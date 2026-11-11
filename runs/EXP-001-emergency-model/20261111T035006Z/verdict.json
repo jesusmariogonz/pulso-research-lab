@@ -1,0 +1,19 @@
+{
+  "experimento": "EXP-001-emergency-model",
+  "manifiesto_sha256": "4cdc4e187fb92ff451f9cf71e48c57e7d321f07371a0e9edfffa35844db3b307",
+  "estado": "FALLIDO",
+  "motivo": "el borrador contiene cifras sin respaldo en results.json (rechazado)",
+  "modo": "calculo_fijo",
+  "etiqueta": "INCONCLUSIVE",
+  "verificacion": {
+    "ok": false,
+    "no_respaldadas": [
+      "40",
+      "60"
+    ],
+    "cifras_revisadas": 97
+  },
+  "llamadas": 2,
+  "tokens_salida": 6937,
+  "modelo": "deepseek-flash"
+}
