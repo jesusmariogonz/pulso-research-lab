@@ -211,6 +211,12 @@ recomendación). Parámetros fijos y neutros: pesos `"equal"`, `theta=1.0`, `k=3
 
 ## `daily.py`
 
+**No reimplementes nada:** importa y usa `prl.emergency.features` (`trend_stress`, `vol_stress`,
+`credit_stress`, `breadth_stress`, `drawdown_velocity_stress`, `correlation_stress`,
+`composite_score`), `prl.emergency.grid.dimension_weights` y `prl.emergency.state_machine`
+(`assign_levels`, `exposure_for_level`). Un test comprueba que el resultado coincide con esos
+módulos con tolerancia 1e-9; una copia que diverge, aunque sea poco, es un defecto.
+
 * `LEVEL_NAMES = ["NORMAL", "VIGILANCIA", "DEFENSIVO", "EMERGENCIA", "CRISIS"]`.
 * `compute_indicator(spy, vix, baa10y, rsp, sectors, theta=1.0, k=3, m=10) -> pd.DataFrame`:
   `spy`, `vix`, `baa10y`, `rsp` son Series de precio/valor; `sectors` es un DataFrame de precios

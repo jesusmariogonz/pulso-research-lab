@@ -98,3 +98,30 @@ def test_run_escribe_los_dos_json_con_fetchers_falsos(tmp_path):
     antes = (out / "latest.json").read_text()
     daily.run(out, fy, ff)
     assert (out / "latest.json").read_text() == antes
+
+
+def test_el_indicador_diario_es_exactamente_el_mismo_modelo_que_features_y_state_machine():
+    """Guarda contra copias que divergen: score y nivel deben coincidir con los módulos revisados."""
+    from prl.emergency import features as f
+    from prl.emergency import grid, state_machine as sm
+
+    spy, vix, baa, rsp, sect = _datos()
+    df = daily.compute_indicator(spy, vix, baa, rsp, sect)
+    idx = spy.index
+    dims = pd.DataFrame(
+        {
+            "trend": f.trend_stress(spy),
+            "vol": f.vol_stress(vix.reindex(idx).ffill()),
+            "credit": f.credit_stress(baa.reindex(idx).ffill()),
+            "breadth": f.breadth_stress(rsp.reindex(idx).ffill(), spy),
+            "drawdown_velocity": f.drawdown_velocity_stress(spy),
+            "correlation": f.correlation_stress(sect.pct_change().reindex(idx)),
+        },
+        index=idx,
+    )
+    score = f.composite_score(dims, grid.dimension_weights("equal"))
+    pd.testing.assert_series_equal(df["score"], score, check_names=False, check_exact=False, rtol=1e-9, atol=1e-9)
+    for c in dims.columns:
+        pd.testing.assert_series_equal(df[c], dims[c], check_names=False, check_exact=False, rtol=1e-9, atol=1e-9)
+    niveles = sm.assign_levels(score, 1.0, 3, 10)
+    assert (df["level"].to_numpy() == niveles.to_numpy()).all()
