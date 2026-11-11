@@ -1,0 +1,8 @@
+id: EXP-001
+titulo: "Modelo de emergencia multifactor (Emergency Model v0)"
+series: [SPY, VIX, BAA10Y, RSP, XLK, XLE, XLF, XLV, XLP, XLU, XLY, XLI, XLB, TLT, BIL, DTB3]
+# El análisis lo hace código fijo y probado (prl.emergency.exp001), NO código escrito por el LLM.
+modulo_calculo: prl.emergency.exp001
+parametros:
+  first_test_year: 2004
+  n_boot: 1000
