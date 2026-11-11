@@ -1,0 +1,16 @@
+{
+  "experimento": "EXP-001-emergency-model",
+  "manifiesto_sha256": "4cdc4e187fb92ff451f9cf71e48c57e7d321f07371a0e9edfffa35844db3b307",
+  "estado": "APROBADO_PARA_REVISION",
+  "motivo": null,
+  "modo": "calculo_fijo",
+  "etiqueta": "INCONCLUSIVE",
+  "verificacion": {
+    "ok": true,
+    "no_respaldadas": [],
+    "cifras_revisadas": 79
+  },
+  "llamadas": 2,
+  "tokens_salida": 5381,
+  "modelo": "deepseek-flash"
+}
