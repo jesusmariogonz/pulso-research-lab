@@ -1,0 +1,22 @@
+id: EXP-000-smoke
+titulo: "Estadística descriptiva de SPY (prueba de extremo a extremo del flujo)"
+series: [SPY]
+tarea: |
+  Con la serie diaria de SPY (adj_close), calcula estadísticas DESCRIPTIVAS de todo el
+  período disponible:
+  - primera y última fecha y número de observaciones;
+  - CAGR (retorno anual compuesto) usando años = días_calendario / 365.25;
+  - volatilidad anualizada de los retornos diarios simples (desv. estándar muestral * sqrt(252));
+  - máximo drawdown (fracción negativa, p. ej. -0.55) y la fecha del mínimo;
+  - peor retorno diario (fracción) y su fecha.
+  No hay hipótesis ni comparación: es una verificación de que el flujo funciona.
+results_schema:
+  primera_fecha: "YYYY-MM-DD"
+  ultima_fecha: "YYYY-MM-DD"
+  n_observaciones: "entero"
+  cagr: "fracción"
+  volatilidad_anualizada: "fracción"
+  max_drawdown: "fracción negativa"
+  fecha_max_drawdown: "YYYY-MM-DD"
+  peor_retorno_diario: "fracción negativa"
+  fecha_peor_retorno_diario: "YYYY-MM-DD"

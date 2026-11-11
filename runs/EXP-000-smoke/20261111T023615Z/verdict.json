@@ -1,0 +1,14 @@
+{
+  "experimento": "EXP-000-smoke",
+  "manifiesto_sha256": "4cdc4e187fb92ff451f9cf71e48c57e7d321f07371a0e9edfffa35844db3b307",
+  "estado": "APROBADO_PARA_REVISION",
+  "motivo": null,
+  "verificacion": {
+    "ok": true,
+    "no_respaldadas": [],
+    "cifras_revisadas": 10
+  },
+  "llamadas": 3,
+  "tokens_salida": 4432,
+  "modelo": "deepseek-flash"
+}

@@ -1,0 +1,11 @@
+{
+  "primera_fecha": "1993-01-29",
+  "ultima_fecha": "2026-11-10",
+  "n_observaciones": 8504,
+  "cagr": 0.1071922099827245,
+  "volatilidad_anualizada": 0.18529161276073133,
+  "max_drawdown": -0.5518945546755859,
+  "fecha_max_drawdown": "2009-03-09",
+  "peor_retorno_diario": -0.10942377857763963,
+  "fecha_peor_retorno_diario": "2020-03-16"
+}
