@@ -74,7 +74,10 @@ def verificar_borrador(texto: str, results: dict, spec_texto: str = "") -> Resul
     no_resp: list[str] = []
     revisadas = 0
     for m in _NUM.finditer(sin_fechas):
-        tok = m.group()
+        # La coma final de una enumeración ("2005, 2006") no es parte del número.
+        tok = m.group().rstrip(",")
+        if not tok:
+            continue
         try:
             val = _a_float(tok)
         except ValueError:
