@@ -29,7 +29,7 @@ SPEC = ROOT / "experiments" / "EXP-001-emergency-model" / "IMPLEMENTATION_SPEC.m
 # El razonamiento del modelo cuenta contra max_tokens: con 12k las respuestas se
 # truncaban antes de cerrar el bloque de código (backtest, 11-nov-2026).
 TOKENS_POR_RESPUESTA = 32000
-MODULOS = {"features", "state_machine", "backtest", "grid", "inputs", "evaluation", "exp001", "daily"}
+MODULOS = {"features", "state_machine", "backtest", "grid", "inputs", "evaluation", "exp001", "daily", "robustness"}
 
 SISTEMA = (
     "Eres un ingeniero cuantitativo senior. Implementas módulos de Python para que pasen un conjunto de "

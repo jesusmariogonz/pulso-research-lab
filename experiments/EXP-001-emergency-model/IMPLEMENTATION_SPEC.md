@@ -244,3 +244,23 @@ módulos con tolerancia 1e-9; una copia que diverge, aunque sea poco, es un defe
   Devuelve el payload de `latest`.
 * `main()`: `run(Path("public/emergency"), descargar_yahoo, descargar_fred)` con las funciones de
   `prl.data.build`.
+
+## `robustness.py` — pruebas de robustez exploratorias (post-hoc, no cambian la etiqueta)
+
+* `cost_sensitivity(prices, exposure, risk_asset, safe_weights, costs_bps) -> pd.DataFrame`: para cada
+  costo por lado en puntos base (`costs_bps`, lista) corre `run_backtest(..., cost_per_side=bps/10000)` y
+  calcula `metrics(ret)`. Índice = `costs_bps` (nombre `cost_bps`), columnas `cagr, max_drawdown, calmar, sharpe`.
+* `subperiod_metrics(ret, windows) -> pd.DataFrame`: `windows` = dict `{nombre: (inicio, fin)}` (fechas
+  inclusivas, strings). Para cada ventana, `metrics` de `ret.loc[inicio:fin]`. Índice = nombre; columnas
+  `cagr, max_drawdown, calmar, sharpe, n_days`. Ventana vacía → fila de NaN con `n_days = 0`.
+  `exclude_window(ret, inicio, fin) -> pd.Series`: la serie sin las fechas en esa ventana (inclusiva).
+* `reality_check(returns, benchmark, n_boot=1000, block=20, seed=0) -> dict`: prueba de White (2000).
+  `returns` = DataFrame (una columna por variante), `benchmark` = Series (mismo índice). Excesos
+  `d = returns.sub(benchmark, axis=0)`; estadístico `V = max_k sqrt(n) * mean(d_k)`. Bootstrap de bloques
+  móviles (longitud `block`, mismos índices remuestreados para todas las columnas, `np.random.default_rng(seed)`),
+  re-centrando: `V*_b = max_k sqrt(n) * (mean(d*_k) - mean(d_k))`. `p_value = mean(V*_b >= V)`.
+  Devuelve `{"statistic": float, "p_value": float, "best_variant": nombre de la columna con mayor media,
+  "n_boot": int}`. Determinista dado `seed`. `ValueError` si hay NaN o índices distintos.
+* `required_sample_size(effect, sd, alpha=0.05, power=0.8) -> float`: n mínimo para una prueba z unilateral
+  de media: `((z_{1-alpha} + z_{power}) * sd / effect)**2` (usa `scipy.stats.norm.ppf`). `ValueError` si
+  `effect <= 0` o `sd <= 0`.
