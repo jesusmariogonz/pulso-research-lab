@@ -154,3 +154,8 @@ def test_modo_calculo_fijo_no_pide_codigo_al_llm_y_usa_la_etiqueta_del_codigo(en
     assert v["estado"] == "APROBADO_PARA_REVISION", v
     assert v["modo"] == "calculo_fijo" and v["etiqueta"] == "INCONCLUSIVE"
     assert v["llamadas"] == 1  # solo el borrador
+
+
+def test_las_etiquetas_de_proporcion_como_60_40_no_cuentan_como_cifras():
+    assert verificar_borrador("El benchmark 60/40 y el reparto 50/50 se compararon.", RESULTS).ok
+    assert not verificar_borrador("El CAGR fue 12.7%.", RESULTS).ok  # sigue atrapando cifras inventadas

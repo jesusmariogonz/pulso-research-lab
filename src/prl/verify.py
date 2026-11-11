@@ -68,6 +68,8 @@ def verificar_borrador(texto: str, results: dict, spec_texto: str = "") -> Resul
 
     # Se ignoran encabezados con identificadores tipo EXP-001 / H1 / H0.
     sin_fechas = re.sub(r"\b(?:EXP|H|v|V)-?\d+\b", " ", sin_fechas)
+    # Etiquetas de proporción como el benchmark "60/40" o "50/50": son nombres, no estadísticas.
+    sin_fechas = re.sub(r"\b\d{1,3}/\d{1,3}\b", " ", sin_fechas)
 
     no_resp: list[str] = []
     revisadas = 0
