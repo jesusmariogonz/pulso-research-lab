@@ -1,0 +1,9 @@
+{
+  "modulo": "robustness",
+  "estado": "TESTS_PASAN",
+  "iteraciones": 1,
+  "motivo": null,
+  "llamadas": 1,
+  "tokens_salida": 3649,
+  "modelo": "deepseek-flash"
+}
