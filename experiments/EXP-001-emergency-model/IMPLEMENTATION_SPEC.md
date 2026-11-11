@@ -64,6 +64,12 @@ alta = más estrés.
   * `costo = 2 · cost_per_side · |e_{t−1} − e_{t−2}|` (se vende un lado y se
     compra el otro). La exposición aplicada en la primera fila es `exposure.iloc[0]`
     y no genera costo.
+  * **Validación estricta (nunca resultados en silencio con datos faltantes):** lanza
+    `ValueError` si, tras alinear `exposure` al índice de `prices`, `exposure` contiene
+    NaN o valores fuera de [0, 1]; o si las columnas de `prices` realmente usadas
+    (`risk_asset` y las de `safe_weights`) contienen NaN; o si `safe_weights` no suma 1
+    (tolerancia 1e-9) o referencia un activo ausente. Quien llama debe recortar la muestra
+    al período común antes de llamar.
   * Devuelve DataFrame con columnas `ret`, `equity` (empieza en 1.0), `exposure_applied`, `cost`.
 * `metrics(returns)`: dict con `cagr` (años = días calendario / 365.25),
   `max_drawdown` (negativo), `calmar` (`cagr / |max_drawdown|`), `sharpe`

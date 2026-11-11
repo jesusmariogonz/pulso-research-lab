@@ -102,3 +102,44 @@ def test_sharpe_positivo_con_deriva_positiva():
     assert m["sharpe"] > 0 and m["sortino"] > 0
     esperado = r.mean() / r.std(ddof=1) * np.sqrt(252)
     assert m["sharpe"] == pytest.approx(esperado)
+
+
+def _base_sin_nan(n=15):
+    p = _precios(n, A=np.linspace(100, 110, n), B=np.full(n, 100.0))
+    return p, pd.Series(1.0, index=p.index)
+
+
+def test_rechaza_nan_en_la_exposicion():
+    p, e = _base_sin_nan()
+    e.iloc[4:6] = np.nan
+    with pytest.raises(ValueError):
+        bt.run_backtest(p, e, "A", {"B": 1.0})
+
+
+def test_rechaza_exposicion_fuera_de_rango():
+    p, e = _base_sin_nan()
+    e.iloc[3] = 1.5
+    with pytest.raises(ValueError):
+        bt.run_backtest(p, e, "A", {"B": 1.0})
+
+
+def test_rechaza_nan_en_los_precios_usados_aunque_la_exposicion_sea_total():
+    p, e = _base_sin_nan()
+    p.loc[p.index[:4], "B"] = np.nan  # refugio sin historia al inicio
+    with pytest.raises(ValueError):
+        bt.run_backtest(p, e, "A", {"B": 1.0})
+
+
+def test_ignora_columnas_no_usadas_con_nan():
+    p, e = _base_sin_nan()
+    p["Z"] = np.nan
+    out = bt.run_backtest(p, e, "A", {"B": 1.0}, cost_per_side=0.0)
+    assert out["ret"].notna().all()
+
+
+def test_rechaza_pesos_del_refugio_que_no_suman_uno_o_activo_ausente():
+    p, e = _base_sin_nan()
+    with pytest.raises(ValueError):
+        bt.run_backtest(p, e, "A", {"B": 0.5})
+    with pytest.raises(ValueError):
+        bt.run_backtest(p, e, "A", {"NO_EXISTE": 1.0})
