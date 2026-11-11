@@ -1,0 +1,76 @@
+name: Implementar módulo con DeepSeek
+
+# TDD automático: DeepSeek escribe un módulo de src/prl/emergency/ hasta que
+# pasen los tests (que escribió un humano/Claude). El código generado se
+# corre SIN secretos. Solo se commitea el archivo del módulo y la evidencia
+# (runs/implement/*), en una rama implement/* con un PR para REVISIÓN
+# HUMANA. Pasar los tests no equivale a "correcto".
+on:
+  workflow_dispatch:
+    inputs:
+      module:
+        description: "features | state_machine | backtest"
+        required: true
+        default: "state_machine"
+      model:
+        description: "Modelo de DeepSeek"
+        required: true
+        default: "deepseek-flash"
+      max_iter:
+        description: "Tope de iteraciones (cada una = 1 llamada al LLM)"
+        required: true
+        default: "6"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  implement:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      # persist-credentials: false -> el token NO queda en .git/config mientras
+      # corre código generado por el LLM.
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e ".[dev]"
+
+      - name: Implementar con DeepSeek (ciclo con tests)
+        id: impl
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          PRL_MODEL: ${{ inputs.model }}
+          PRL_MAX_CALLS: ${{ inputs.max_iter }}
+        run: |
+          set +e
+          python -m prl.implement "${{ inputs.module }}" --max-iter "${{ inputs.max_iter }}"
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Guardar el módulo y la evidencia en una rama + PR
+        if: always()
+        run: |
+          BR="implement/${{ inputs.module }}-$(date -u +%Y%m%dT%H%M%SZ)"
+          git config user.name "prl-bot"
+          git config user.email "prl-bot@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
+          git checkout -b "$BR"
+          # Solo el archivo del módulo y la evidencia: nunca tests, spec ni workflows.
+          git add "src/prl/emergency/${{ inputs.module }}.py" src/prl/emergency/__init__.py runs/implement 2>/dev/null || true
+          git diff --cached --quiet && { echo "Nada que guardar"; exit 0; }
+          git commit -m "Módulo ${{ inputs.module }} implementado por DeepSeek (resultado: ${{ steps.impl.outputs.code == '0' && 'tests pasan' || 'tests NO pasan' }})"
+          git push -u origin "$BR"
+          gh pr create --title "Implementación: ${{ inputs.module }}" \
+            --body "Generado por DeepSeek con el ciclo de tests. Ver runs/implement/${{ inputs.module }}/*/verdict.json. REVISIÓN HUMANA OBLIGATORIA: pasar los tests no garantiza ausencia de errores." \
+            || echo "No se pudo abrir el PR."
+
+      - name: Fallar el job si los tests no pasaron
+        if: steps.impl.outputs.code != '0'
+        run: exit 1

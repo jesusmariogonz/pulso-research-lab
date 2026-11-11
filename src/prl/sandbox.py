@@ -33,7 +33,8 @@ class CodigoNoPermitido(ValueError):
     pass
 
 
-def revisar_codigo(codigo: str) -> None:
+def revisar_codigo(codigo: str, extra_permitidos: frozenset[str] = frozenset()) -> None:
+    permitidos = IMPORTS_PERMITIDOS | set(extra_permitidos)
     try:
         arbol = ast.parse(codigo)
     except SyntaxError as e:
@@ -42,11 +43,11 @@ def revisar_codigo(codigo: str) -> None:
         if isinstance(nodo, ast.Import):
             for a in nodo.names:
                 raiz = a.name.split(".")[0]
-                if raiz not in IMPORTS_PERMITIDOS:
+                if raiz not in permitidos:
                     raise CodigoNoPermitido(f"import no permitido: {a.name}")
         elif isinstance(nodo, ast.ImportFrom):
             raiz = (nodo.module or "").split(".")[0]
-            if raiz not in IMPORTS_PERMITIDOS:
+            if raiz not in permitidos:
                 raise CodigoNoPermitido(f"import no permitido: {nodo.module}")
         elif isinstance(nodo, ast.Name) and nodo.id in NOMBRES_PROHIBIDOS:
             raise CodigoNoPermitido(f"nombre prohibido: {nodo.id}")
