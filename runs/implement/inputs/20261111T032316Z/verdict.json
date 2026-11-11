@@ -1,0 +1,9 @@
+{
+  "modulo": "inputs",
+  "estado": "TESTS_PASAN",
+  "iteraciones": 1,
+  "motivo": null,
+  "llamadas": 1,
+  "tokens_salida": 4646,
+  "modelo": "deepseek-flash"
+}
