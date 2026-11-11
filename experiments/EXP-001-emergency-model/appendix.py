@@ -115,6 +115,12 @@ def annual(rets):
     return out
 
 
+def annual_assets(prices, oos_idx):
+    """Rendimiento por año calendario de cada activo del refugio/riesgo (mismas fechas OOS)."""
+    r = prices.pct_change().reindex(oos_idx)
+    return {c: {int(y): _f((1 + r[c][r.index.year == y]).prod() - 1) for y in sorted(set(r.index.year))} for c in r.columns}
+
+
 def exposure_stats(applied, cost):
     a = applied.to_numpy()
     ch = int((np.abs(np.diff(a)) > 1e-12).sum())
@@ -264,6 +270,7 @@ def main(inputs_dir, out_dir):
                   training_days_before_first_test_year=int((var[next(iter(var))]["ret"].index < pd.Timestamp(f"{FIRST_TEST_YEAR}-01-01")).sum()),
                   sample_start=str(prices.index[0].date())),
         annual=annual(rets),
+        annual_assets=annual_assets(prices, oi),
         drawdowns={k: drawdown_table(r) for k, r in rets.items() if k != "sixty_forty"},
         exposure=exposure_stats(applied, cost),
         chosen_frequency={k: int(v) for k, v in freq.items()},
