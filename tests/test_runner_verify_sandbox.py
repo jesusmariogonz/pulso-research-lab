@@ -134,3 +134,23 @@ def test_codigo_peligroso_se_rechaza_y_reintenta(entorno, tmp_path):
     ds = FalsoDS(tmp_path / "log.jsonl", [malo, CODIGO_OK, "Hay 300 observaciones."])
     v = runner.correr(entorno, cliente=ds)
     assert v["estado"] == "APROBADO_PARA_REVISION", v
+
+
+def test_modo_calculo_fijo_no_pide_codigo_al_llm_y_usa_la_etiqueta_del_codigo(entorno, tmp_path, monkeypatch):
+    modulo = tmp_path / "mod_calculo_falso.py"
+    modulo.write_text(
+        "import json\n"
+        "def run(inputs_dir, run_dir, **kw):\n"
+        "    r = {'n': 300, 'label': 'INCONCLUSIVE', 'param': kw.get('p')}\n"
+        "    (run_dir / 'results.json').write_text(json.dumps(r))\n"
+        "    return r\n"
+    )
+    monkeypatch.syspath_prepend(str(tmp_path))
+    (entorno / "spec.yaml").write_text(
+        "id: EXP-T\nseries: [SPY]\nmodulo_calculo: mod_calculo_falso\nparametros: {p: 7}\n"
+    )
+    ds = FalsoDS(tmp_path / "log.jsonl", ["Resultado INCONCLUSIVE con 300 observaciones."])
+    v = runner.correr(entorno, cliente=ds)
+    assert v["estado"] == "APROBADO_PARA_REVISION", v
+    assert v["modo"] == "calculo_fijo" and v["etiqueta"] == "INCONCLUSIVE"
+    assert v["llamadas"] == 1  # solo el borrador

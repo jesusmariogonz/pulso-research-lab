@@ -17,6 +17,7 @@ El LLM no decide etiquetas ni cambia la spec: eso es humano/código.
 from __future__ import annotations
 
 import hashlib
+import importlib
 import json
 import re
 import shutil
@@ -103,13 +104,14 @@ REGLAS DURAS:
 - Usa ÚNICAMENTE cifras que aparezcan en results.json, tal cual (puedes expresar una fracción como porcentaje).
 - NO calcules cifras nuevas ni cites datos de memoria (nada de "históricamente..." con números).
 - No afirmes causalidad ni recomiendes invertir. Es descriptivo/experimental.
-- Etiqueta el resultado como `EXPERIMENTAL`. Indica el período de datos con las fechas de results.json.
+- Si results.json trae el campo `label`, esa es la etiqueta OFICIAL (calculada por código con criterios pre-registrados): úsala tal cual, sin suavizarla ni cambiarla. Si no, etiqueta el resultado como `EXPERIMENTAL`. Indica el período de datos con las fechas de results.json.
+- Si results.json trae `notes`, inclúyelas todas en Limitaciones.
 - Secciones: Resumen · Datos y período · Resultados · Limitaciones.
 Responde SOLO con el Markdown."""
 
 
 def _validar_esquema(results: dict, spec: dict) -> list[str]:
-    return [k for k in spec["results_schema"] if k not in results]
+    return [k for k in spec.get("results_schema", {}) if k not in results]
 
 
 def correr(exp_dir: Path, cliente: DeepSeek | None = None, ahora: datetime | None = None) -> dict:
@@ -130,10 +132,19 @@ def correr(exp_dir: Path, cliente: DeepSeek | None = None, ahora: datetime | Non
     veredicto: dict = {"experimento": exp_dir.name, "manifiesto_sha256": manifiesto_sha, "estado": "FALLIDO", "motivo": None}
 
     try:
-        # --- 1. Código ---
-        mensajes = [{"role": "system", "content": SISTEMA}, {"role": "user", "content": _prompt_codigo(spec)}]
+        # --- 1. Cómputo ---
         results = None
-        for intento in range(2):
+        mensajes = []
+        if spec.get("modulo_calculo"):
+            # Modo cálculo fijo: el análisis lo hace código versionado y probado
+            # (no código escrito por el LLM en esta corrida). El LLM solo redacta.
+            mod = importlib.import_module(spec["modulo_calculo"])
+            results = mod.run(run_dir / "inputs", run_dir, **spec.get("parametros", {}))
+            veredicto["modo"] = "calculo_fijo"
+            veredicto["etiqueta"] = results.get("label")
+        else:
+            mensajes = [{"role": "system", "content": SISTEMA}, {"role": "user", "content": _prompt_codigo(spec)}]
+        for intento in range(0 if results is not None else 2):
             respuesta = ds.chat(mensajes, max_tokens=8000, etiqueta=f"codigo_intento_{intento + 1}")
             try:
                 codigo = extraer_bloque(respuesta, "python")

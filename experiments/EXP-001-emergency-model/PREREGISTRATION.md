@@ -118,9 +118,27 @@ No toca el motor de paper trading ni IBKR. Solo si resulta `VALIDATED` se
 propone una fase aparte (poder de veto sobre las compras) con su propio
 pre-registro.
 
+## Aclaraciones de implementación (v1.1, 2026-11-11 — ANTES de correr con datos reales)
+
+Aclaran puntos que la v1 dejaba abiertos, o que los datos hacen inviables. **No cambian** la
+hipótesis, la grilla, los criterios de éxito ni los costos.
+
+1. **Umbrales → niveles:** nivel crudo = `clip(floor(score / θ), 0, 4)`.
+2. **Persistencia e histéresis:** se sube a un nivel si el nivel crudo **mínimo** de los últimos *k*
+   días lo supera; se baja si el **máximo** de los últimos *m* días queda por debajo del actual.
+3. **Efectivo:** "SHY/BIL (efectivo)" se implementa como índice de T-Bills: BIL desde 2007-05 y, antes,
+   un índice sintético con la tasa DTB3 (FRED) del día anterior. SHY (duración ≈ 2 años) no se usa como efectivo.
+4. **Crédito:** la v0 usa solo `BAA10Y`; **no incluye HYG/LQD**.
+5. **Primer año de prueba: 2004** (no 2003). TLT empieza en 2002-07 y se exigen ≥ 252 días de
+   entrenamiento. Consecuencia: el episodio **dot-com queda fuera de muestra** y se evalúan **3**
+   episodios (2007-09, COVID, 2022), no 4.
+6. **Limitación declarada:** el refugio se rebalancea a diario hacia la exposición objetivo sin costo.
+7. **Benchmarks:** SMA200 con refugio en efectivo; 60/40 = 60 % SPY / 40 % TLT con rebalanceo diario.
+
 ## Registro de cambios
 
 | Fecha | Cambio | Commit |
 |---|---|---|
 | 2026-11-10 | borrador inicial | bfa9810 |
-| 2026-11-11 | aprobado y bloqueado (v1); se añaden fechas de episodios y hash del manifiesto | (este commit) |
+| 2026-11-11 | aprobado y bloqueado (v1); se añaden fechas de episodios y hash del manifiesto | ad02967 |
+| 2026-11-11 | v1.1: aclaraciones de implementación (ver sección); primer año de prueba 2004; sin cambio de reglas de éxito | (este commit) |
