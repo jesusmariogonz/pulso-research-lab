@@ -50,6 +50,7 @@ class DeepSeek:
     bitacora: Path
     budget: Budget = field(default_factory=Budget)
     modelo: str = MODELO_POR_DEFECTO
+    ultimo_finish_reason: str | None = None
 
     def chat(self, mensajes: list[dict], *, max_tokens: int = 8000, temperature: float = 0.0, etiqueta: str = "") -> str:
         llave = os.environ.get("DEEPSEEK_API_KEY")
@@ -71,6 +72,7 @@ class DeepSeek:
             raise RuntimeError(f"DeepSeek respondió HTTP {r.status_code}: {r.text[:500]}")
         data = r.json()
         texto = data["choices"][0]["message"].get("content") or ""
+        self.ultimo_finish_reason = data["choices"][0].get("finish_reason")
         uso = data.get("usage", {})
         self.budget.despues_de_llamar(int(uso.get("completion_tokens", 0)))
         self._registrar(
@@ -83,6 +85,7 @@ class DeepSeek:
                 "mensajes": mensajes,
                 "respuesta": texto,
                 "uso": uso,
+                "finish_reason": self.ultimo_finish_reason,
                 "segundos": round(time.time() - t0, 2),
             }
         )

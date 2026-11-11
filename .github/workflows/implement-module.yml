@@ -63,7 +63,10 @@ jobs:
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
           git checkout -b "$BR"
           # Solo el archivo del módulo y la evidencia: nunca tests, spec ni workflows.
-          git add "src/prl/emergency/${{ inputs.module }}.py" src/prl/emergency/__init__.py runs/implement 2>/dev/null || true
+          # Un git add por ruta: si el módulo no existe (el ciclo falló), la evidencia igual se guarda.
+          git add "src/prl/emergency/${{ inputs.module }}.py" 2>/dev/null || true
+          git add src/prl/emergency/__init__.py 2>/dev/null || true
+          git add runs/implement 2>/dev/null || true
           git diff --cached --quiet && { echo "Nada que guardar"; exit 0; }
           git commit -m "Módulo ${{ inputs.module }} implementado por DeepSeek (resultado: ${{ steps.impl.outputs.code == '0' && 'tests pasan' || 'tests NO pasan' }})"
           git push -u origin "$BR"

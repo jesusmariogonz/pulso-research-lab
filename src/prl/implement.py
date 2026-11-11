@@ -26,6 +26,9 @@ from prl.sandbox import CodigoNoPermitido, revisar_codigo
 
 ROOT = Path(__file__).resolve().parents[2]
 SPEC = ROOT / "experiments" / "EXP-001-emergency-model" / "IMPLEMENTATION_SPEC.md"
+# El razonamiento del modelo cuenta contra max_tokens: con 12k las respuestas se
+# truncaban antes de cerrar el bloque de código (backtest, 11-nov-2026).
+TOKENS_POR_RESPUESTA = 32000
 MODULOS = {"features", "state_machine", "backtest"}
 
 SISTEMA = (
@@ -74,7 +77,7 @@ def implementar(modulo: str, max_iter: int = 6, cliente: DeepSeek | None = None,
     ahora = ahora or datetime.now(timezone.utc)
     run_dir = ROOT / "runs" / "implement" / modulo / ahora.strftime("%Y%m%dT%H%M%SZ")
     run_dir.mkdir(parents=True, exist_ok=True)
-    ds = cliente or DeepSeek(bitacora=run_dir / "llm_log.jsonl", budget=Budget(max_llamadas=max_iter))
+    ds = cliente or DeepSeek(bitacora=run_dir / "llm_log.jsonl", budget=Budget(max_llamadas=max_iter, max_tokens_salida_total=max_iter * TOKENS_POR_RESPUESTA))
 
     destino.parent.mkdir(parents=True, exist_ok=True)
     (destino.parent / "__init__.py").touch()
@@ -86,11 +89,14 @@ def implementar(modulo: str, max_iter: int = 6, cliente: DeepSeek | None = None,
             veredicto["iteraciones"] = i
             resp = ds.chat(
                 [{"role": "system", "content": SISTEMA}, {"role": "user", "content": _prompt(modulo, spec, tests, codigo_previo, salida)}],
-                max_tokens=12000, etiqueta=f"{modulo}_iter_{i}",
+                max_tokens=TOKENS_POR_RESPUESTA, etiqueta=f"{modulo}_iter_{i}",
             )
             m = re.search(r"```python\s*\n(.*?)```", resp, re.S)
             if not m:
-                salida = "La respuesta no traía un bloque ```python."
+                if ds.ultimo_finish_reason == "length":
+                    salida = "Tu respuesta se TRUNCÓ por longitud antes de cerrar el bloque de código. Piensa menos y responde directo con el archivo completo, sin explicaciones."
+                else:
+                    salida = "La respuesta no traía un bloque ```python."
                 continue
             codigo = m.group(1)
             try:
