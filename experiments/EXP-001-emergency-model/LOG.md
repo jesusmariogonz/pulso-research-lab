@@ -8,7 +8,7 @@
 | Verificador | Falsos positivos corregidos: "60/40" contado como cifra; años con coma final. |
 | Resultado | Etiqueta INCONCLUSIVE: cumple 3 de 4 criterios; la mejora sobre SMA200 no es distinguible de cero (solo 3 episodios evaluables). |
 | Apéndice exploratorio | Sensibilidad, bootstrap, placebo, derivación paso a paso del Deflated Sharpe (DSR = 0.9030, N = 162), número efectivo de intentos y análisis de entradas y salidas. Hallazgo: el valor proviene casi todo del episodio 2007–2009 (pagos convexos, baja tasa de acierto). |
-| Robustez (en curso) | Módulo `robustness.py` implementado por DeepSeek (run 14, tests pasan, 1 iteración): sensibilidad a costos, subperiodos, exclusión de ventana, Reality Check de White, tamaño de muestra requerido. **Pendiente:** correrlo sobre los datos de EXP-001 y publicar resultados (exploratorio). |
+| Robustez (hecho) | `robustness_run.py` → `robustness.json`. Costos 0–50 pb: modelo CAGR 11.2%→9.8%, SMA200 colapsa (Calmar 0.43→0.04). Sin 2007-10 a 2009-12: modelo CAGR 10.9%, DD −26.4%, Sharpe 0.95 vs comprar y mantener 12.0%, −33.7%, 0.86. Reality Check (162 variantes): vs comprar y mantener p=0.687; vs SMA200 p=0.0285. Potencia: exceso anual vs SMA200 +4.0 pp (t=2.19, 23 años); se requerirían ≈30 años para 80% de potencia. Exploratorio; no cambia la etiqueta. Salvedad: la selección de variante por año se mantuvo fija al variar costos; el Reality Check usa media de retornos, no Calmar. |
 | Literatura (pendiente) | `REFERENCES.md` con citas verificadas por búsqueda web antes de usarlas en el reporte. |
 
 ## Reglas de trabajo
