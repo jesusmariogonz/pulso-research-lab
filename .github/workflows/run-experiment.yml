@@ -1,0 +1,82 @@
+name: Ejecutar experimento
+
+# Corre un experimento PRE-REGISTRADO (Estado: LOCKED) con DeepSeek.
+# El LLM escribe código y borrador; el cómputo y la verificación de cifras
+# son código. Deja SIEMPRE evidencia en una rama run/* (también si falla:
+# los resultados negativos se documentan). Claude solo interviene al revisar.
+on:
+  workflow_dispatch:
+    inputs:
+      experiment:
+        description: "Carpeta del experimento (p. ej. EXP-000-smoke)"
+        required: true
+        default: "EXP-000-smoke"
+      model:
+        description: "Modelo de DeepSeek"
+        required: true
+        default: "deepseek-flash"
+      max_calls:
+        description: "Tope de llamadas al LLM por corrida"
+        required: true
+        default: "6"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: pytest -q
+
+      - name: Traer datos congelados (último Release data-*)
+        run: |
+          TAG=$(gh release list --limit 30 --json tagName -q '.[] | select(.tagName | startswith("data-")) | .tagName' | head -1)
+          test -n "$TAG" || { echo "No hay Release de datos: corre primero 'Construir base de datos'"; exit 1; }
+          mkdir -p dl data
+          gh release download "$TAG" -p data-raw.tar.gz -p manifest.json -D dl
+          tar -xzf dl/data-raw.tar.gz -C data
+          cp dl/manifest.json data/manifest.json
+          python -m prl.data.build --verify
+
+      - name: Ejecutar con DeepSeek
+        id: run
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          PRL_MODEL: ${{ inputs.model }}
+          PRL_MAX_CALLS: ${{ inputs.max_calls }}
+        run: |
+          set +e
+          python -m prl.runner "experiments/${{ inputs.experiment }}"
+          echo "code=$?" >> "$GITHUB_OUTPUT"
+
+      - name: Guardar evidencia en una rama y abrir PR
+        if: always()
+        run: |
+          BR="run/${{ inputs.experiment }}-$(date -u +%Y%m%dT%H%M%SZ)"
+          git config user.name "prl-bot"
+          git config user.email "prl-bot@users.noreply.github.com"
+          git checkout -b "$BR"
+          # Los insumos (parquet) no se versionan: están congelados por hash en el manifiesto.
+          rm -rf runs/*/*/inputs
+          git add runs
+          git diff --cached --quiet && { echo "Sin evidencia que guardar"; exit 0; }
+          git commit -m "Corrida de ${{ inputs.experiment }} (ver verdict.json)"
+          git push -u origin "$BR"
+          gh pr create --title "Corrida ${{ inputs.experiment }}" \
+            --body "Evidencia automática. Revisar verdict.json, results.json y draft.md. El borrador NO se publica hasta revisión humana." \
+            || echo "No se pudo abrir el PR (habilita 'Allow GitHub Actions to create pull requests' en Settings > Actions)."
+
+      - name: Fallar el job si el experimento no fue aprobado
+        if: steps.run.outputs.code != '0'
+        run: exit 1

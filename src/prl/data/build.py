@@ -122,10 +122,31 @@ def construir(only: list[str] | None = None) -> dict:
     return manifiesto
 
 
+def verificar_integridad() -> list[str]:
+    """Compara cada parquet de data/raw con el SHA-256 del manifiesto.
+    Devuelve la lista de problemas (vacía = todo íntegro)."""
+    manifiesto = json.loads(MANIFIESTO.read_text())
+    problemas = []
+    for sid, m in manifiesto["series"].items():
+        archivo = RAW / f"{sid}.parquet"
+        if not archivo.exists():
+            problemas.append(f"{sid}: falta el archivo")
+        elif sha256_archivo(archivo) != m["sha256"]:
+            problemas.append(f"{sid}: el hash no coincide con el manifiesto")
+    return problemas
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--only", nargs="*", help="ids de series a descargar (default: todas)")
+    ap.add_argument("--verify", action="store_true", help="solo verificar data/raw contra data/manifest.json")
     args = ap.parse_args(argv)
+    if args.verify:
+        problemas = verificar_integridad()
+        for p in problemas:
+            print("INTEGRIDAD:", p)
+        print("Integridad OK" if not problemas else f"{len(problemas)} problema(s)")
+        return 1 if problemas else 0
     m = construir(args.only)
     print(f"Series guardadas: {len(m['series'])} · fallidas: {len(m['fallidas'])}")
     for k, v in m["fallidas"].items():
