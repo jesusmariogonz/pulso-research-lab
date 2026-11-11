@@ -206,6 +206,140 @@ def dsr_components(r, n_trials=162):
                 dsr=_f(deflated_sharpe_ratio(r, n_trials)), psr_vs_zero=_f(deflated_sharpe_ratio(r, 1)))
 
 
+def dsr_steps(r, var, oos_idx, n_trials=162):
+    """Derivación numérica del DSR, con TODOS los valores intermedios, y sensibilidades (exploratorio)."""
+    from scipy.stats import norm
+    n = len(r); sr = float(r.mean() / r.std(ddof=1)); g3 = float(r.skew()); g4 = float(r.kurt() + 3.0)
+    gam = 0.5772156649015329
+    t1, t2, t3 = 1.0, -g3 * sr, (g4 - 1.0) / 4.0 * sr ** 2
+    num = t1 + t2 + t3
+    var_sr = num / (n - 1); sr_std = math.sqrt(var_sr)
+
+    def sr0_of(N, scale):
+        z1 = norm.ppf(1 - 1 / N); z2 = norm.ppf(1 - 1 / (N * math.e))
+        return scale * ((1 - gam) * z1 + gam * z2), z1, z2
+
+    sr0, z1, z2 = sr0_of(n_trials, sr_std)
+    steps = dict(n=n, mean_daily=_f(r.mean()), std_daily=_f(r.std(ddof=1)), sr=_f(sr), skew=_f(g3), kurtosis=_f(g4),
+                 term_one=t1, term_skew=_f(t2), term_kurt=_f(t3), numerator=_f(num), denominator=n - 1,
+                 variance_sr=_f(var_sr), sr_std=_f(sr_std), n_trials=n_trials, gamma=gam,
+                 z1=_f(z1), z2=_f(z2), part1=_f((1 - gam) * z1), part2=_f(gam * z2), expected_max_z=_f((1 - gam) * z1 + gam * z2),
+                 sr0=_f(sr0), diff=_f(sr - sr0), z_stat=_f((sr - sr0) / sr_std), dsr=_f(norm.cdf((sr - sr0) / sr_std)))
+    # sensibilidad al número de intentos (misma fórmula, σ_SR del estimador)
+    sens = []
+    for N in [1, 2, 5, 10, 20, 50, 100, 162, 500, 1000]:
+        s0 = 0.0 if N <= 1 else sr0_of(N, sr_std)[0]
+        sens.append(dict(n_trials=N, sr0_daily=_f(s0), sr0_annualized=_f(s0 * math.sqrt(252)), dsr=_f(norm.cdf((sr - s0) / sr_std))))
+    # correlación entre las 162 variantes y número efectivo de pruebas (razón de participación de autovalores)
+    R = pd.DataFrame({k: v["ret"].reindex(oos_idx) for k, v in var.items()})
+    C = R.corr().to_numpy(); K = C.shape[0]
+    off = C[~np.eye(K, dtype=bool)]
+    lam = np.clip(np.linalg.eigvalsh(C), 0, None)
+    n_eff = float(lam.sum() ** 2 / (lam ** 2).sum())
+    srs = (R.mean() / R.std(ddof=1)).to_numpy()
+    s0_eff = sr0_of(n_eff, sr_std)[0]
+    s0_alt = sr0_of(n_trials, float(srs.std(ddof=1)))[0]
+    s0_alt_eff = sr0_of(n_eff, float(srs.std(ddof=1)))[0]
+    steps["trials"] = dict(mean_pairwise_corr=_f(off.mean()), min_pairwise_corr=_f(off.min()), n_eff_participation=_f(n_eff),
+                           top_eigenvalue_share=_f(lam.max() / lam.sum()),
+                           sr_trials_std_daily=_f(srs.std(ddof=1)), sr_trials_min_daily=_f(srs.min()), sr_trials_max_daily=_f(srs.max()),
+                           dsr_with_n_eff=_f(norm.cdf((sr - s0_eff) / sr_std)), sr0_with_n_eff=_f(s0_eff),
+                           dsr_cross_trial_sigma_n162=_f(norm.cdf((sr - s0_alt) / sr_std)), sr0_cross_trial_n162=_f(s0_alt),
+                           dsr_cross_trial_sigma_n_eff=_f(norm.cdf((sr - s0_alt_eff) / sr_std)), sr0_cross_trial_n_eff=_f(s0_alt_eff))
+    steps["sensitivity_n_trials"] = sens
+    return steps
+
+
+FWD = [20, 60, 120]
+
+
+def _fwd(close, i, h):
+    j = i + h
+    return float(close.iloc[j] / close.iloc[i] - 1.0) if j < len(close) else None
+
+
+def _stats(vals):
+    v = np.array([x for x in vals if x is not None], dtype=float)
+    if len(v) == 0:
+        return dict(n=0, mean=None, median=None, share_negative=None)
+    return dict(n=int(len(v)), mean=_f(v.mean()), median=_f(np.median(v)), share_negative=_f((v < 0).mean()))
+
+
+def trading_points(applied, spy_full, model_ret, bh_ret, episodes, oos_idx):
+    """Entradas/salidas del modelo: cambios de exposición, períodos defensivos y timing en las crisis (exploratorio)."""
+    close = spy_full.reindex(oos_idx)
+    a = applied.reindex(oos_idx).to_numpy()
+    n = len(a)
+    ath = spy_full.cummax()
+    dd_full = (spy_full / ath - 1.0).reindex(oos_idx)
+
+    events = []
+    for i in range(1, n):
+        if abs(a[i] - a[i - 1]) > 1e-12:
+            d = i - 1  # día de decisión (cierre previo a la aplicación)
+            events.append(dict(date=str(oos_idx[i].date()), decision_date=str(oos_idx[d].date()), from_exposure=_f(a[i - 1]), to_exposure=_f(a[i]),
+                               direction="reduce" if a[i] < a[i - 1] else "increase",
+                               spy_drawdown_at_decision=_f(dd_full.iloc[d]),
+                               **{f"spy_fwd_{h}d": _f(_fwd(close, d, h)) if _fwd(close, d, h) is not None else None for h in FWD}))
+    base = {f"fwd_{h}d": _stats([_fwd(close, i, h) for i in range(n)]) for h in FWD}
+    agg = {}
+    for dire in ["reduce", "increase"]:
+        ev = [e for e in events if e["direction"] == dire]
+        agg[dire] = dict(n=len(ev), mean_spy_drawdown_at_decision=_f(np.mean([e["spy_drawdown_at_decision"] for e in ev])),
+                         **{f"fwd_{h}d": _stats([e[f"spy_fwd_{h}d"] for e in ev]) for h in FWD})
+
+    periods, i = [], 0
+    while i < n:
+        if a[i] < 1 - 1e-12:
+            j = i
+            while j + 1 < n and a[j + 1] < 1 - 1e-12:
+                j += 1
+            ref = close.iloc[i - 1] if i > 0 else close.iloc[i]
+            spy_r = float(close.iloc[j] / ref - 1.0)
+            mod_r = float((1 + model_ret.iloc[i:j + 1]).prod() - 1.0)
+            periods.append(dict(start=str(oos_idx[i].date()), end=str(oos_idx[j].date()), n_days=int(j - i + 1), min_exposure=_f(a[i:j + 1].min()),
+                                spy_return=_f(spy_r), model_return=_f(mod_r), impact=_f(mod_r - spy_r),
+                                log_impact=_f(math.log1p(mod_r) - math.log1p(spy_r))))
+            i = j + 1
+        else:
+            i += 1
+    saved = [p for p in periods if p["spy_return"] < 0]
+    cost = [p for p in periods if p["spy_return"] >= 0]
+    psum = dict(n_periods=len(periods), n_spy_fell=len(saved), n_spy_rose=len(cost), hit_rate=_f(len(saved) / len(periods)) if periods else None,
+                mean_days=_f(np.mean([p["n_days"] for p in periods])), median_days=_f(np.median([p["n_days"] for p in periods])),
+                total_days_defensive=int(sum(p["n_days"] for p in periods)),
+                sum_log_impact_when_spy_fell=_f(sum(p["log_impact"] for p in saved)),
+                sum_log_impact_when_spy_rose=_f(sum(p["log_impact"] for p in cost)),
+                sum_log_impact_total=_f(sum(p["log_impact"] for p in periods)))
+
+    timing = []
+    for e in episodes:
+        pk, tr = pd.Timestamp(e["peak"]), pd.Timestamp(e["trough"])
+        if pk not in oos_idx or tr not in oos_idx:
+            continue
+        ipk, itr = oos_idx.get_loc(pk), oos_idx.get_loc(tr)
+        lo = oos_idx.searchsorted(pk - pd.Timedelta(days=90))
+        ex = next((k for k in range(max(lo, 1), itr + 1) if a[k] < 1 - 1e-12), None)
+        re = next((k for k in range(itr, n) if a[k] >= 1 - 1e-12), None)
+        row = dict(name=e["name"], peak=e["peak"], trough=e["trough"], spy_peak_to_trough=_f(close.iloc[itr] / close.iloc[ipk] - 1))
+        if ex is not None:
+            row.update(exit_date=str(oos_idx[ex].date()), exit_days_vs_peak=int((oos_idx[ex] - pk).days), exit_exposure=_f(a[ex]),
+                       spy_vs_peak_at_exit=_f(close.iloc[ex - 1] / close.iloc[ipk] - 1), spy_exit_to_trough=_f(close.iloc[itr] / close.iloc[ex - 1] - 1),
+                       min_exposure_before_trough=_f(a[ex:itr + 1].min()), exposure_at_trough=_f(a[itr]))
+        if re is not None:
+            row.update(reentry_date=str(oos_idx[re].date()), reentry_days_after_trough=int((oos_idx[re] - tr).days),
+                       spy_trough_to_reentry=_f(close.iloc[re - 1] / close.iloc[itr] - 1), spy_vs_peak_at_reentry=_f(close.iloc[re - 1] / close.iloc[ipk] - 1))
+        sl = slice(ipk, (re if re is not None else n - 1) + 1)
+        row.update(model_return_peak_to_reentry=_f((1 + model_ret.iloc[sl]).prod() - 1), spy_return_peak_to_reentry=_f((1 + bh_ret.iloc[sl]).prod() - 1))
+        timing.append(row)
+    return dict(n_events=len(events), events=events, baseline=base, aggregate=agg, periods=periods, periods_summary=psum, crisis_timing=timing)
+
+
+def exposure_weekly(applied, oos_idx):
+    w = applied.reindex(oos_idx).resample("W-FRI").mean().dropna()
+    return dict(dates=[str(x.date()) for x in w.index], exposure=[round(float(x), 3) for x in w.values])
+
+
 def dims_diag(dims, oos_idx, episodes, spy):
     d = dims.reindex(oos_idx)
     d = d.assign(score=composite_score(dims, dimension_weights("equal")).reindex(oos_idx))
@@ -278,6 +412,9 @@ def main(inputs_dir, out_dir):
         bootstrap=bootstraps(oos, bh, sm),
         placebo=placebo(data, top_vid, oi),
         dsr=dsr_components(oos),
+        dsr_steps=dsr_steps(oos, var, oi),
+        trading=trading_points(applied, data['spy'], oos, bh, ep, oi),
+        exposure_weekly=exposure_weekly(applied, oi),
         dims=dims_diag(data["dims"], oi, ep, data["spy"]),
         curves=curves(rets),
     )
