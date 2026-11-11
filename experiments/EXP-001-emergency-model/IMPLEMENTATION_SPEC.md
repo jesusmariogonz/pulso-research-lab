@@ -124,7 +124,9 @@ Reglas transversales: las mismas de arriba. Los módulos nuevos pueden importar
   *block bootstrap* pareado. Con `rng = np.random.default_rng(seed)`, en cada réplica concatena
   `ceil(n/block)` bloques de `block` filas consecutivas (inicio uniforme en `[0, n-block]`), se
   recorta a `n` filas y se aplica **la misma** selección de filas a `r_a` y `r_b`; evalúa
-  `statistic(a, b)`. Devuelve los percentiles `alpha/2` y `1-alpha/2` (np.percentile). Si
+  `statistic(a, b)`. Las series remuestreadas **conservan el índice temporal original** (se
+  reemplazan los valores por posición, no el índice): métricas que dependen del lapso
+  calendario (CAGR, Calmar) deben seguir siendo válidas dentro de la estadística. Devuelve los percentiles `alpha/2` y `1-alpha/2` (np.percentile). Si
   `n < block` → `ValueError`.
 * `deflated_sharpe_ratio(returns, n_trials) -> float`: sea `n=len(returns)`, `sr` = media/desv(ddof=1)
   **diaria** (sin anualizar), `g3` = asimetría y `g4` = curtosis (NO exceso) de los retornos
@@ -184,15 +186,18 @@ COVID 2020-02-19→2020-03-23, 2022 2022-01-03→2022-10-12). Pasos:
    (exposición 0.6 constante, refugio `{"TLT":1.0}`).
 7. `metrics` de los cuatro (modelo y 3 benchmarks) sobre el período OOS. IC bootstrap de
    `calmar(modelo) - calmar(SMA200)` con `block_bootstrap_ci(..., block=20, n_boot=n_boot, seed=0)`.
-8. `episode_report(SPY, nivel_OOS, episodes)`, `non_episode_shortfall(modelo, buy-and-hold, episodes)`,
+8. Solo se evalúan los episodios con `peak ≥ oos_start` (un episodio anterior al primer año de
+   prueba no se puede evaluar fuera de muestra: p. ej. con `first_test_year=2003` el *dot-com* queda
+   fuera). Los demás se listan por nombre en `episodes_excluded_not_oos`. Luego
+   `episode_report(SPY, nivel_OOS, episodios_evaluables)`, `non_episode_shortfall(modelo, buy-and-hold, episodes)`,
    `deflated_sharpe_ratio(retornos OOS del modelo, n_trials=162)`.
 9. `label = label_result({...})` con los valores calculados (`calmar_diff_ci_lo` = límite inferior).
 10. `results.json` (NaN → `null`) con claves: `experiment` ("EXP-001"), `first_test_year`, `oos_start`,
     `oos_end` (fechas), `n_variants`, `n_oos_days`, `metrics` (`model`, `buy_hold`, `sma200`,
     `sixty_forty`: cada uno el dict de `metrics`), `calmar_diff_vs_sma200` (`value`, `ci_lo`, `ci_hi`,
-    `n_boot`, `block`), `episodes` (salida de `episode_report`), `non_episode_shortfall`,
+    `n_boot`, `block`), `episodes` (salida de `episode_report`), `episodes_excluded_not_oos` (lista de nombres), `non_episode_shortfall`,
     `deflated_sharpe`, `chosen_by_year` (claves str), `level_fractions` (fracción de días OOS en
     cada nivel 0–4), `turnover` (suma de |Δ exposición aplicada|), `costs_paid` (suma de costos),
     `label`, `notes` (lista de limitaciones: rebalanceo diario sin costo, crédito solo con BAA10Y
-    —sin HYG/LQD en v0—, amplitud solo con proxies, pocos eventos independientes).
+    —sin HYG/LQD en v0—, amplitud solo con proxies, pocos eventos independientes; y los episodios previos al primer año de prueba no se evalúan).
 Debe ser **determinista** (mismas entradas → mismo `results.json`).

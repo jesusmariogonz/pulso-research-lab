@@ -61,6 +61,32 @@ def test_bootstrap_detecta_una_mejora_clara_y_exige_bloque_valido():
         ev.block_bootstrap_ci(a.iloc[:10], b.iloc[:10], _dif_medias, block=20)
 
 
+def test_bootstrap_entrega_a_la_estadistica_series_con_el_indice_original():
+    idx = _idx()
+    rng = np.random.default_rng(6)
+    a = pd.Series(rng.normal(0, 0.01, len(idx)), index=idx)
+    b = pd.Series(rng.normal(0, 0.01, len(idx)), index=idx)
+    vistos = []
+
+    def stat(x, y):
+        vistos.append(x.index.equals(idx) and y.index.equals(idx) and len(x) == len(idx))
+        return 0.0
+
+    ev.block_bootstrap_ci(a, b, stat, n_boot=5, seed=1)
+    assert vistos and all(vistos)
+
+
+def test_bootstrap_con_calmar_da_un_intervalo_finito():
+    from prl.emergency.backtest import metrics
+
+    idx = _idx("2005-01-01", "2013-12-31")
+    rng = np.random.default_rng(8)
+    b = pd.Series(rng.normal(0.0003, 0.01, len(idx)), index=idx)
+    a = b + 0.0004
+    lo, hi = ev.block_bootstrap_ci(a, b, lambda x, y: metrics(x)["calmar"] - metrics(y)["calmar"], n_boot=100, seed=1)
+    assert np.isfinite(lo) and np.isfinite(hi) and lo <= hi
+
+
 # ---------------- Deflated Sharpe ----------------
 def test_dsr_con_un_intento_es_el_psr_contra_cero_y_baja_con_mas_intentos():
     idx = _idx("2005-01-01", "2013-12-31")

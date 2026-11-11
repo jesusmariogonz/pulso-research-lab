@@ -42,7 +42,10 @@ def inputs_dir(tmp_path):
     return d
 
 
-EPISODIOS = [{"name": "sintetico", "peak": "2009-01-02", "trough": "2009-03-27"}]
+EPISODIOS = [
+    {"name": "sintetico", "peak": "2009-01-02", "trough": "2009-03-27"},
+    {"name": "anterior_a_la_prueba", "peak": "2004-02-02", "trough": "2004-05-03"},
+]
 
 
 def test_run_escribe_results_con_las_claves_esperadas(inputs_dir, tmp_path):
@@ -51,7 +54,7 @@ def test_run_escribe_results_con_las_claves_esperadas(inputs_dir, tmp_path):
     r = exp001.run(inputs_dir, out, first_test_year=2006, n_boot=50, episodes=EPISODIOS)
     guardado = json.loads((out / "results.json").read_text())
     for k in ["experiment", "first_test_year", "oos_start", "oos_end", "n_variants", "n_oos_days", "metrics",
-              "calmar_diff_vs_sma200", "episodes", "non_episode_shortfall", "deflated_sharpe",
+              "calmar_diff_vs_sma200", "episodes", "episodes_excluded_not_oos", "non_episode_shortfall", "deflated_sharpe",
               "chosen_by_year", "level_fractions", "turnover", "costs_paid", "label", "notes"]:
         assert k in guardado, k
     assert guardado["experiment"] == "EXP-001" and guardado["n_variants"] == 162
@@ -64,6 +67,8 @@ def test_run_escribe_results_con_las_claves_esperadas(inputs_dir, tmp_path):
     assert sum(guardado["level_fractions"].values()) == pytest.approx(1.0)
     assert 0.0 <= guardado["deflated_sharpe"] <= 1.0
     assert guardado["calmar_diff_vs_sma200"]["n_boot"] == 50
+    assert guardado["episodes_excluded_not_oos"] == ["anterior_a_la_prueba"]
+    assert [e["name"] for e in guardado["episodes"]["episodes"]] == ["sintetico"]
     assert r["label"] == guardado["label"]
 
 
