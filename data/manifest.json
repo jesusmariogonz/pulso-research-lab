@@ -1,0 +1,2292 @@
+{
+  "generado_utc": "2026-11-11T02:33:51.637160+00:00",
+  "librerias": {
+    "pandas": "3.1.1",
+    "python": "3.11.18"
+  },
+  "series": {
+    "GSPC": {
+      "source": "yahoo",
+      "symbol": "^GSPC",
+      "role": "equity_index",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "986f56e05706752e8817a72f4a8a3a76d09c1fe6d85bdb182aa8551ff16a63be",
+      "notas": "Índice de precio (sin dividendos). Desde 1990. Sin volumen confiable.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "SPY": {
+      "source": "yahoo",
+      "symbol": "SPY",
+      "role": "universe:trading_universe",
+      "filas": 8504,
+      "primera_fecha": "1993-01-29",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "2668c2bd7cd292b41c1b30f99926b1104e3a38e8a5f2bdf88016d04a5badbad2",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "IXIC": {
+      "source": "yahoo",
+      "symbol": "^IXIC",
+      "role": "equity_index",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "393de64d5c0ad1001c9dd6918f4f03f5125147e1cdd18f00d01fabba081392ed",
+      "notas": "Nasdaq Composite, precio. Desde 1990.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "QQQ": {
+      "source": "yahoo",
+      "symbol": "QQQ",
+      "role": "universe:trading_universe",
+      "filas": 6962,
+      "primera_fecha": "1999-03-10",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "cd246e6aa77215f92d3a6445629c964df09f9fd6072b7d09d2707b19ea4029d1",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "DIA": {
+      "source": "yahoo",
+      "symbol": "DIA",
+      "role": "universe:trading_universe",
+      "filas": 7248,
+      "primera_fecha": "1998-01-20",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "2087e23a9faab7270eecb816cf2ea408fc20f32bf34fdeddd93923c7421206d5",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "IWM": {
+      "source": "yahoo",
+      "symbol": "IWM",
+      "role": "universe:trading_universe",
+      "filas": 6654,
+      "primera_fecha": "2000-05-26",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "6b7f2fb0fb026c13108bcee240b04e890ebf2f33b4cb8966ce8d8aaf6faea41a",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "RSP": {
+      "source": "yahoo",
+      "symbol": "RSP",
+      "role": "breadth_proxy",
+      "filas": 5921,
+      "primera_fecha": "2003-05-01",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "8e20ea4e97b6d7408eabeed570b082a7a3cb46df87b729236978b123926b9639",
+      "notas": "S&P 500 igual ponderado, desde 2003-05. RSP/SPY es un proxy de amplitud, NO amplitud real.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "EFA": {
+      "source": "yahoo",
+      "symbol": "EFA",
+      "role": "universe:trading_universe",
+      "filas": 6339,
+      "primera_fecha": "2001-08-27",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "1c1b833079821a8a4b4734995c5ff7c2380c3550a0727d86196e4fa519ab6614",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "EEM": {
+      "source": "yahoo",
+      "symbol": "EEM",
+      "role": "universe:trading_universe",
+      "filas": 5933,
+      "primera_fecha": "2003-04-14",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "f0747defe08f300db1448a8ac93ec9e47c17e04564e401ccd36ba48f853fd446",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "EWJ": {
+      "source": "yahoo",
+      "symbol": "EWJ",
+      "role": "universe:trading_universe",
+      "filas": 7713,
+      "primera_fecha": "1996-03-18",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "1ea877a730d737baea3fec2d1d384505ddc026b16c5168e9c8acf181771c89d2",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "VNQ": {
+      "source": "yahoo",
+      "symbol": "VNQ",
+      "role": "universe:trading_universe",
+      "filas": 5565,
+      "primera_fecha": "2004-09-29",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "c01752a3db227da56f6aa9c92e14d85cfe6f5df1d3e7e35bed7e7f8d288f7aed",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "XLK": {
+      "source": "yahoo",
+      "symbol": "XLK",
+      "role": "universe:trading_universe",
+      "filas": 7014,
+      "primera_fecha": "1998-12-22",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "ff61f7cf66d7d0a125714eafb709272996054fba6070eb84103a39c9af895737",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "XLE": {
+      "source": "yahoo",
+      "symbol": "XLE",
+      "role": "universe:trading_universe",
+      "filas": 7014,
+      "primera_fecha": "1998-12-22",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "7c1127ce30f83ad2d7d0a8980df316a5fe472854eab127badc48b372b2c380e4",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "XLF": {
+      "source": "yahoo",
+      "symbol": "XLF",
+      "role": "universe:trading_universe",
+      "filas": 7014,
+      "primera_fecha": "1998-12-22",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "cf821a181a4730c6508a67ed1d729bfcad231261236d745e2d94d133db2044e9",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "XLV": {
+      "source": "yahoo",
+      "symbol": "XLV",
+      "role": "universe:trading_universe",
+      "filas": 7014,
+      "primera_fecha": "1998-12-22",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "223c80a0de6e360f1a91dc98ff0591fae3c95efc53e44348ad7470a728f6d55a",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "XLP": {
+      "source": "yahoo",
+      "symbol": "XLP",
+      "role": "universe:trading_universe",
+      "filas": 7014,
+      "primera_fecha": "1998-12-22",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "55edb302fe2df26f502cc20b902055e3bac62b70d6ee3b9976158325bad08436",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "XLU": {
+      "source": "yahoo",
+      "symbol": "XLU",
+      "role": "sector",
+      "filas": 7014,
+      "primera_fecha": "1998-12-22",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "655e8fae8019996f11142960fb25db702cc5ed6a9d75a49140c555b300a89a55",
+      "notas": "Desde 1998-12.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "XLY": {
+      "source": "yahoo",
+      "symbol": "XLY",
+      "role": "universe:trading_universe",
+      "filas": 7014,
+      "primera_fecha": "1998-12-22",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "b50d10008e392d753cc9e88168f86a931b0aaf9eebca34b25e5d648e54c5963c",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "XLI": {
+      "source": "yahoo",
+      "symbol": "XLI",
+      "role": "universe:trading_universe",
+      "filas": 7014,
+      "primera_fecha": "1998-12-22",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "9b975709dbf9d370a3a67f4fb1618cc7a7e1e53a1e3ac2b364767e9097e9a9ef",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "XLB": {
+      "source": "yahoo",
+      "symbol": "XLB",
+      "role": "sector",
+      "filas": 7014,
+      "primera_fecha": "1998-12-22",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "381b84ec78cbe87a280a4cf800a8bba7c9f360beac6e6cf789faef90eac0f720",
+      "notas": "Desde 1998-12.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "VIX": {
+      "source": "yahoo",
+      "symbol": "^VIX",
+      "role": "volatility",
+      "filas": 9285,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "970fb6647a64843bc4b83678f73af364348be53a8483c8fbded46bc1be378160",
+      "notas": "Desde 1990. Nivel de índice, sin ajustes.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "VIX3M": {
+      "source": "yahoo",
+      "symbol": "^VIX3M",
+      "role": "volatility",
+      "filas": 5113,
+      "primera_fecha": "2006-07-17",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "3814bb307a8603f24aea21b374fc7ad7dc2d3e9c72985f1a1f32b92a170ebf63",
+      "notas": "Desde 2006-07. Estructura temporal = VIX3M/VIX.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "VXN": {
+      "source": "yahoo",
+      "symbol": "^VXN",
+      "role": "volatility",
+      "filas": 6489,
+      "primera_fecha": "2001-01-23",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "c50354e566b20fbd1243ce7eaafa4d86c3c9924c43349fe84c3bb2151e061497",
+      "notas": "Volatilidad Nasdaq-100, desde 2001-01.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 2
+      }
+    },
+    "TLT": {
+      "source": "yahoo",
+      "symbol": "TLT",
+      "role": "universe:trading_universe",
+      "filas": 6111,
+      "primera_fecha": "2002-07-30",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "3ec632230926d4b405d7411c1e5cd893b9c7d33cb5cd6c8027f91fc96964067d",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "IEF": {
+      "source": "yahoo",
+      "symbol": "IEF",
+      "role": "safe_haven_mid",
+      "filas": 6111,
+      "primera_fecha": "2002-07-30",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "cd1845aad5f5759ca0c4dd5d5f0431c1ef6a411b47fe30449503282c043091ad",
+      "notas": "Tesoro 7-10 años, desde 2002-07.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "SHY": {
+      "source": "yahoo",
+      "symbol": "SHY",
+      "role": "universe:trading_universe",
+      "filas": 6111,
+      "primera_fecha": "2002-07-30",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "72756a73af9f28e9de26934163120dd04e2a0dc95cc5b8c478798ec76d8c3a68",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "BIL": {
+      "source": "yahoo",
+      "symbol": "BIL",
+      "role": "cash_like",
+      "filas": 4895,
+      "primera_fecha": "2007-05-30",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "a8e1d2c460da49e88bf072a3af5ef281e098d2dd6ca9baa3052f0e5fce0c48d0",
+      "notas": "T-Bills 1-3 meses, desde 2007-05. Antes: usar FRED DTB3 como retorno de efectivo.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "GLD": {
+      "source": "yahoo",
+      "symbol": "GLD",
+      "role": "universe:trading_universe",
+      "filas": 5529,
+      "primera_fecha": "2004-11-18",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "0fbdb9c0b5a10dac783956fa0df51f6d252f91cc430899f51fc9177528b43bf1",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "TNX": {
+      "source": "yahoo",
+      "symbol": "^TNX",
+      "role": "yield",
+      "filas": 9252,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "6761cde11a27c0ab9f474d937427ba3cbfdb15dfbfb588b39dd7f92e55e6d488",
+      "notas": "Rendimiento 10 años (x10 en Yahoo). Desde 1990.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "IRX": {
+      "source": "yahoo",
+      "symbol": "^IRX",
+      "role": "yield",
+      "filas": 9252,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "d50729db2994e0ebbea9d4d2628255015c4a3461e3f9a3865667a4809e2cfad7",
+      "notas": "Rendimiento 13 semanas. Desde 1990.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "DXY": {
+      "source": "yahoo",
+      "symbol": "DX-Y.NYB",
+      "role": "fx",
+      "filas": 9392,
+      "primera_fecha": "1990-01-01",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "3468b44a11de49f75bc83de5ae358dc931b6069f730cc0e4a5a5d768b33637ce",
+      "notas": "Índice dólar. Desde 1990.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "HYG": {
+      "source": "yahoo",
+      "symbol": "HYG",
+      "role": "universe:trading_universe",
+      "filas": 4929,
+      "primera_fecha": "2007-04-11",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "387caa02d2d9f1a2508ce4579b013e222d25cb57ad9ec02b4434b8040e36ea3b",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "LQD": {
+      "source": "yahoo",
+      "symbol": "LQD",
+      "role": "universe:trading_universe",
+      "filas": 6111,
+      "primera_fecha": "2002-07-30",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "4dc68de23e2ff20a503a4891229902c71c77279498fc19c36f53142c36ddca39",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "BAA10Y": {
+      "source": "fred",
+      "symbol": "BAA10Y",
+      "role": "credit_spread",
+      "filas": 10214,
+      "primera_fecha": "1986-01-02",
+      "ultima_fecha": "2026-11-09",
+      "sha256": "b7ed0aa4f1e5c893e58aa478195dd259ebc6c58714799db9ed386b2215092dfb",
+      "notas": "Moody's Baa menos Tesoro 10a. Desde 1986. Es la serie larga de crédito disponible: los OAS ICE BofA en FRED solo dan los últimos 3 años (licencia) y NO se usan.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "AAA10Y": {
+      "source": "fred",
+      "symbol": "AAA10Y",
+      "role": "credit_spread",
+      "filas": 10961,
+      "primera_fecha": "1983-01-03",
+      "ultima_fecha": "2026-11-09",
+      "sha256": "06c33fc615c3d892fd1153709d787c1ede4d2861b379014e49edeb3bfac9309e",
+      "notas": "Moody's Aaa menos Tesoro 10a. Desde 1983.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "DGS10": {
+      "source": "fred",
+      "symbol": "DGS10",
+      "role": "yield",
+      "filas": 16199,
+      "primera_fecha": "1962-01-02",
+      "ultima_fecha": "2026-11-09",
+      "sha256": "adbf11c16de2bfb802ae50a795310284ad6a4b969ebb4d76f8080440002963b4",
+      "notas": "Tesoro 10a constante. Desde 1962.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "DGS2": {
+      "source": "fred",
+      "symbol": "DGS2",
+      "role": "yield",
+      "filas": 12607,
+      "primera_fecha": "1976-06-01",
+      "ultima_fecha": "2026-11-09",
+      "sha256": "329843f627f80702c219efc1c15aee8b8f65a40ad7423f31966f8ccfe145e210",
+      "notas": "Tesoro 2a constante. Desde 1976.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "T10Y2Y": {
+      "source": "fred",
+      "symbol": "T10Y2Y",
+      "role": "curve",
+      "filas": 12608,
+      "primera_fecha": "1976-06-01",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "3993213ca8d465abc093eb3d996265c18e4c5f0392a6c7c44124e3520be00494",
+      "notas": "Pendiente 10a-2a. Desde 1976.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "DTB3": {
+      "source": "fred",
+      "symbol": "DTB3",
+      "role": "cash_rate",
+      "filas": 18205,
+      "primera_fecha": "1954-01-04",
+      "ultima_fecha": "2026-11-09",
+      "sha256": "0b0189d6060c0d9e0c2d792102ba317c6b05dba4ab7a9e76eda17a20d8958aad",
+      "notas": "T-Bill 3m (tasa de efectivo para backtests antes de BIL). Desde 1954.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "USREC": {
+      "source": "fred",
+      "symbol": "USREC",
+      "role": "recession_flag",
+      "filas": 2063,
+      "primera_fecha": "1854-12-01",
+      "ultima_fecha": "2026-10-01",
+      "sha256": "b2af58d6a2b76994e4769873d364ffc6ae7bed74b04af5bc3c9aba37b8bfd360",
+      "notas": "Indicador NBER, mensual. SOLO para etiquetar episodios ex-post; JAMÁS como entrada de un modelo (se publica con meses de retraso).",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "AAPL": {
+      "source": "yahoo",
+      "symbol": "AAPL",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "975f7f7d748d30aac67b9f77be3bb4e4b1fe1ca87a74bf7b6d2df5a234e10df6",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "ABBV": {
+      "source": "yahoo",
+      "symbol": "ABBV",
+      "role": "universe:trading_universe",
+      "filas": 3486,
+      "primera_fecha": "2013-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "f1f970f5279922e0035c52b02e974be58ba894149ba28382cbedfa9a6aa290bf",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "ABT": {
+      "source": "yahoo",
+      "symbol": "ABT",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "f0b0bb55cbe037115b805190c7a20e524e5ff291147aa362127b67bceb693dc0",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "ADBE": {
+      "source": "yahoo",
+      "symbol": "ADBE",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "4c2454be494cd361fc71826cf94a96e668a78c8242ac65868cbdb467a4a0f306",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "AFRM": {
+      "source": "yahoo",
+      "symbol": "AFRM",
+      "role": "universe:trading_universe",
+      "filas": 1464,
+      "primera_fecha": "2021-01-13",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "0ba6e90676450cfe0bcb49090356c7ef73a77963137996f35616907161cdbece",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 2
+      }
+    },
+    "AGG": {
+      "source": "yahoo",
+      "symbol": "AGG",
+      "role": "universe:trading_universe",
+      "filas": 5817,
+      "primera_fecha": "2003-09-29",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "b29fd1ae3fa1900b1a58b6774efd7502617b5593fc94dfb7e468f3df7f573787",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "AI": {
+      "source": "yahoo",
+      "symbol": "AI",
+      "role": "universe:trading_universe",
+      "filas": 1487,
+      "primera_fecha": "2020-12-09",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "f75bec46442f2d541b5a69381ef30829ddccbaa4193d61237c1b99c7fb4f3019",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 2
+      }
+    },
+    "AMD": {
+      "source": "yahoo",
+      "symbol": "AMD",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "6a7523dcff26abda36f8ef079c8e5cf42ddd2b9fd85149ec39a42de3b38b1032",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "AMZN": {
+      "source": "yahoo",
+      "symbol": "AMZN",
+      "role": "universe:trading_universe",
+      "filas": 7419,
+      "primera_fecha": "1997-05-15",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "bac99c8becf78f7bc13432137739500eabe23073aba739156361d5c53212382e",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "ASAN": {
+      "source": "yahoo",
+      "symbol": "ASAN",
+      "role": "universe:trading_universe",
+      "filas": 1536,
+      "primera_fecha": "2020-09-30",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "3149e98473b6c240e5df43aab084b4d9271fdf4502b1997aa2923e0ea16005b4",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 2
+      }
+    },
+    "AVGO": {
+      "source": "yahoo",
+      "symbol": "AVGO",
+      "role": "universe:trading_universe",
+      "filas": 4343,
+      "primera_fecha": "2009-08-06",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "5f994ad9c9b881b3149c935f67a1d357161093a7bda6b67be2f26737565c640d",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "AXP": {
+      "source": "yahoo",
+      "symbol": "AXP",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "f38062230f7e99c2a61714b451a13cd2d542872b33c47ade5e3f1b2e8b5f9e76",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "BA": {
+      "source": "yahoo",
+      "symbol": "BA",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "e07107fb43200a3c940a2dbacee2168e10e9e8cf5a86d2eb5b2e8cf70de661e1",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "BAC": {
+      "source": "yahoo",
+      "symbol": "BAC",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "a2fd0c1ff81214401d18fa870118af650f9684b2a50253253aacc745d9fc2c64",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "BILL": {
+      "source": "yahoo",
+      "symbol": "BILL",
+      "role": "universe:trading_universe",
+      "filas": 1737,
+      "primera_fecha": "2019-12-12",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "f7f5a3f4d86942042eecefd25a50d9b34772e4a442426a63f1fb07feb06c12b6",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 2
+      }
+    },
+    "C": {
+      "source": "yahoo",
+      "symbol": "C",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "5e933c879bafdd70e18799396d5144e57fb28f0513d9264ced951c1bfb218242",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "CARG": {
+      "source": "yahoo",
+      "symbol": "CARG",
+      "role": "universe:trading_universe",
+      "filas": 2282,
+      "primera_fecha": "2017-10-12",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "01072fd6b7b3f4524e3fecf066d2f3b68819954e6654076aec20b004b17b46ec",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 2
+      }
+    },
+    "CAT": {
+      "source": "yahoo",
+      "symbol": "CAT",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "ea91d48c2f8680691ec88726f1f8558878698e761661ff312bdaa28529fa3ddc",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "CELH": {
+      "source": "yahoo",
+      "symbol": "CELH",
+      "role": "universe:trading_universe",
+      "filas": 4984,
+      "primera_fecha": "2007-01-22",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "3bc832698556746e89c5003a3abd3df66c099510fea6ca7c6c1edb8c7793635f",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 2
+      }
+    },
+    "CHWY": {
+      "source": "yahoo",
+      "symbol": "CHWY",
+      "role": "universe:trading_universe",
+      "filas": 1863,
+      "primera_fecha": "2019-06-14",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "fb3d434743e667ee4b073401558aa42946545529972abd2f1518a7c968bd413d",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "COIN": {
+      "source": "yahoo",
+      "symbol": "COIN",
+      "role": "universe:trading_universe",
+      "filas": 1402,
+      "primera_fecha": "2021-04-14",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "71dbcc4ff21b390e2dae952d8afc3021ab026072b78f10f49f23b1c55450a912",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "COST": {
+      "source": "yahoo",
+      "symbol": "COST",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "12838685400838fc75f7d46980b0ec4ae47fd2f5808665b46e4002422ebdd805",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "CRM": {
+      "source": "yahoo",
+      "symbol": "CRM",
+      "role": "universe:trading_universe",
+      "filas": 5633,
+      "primera_fecha": "2004-06-23",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "8dde8b79f5b59863253098cf105c6c8bec442b0a2a491e5ef729b85e4ce65a53",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "CRWD": {
+      "source": "yahoo",
+      "symbol": "CRWD",
+      "role": "universe:trading_universe",
+      "filas": 1865,
+      "primera_fecha": "2019-06-12",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "c01e6602db73067832bb561b474e6500a9235ae21537f070e77425034da257e5",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "CSCO": {
+      "source": "yahoo",
+      "symbol": "CSCO",
+      "role": "universe:trading_universe",
+      "filas": 9250,
+      "primera_fecha": "1990-02-16",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "0f1f6f0539fbcb7de0ce59ff7068188d90b8669272ac11e845cad840961bf0ce",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "CVNA": {
+      "source": "yahoo",
+      "symbol": "CVNA",
+      "role": "universe:trading_universe",
+      "filas": 2398,
+      "primera_fecha": "2017-04-28",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "5ab0634cef31f16df87462664f971528a231e5f89c2dcdab4aa930c464bbdad1",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "CVX": {
+      "source": "yahoo",
+      "symbol": "CVX",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "8a2d4f816ad2cc7faf523fce7df0d76154d7b66175ec2c67838560872154c4eb",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "DBC": {
+      "source": "yahoo",
+      "symbol": "DBC",
+      "role": "universe:trading_universe",
+      "filas": 5224,
+      "primera_fecha": "2006-02-06",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "e8a1289ab443ecad68a4340bb5c4bd053cbf6301202bf6660168570090b8e764",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "DDOG": {
+      "source": "yahoo",
+      "symbol": "DDOG",
+      "role": "universe:trading_universe",
+      "filas": 1796,
+      "primera_fecha": "2019-09-19",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "4fa33d443eb2570c0f5427d62e3d210607a0b4be1fd73bfa90ce376c7f39db0d",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "DE": {
+      "source": "yahoo",
+      "symbol": "DE",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "e6120944f4716c4b2ae9389bd5ee5b3f97770786ce3f5ff864d03f37849b938f",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "DIS": {
+      "source": "yahoo",
+      "symbol": "DIS",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "57717d49c22a8b1436b28e89fec4f1f1fb7db208c398086f6b8e91850ccba75c",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "DKNG": {
+      "source": "yahoo",
+      "symbol": "DKNG",
+      "role": "universe:trading_universe",
+      "filas": 1835,
+      "primera_fecha": "2019-07-25",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "d297e83a283effb884e05136412d977c93c5182bedd051526d5f94f90c6c7f9d",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 2
+      }
+    },
+    "DOCU": {
+      "source": "yahoo",
+      "symbol": "DOCU",
+      "role": "universe:trading_universe",
+      "filas": 2147,
+      "primera_fecha": "2018-04-27",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "3592d6014c715e00a3d0e75f92f4b1ba87182e4c0a7bb1b344c4f8bb9554087a",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "DUK": {
+      "source": "yahoo",
+      "symbol": "DUK",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "3547cd8385d3709c937f3f148778d2866b22fdbba3e2607b2151dcb68358772e",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "EMB": {
+      "source": "yahoo",
+      "symbol": "EMB",
+      "role": "universe:trading_universe",
+      "filas": 4753,
+      "primera_fecha": "2007-12-19",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "b4e1fca7d41279bb8f131fcb3f935460d5cabcdab5a434d59a4f4c3c24b3362a",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "EMR": {
+      "source": "yahoo",
+      "symbol": "EMR",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "a8dde30f96f15b14258da71423d90655ff0988d67925d3f2be31af59ad9ebadf",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "ETN": {
+      "source": "yahoo",
+      "symbol": "ETN",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "8b3bb9e503ef70ead15e62b11c6bd6d7fc11c64549a7c9df822f3f5fa6f1eab8",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "ETSY": {
+      "source": "yahoo",
+      "symbol": "ETSY",
+      "role": "universe:trading_universe",
+      "filas": 2911,
+      "primera_fecha": "2015-04-16",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "05e2905c704ba8fc059ad834f3b806767d02be067675d7473e1370ea35457cc6",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "FUBO": {
+      "source": "yahoo",
+      "symbol": "FUBO",
+      "role": "universe:trading_universe",
+      "filas": 1918,
+      "primera_fecha": "2019-03-27",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "dd99446b91362a1fbe651bb71eaad1b8ef6006a0e2bc5fa2b0377e98931c058d",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 2
+      }
+    },
+    "FVRR": {
+      "source": "yahoo",
+      "symbol": "FVRR",
+      "role": "universe:trading_universe",
+      "filas": 1864,
+      "primera_fecha": "2019-06-13",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "c80661e75c625a94bbb521e45556276b98592d7f1b12927ffce3eeba2a11b159",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "FXI": {
+      "source": "yahoo",
+      "symbol": "FXI",
+      "role": "universe:trading_universe",
+      "filas": 5558,
+      "primera_fecha": "2004-10-08",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "6762eb869a8f292dd243b8eab90bcbf849c57d76e29f9f9e02ccc10390268061",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "GE": {
+      "source": "yahoo",
+      "symbol": "GE",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "74248cdc4af30cd7f27ec838c200978ec5c7bf6aea7aa195328f2501a3930d10",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "GOOGL": {
+      "source": "yahoo",
+      "symbol": "GOOGL",
+      "role": "universe:trading_universe",
+      "filas": 5593,
+      "primera_fecha": "2004-08-19",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "7b6de8e5990b4c857f53b282fdd605b26af3c56bce6ea08b3c06a2a589958011",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "GS": {
+      "source": "yahoo",
+      "symbol": "GS",
+      "role": "universe:trading_universe",
+      "filas": 6924,
+      "primera_fecha": "1999-05-04",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "9ff53f9aa24e305663c72e5d266b13a2efa3a2eafa254929345e528e909cdc0d",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "HD": {
+      "source": "yahoo",
+      "symbol": "HD",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "0061ca02e2aaeaa3dfb1886997a61d90d74a60a0fac6bb430d10e9c650cb407c",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "HON": {
+      "source": "yahoo",
+      "symbol": "HON",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "bc79ebe76ff2fed9e6660e057b88316c05526485b4010d98aacb8e0b914cb8ad",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "HOOD": {
+      "source": "yahoo",
+      "symbol": "HOOD",
+      "role": "universe:trading_universe",
+      "filas": 1328,
+      "primera_fecha": "2021-07-29",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "815e3a2eca6334d2137ed74785df78108f5703bfe3f14d42f3fb0015a89c78cc",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "IBM": {
+      "source": "yahoo",
+      "symbol": "IBM",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "bc559cfba85d12a5b09886b555c8583b18b3d21ce534f85bb16c48e0da4d049f",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "IJH": {
+      "source": "yahoo",
+      "symbol": "IJH",
+      "role": "universe:trading_universe",
+      "filas": 6654,
+      "primera_fecha": "2000-05-26",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "a9f2a84b5c4c1a46548d123d857f79eff83b71dfccf956eac472dbc1f6cac322",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "IJR": {
+      "source": "yahoo",
+      "symbol": "IJR",
+      "role": "universe:trading_universe",
+      "filas": 6654,
+      "primera_fecha": "2000-05-26",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "441f23d4732e774422c2410dbee954ef81cf463e15da9c1b325eae66d6f24c96",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "INTC": {
+      "source": "yahoo",
+      "symbol": "INTC",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "7c8cc851f14b525f6035c2f5d41a259babeb137b353a148e17fc7beeae256e47",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "IONQ": {
+      "source": "yahoo",
+      "symbol": "IONQ",
+      "role": "universe:trading_universe",
+      "filas": 1471,
+      "primera_fecha": "2021-01-04",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "8c939658b14d18d200bc4de6f2fbeb16b0536171d9a70444532f02740f01810e",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "JNJ": {
+      "source": "yahoo",
+      "symbol": "JNJ",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "d799b3b241c059be499fb206828683b52f169127ee7511fba5289d9fafbd7fde",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "JPM": {
+      "source": "yahoo",
+      "symbol": "JPM",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "a1ee00c9a7d152592f2204f98c3063458dce1bb0ce36e67e9120fc4fe8b24d5f",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 2
+      }
+    },
+    "KO": {
+      "source": "yahoo",
+      "symbol": "KO",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "48eeaa8516f0dc08529ddd634de7a6caeeb7e921cf0943aefa8265fc882ac0ee",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "LLY": {
+      "source": "yahoo",
+      "symbol": "LLY",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "f37089a73f1bcef2ee47f1d9a32bce4f00f8b85b63ffc733c690193e433defeb",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "LMT": {
+      "source": "yahoo",
+      "symbol": "LMT",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "5337ddc3d29cf7fc638599096ffb741416be22b40ec6ba401a8db8d0d5b18636",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "LOW": {
+      "source": "yahoo",
+      "symbol": "LOW",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "4474de9c38b5f45c59ec38cd41d7903733de5ab33a246f35bb3483e0e648f8d5",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "LYFT": {
+      "source": "yahoo",
+      "symbol": "LYFT",
+      "role": "universe:trading_universe",
+      "filas": 1916,
+      "primera_fecha": "2019-03-29",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "861316e13928d51b6915e70088058dfe88cff70a9319b85d1fee450725cbc746",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "MA": {
+      "source": "yahoo",
+      "symbol": "MA",
+      "role": "universe:trading_universe",
+      "filas": 5148,
+      "primera_fecha": "2006-05-25",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "69c04b7d22c92b0ceb43635d05133d0c1150cbc24f8cbd26a93ea691665de893",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "MARA": {
+      "source": "yahoo",
+      "symbol": "MARA",
+      "role": "universe:trading_universe",
+      "filas": 3651,
+      "primera_fecha": "2012-05-04",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "8dbc7610f7cba41b302cb13de2359b39bd794f3502c5f1c988aa6d37e7152715",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 2
+      }
+    },
+    "MCD": {
+      "source": "yahoo",
+      "symbol": "MCD",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "dd29802c489aad000278b0b264c575739cab6c8b5793e650d472764c0bbd54ee",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "META": {
+      "source": "yahoo",
+      "symbol": "META",
+      "role": "universe:trading_universe",
+      "filas": 3641,
+      "primera_fecha": "2012-05-18",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "dd3d2b129d3659f6eeed870ad38b626c4f0691aec2c195187ea443bebb664f38",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "MMM": {
+      "source": "yahoo",
+      "symbol": "MMM",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "05311c99be52a2859552992fb82b58d16136e1bdf0ad989cfc4e8e64b7904f36",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "MRK": {
+      "source": "yahoo",
+      "symbol": "MRK",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "059c5a8cf54d68b8e51740f093bf21a7acaf0c1ffc28c3639e25cc7ea4c61b8b",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "MS": {
+      "source": "yahoo",
+      "symbol": "MS",
+      "role": "universe:trading_universe",
+      "filas": 8488,
+      "primera_fecha": "1993-02-23",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "197d71be307875eb8c8d3021ecfe0ee1a4edfbd2586d571f7fe0704a7f5964aa",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "MSFT": {
+      "source": "yahoo",
+      "symbol": "MSFT",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "2f4280a9ebf7cf5a4ab2324327613c089b61ab76ba9fd2cc8e5088cfb9ed8bdc",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "MUB": {
+      "source": "yahoo",
+      "symbol": "MUB",
+      "role": "universe:trading_universe",
+      "filas": 4824,
+      "primera_fecha": "2007-09-10",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "e7ed2bb2d8246d25735df6b52fa0fbf92cf465d06555442f1ebefbbc0a1339f3",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "NEE": {
+      "source": "yahoo",
+      "symbol": "NEE",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "b224d2c513b372ce4564cf4c3166b96880c9378fec3160e35dc883e1e6f8515a",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "NET": {
+      "source": "yahoo",
+      "symbol": "NET",
+      "role": "universe:trading_universe",
+      "filas": 1800,
+      "primera_fecha": "2019-09-13",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "5818f2da586ccf7db615f67470cbc1fa2506a999c9b6ae7f6caab0bf01e5c33a",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "NFLX": {
+      "source": "yahoo",
+      "symbol": "NFLX",
+      "role": "universe:trading_universe",
+      "filas": 6157,
+      "primera_fecha": "2002-05-23",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "af45dee53c70d01b535a3c52d508a46ca562e3d9c4a8a01f402d8553f512acc9",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "NKE": {
+      "source": "yahoo",
+      "symbol": "NKE",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "b450ec6a775328efe8f7c83f1815d1c527abac3757b696fb7d02bf759e241bf8",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "NVDA": {
+      "source": "yahoo",
+      "symbol": "NVDA",
+      "role": "universe:trading_universe",
+      "filas": 6994,
+      "primera_fecha": "1999-01-22",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "6e0abb4e417d1711a97f1b15a9018f2bda36b634d04bb6795d80b45a25590b58",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "OKTA": {
+      "source": "yahoo",
+      "symbol": "OKTA",
+      "role": "universe:trading_universe",
+      "filas": 2412,
+      "primera_fecha": "2017-04-07",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "17860d80b47961be0938afb4fd3131639cccc7275b4a2cbe752872b031eb114d",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "OPEN": {
+      "source": "yahoo",
+      "symbol": "OPEN",
+      "role": "universe:trading_universe",
+      "filas": 1608,
+      "primera_fecha": "2020-06-18",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "d4ca8448e325652455940a20f3b372d3baa96551c05c009f3e6bd3b7a6bbfbfc",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "ORCL": {
+      "source": "yahoo",
+      "symbol": "ORCL",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "0300ef8d8e52e49c88d70002fb4a6883c9e1cefe957f8e8b8534fb1e2a2ce420",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "PATH": {
+      "source": "yahoo",
+      "symbol": "PATH",
+      "role": "universe:trading_universe",
+      "filas": 1397,
+      "primera_fecha": "2021-04-21",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "e7963ccde8e86fa39a4b528524309faa40a5e7c36e682af309b25b66879e1a3b",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "PENN": {
+      "source": "yahoo",
+      "symbol": "PENN",
+      "role": "universe:trading_universe",
+      "filas": 8170,
+      "primera_fecha": "1994-05-26",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "7cac5b7fcdbeab9526ffe677e37a3278cf6b68a7e4e5b0ad5627eff52a724795",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "PEP": {
+      "source": "yahoo",
+      "symbol": "PEP",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "12a581c2cf432ab0ceb26a88c7ea0ba79013f27ba90dae1857308a3f86b0f565",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "PFE": {
+      "source": "yahoo",
+      "symbol": "PFE",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "cc776a3b8a4da1f3b61626439133cbb36e578284d4bd0e672ec2ed6f3324b2ba",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "PG": {
+      "source": "yahoo",
+      "symbol": "PG",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "610393994833ff616d67fdd24e3f393664535495b3ea6f6b2ab44f38592677bf",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "PINS": {
+      "source": "yahoo",
+      "symbol": "PINS",
+      "role": "universe:trading_universe",
+      "filas": 1902,
+      "primera_fecha": "2019-04-18",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "f63750579df322560f52839fd5e5853b8455b2c33493b861aadc98370708ba33",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "PLTR": {
+      "source": "yahoo",
+      "symbol": "PLTR",
+      "role": "universe:trading_universe",
+      "filas": 1536,
+      "primera_fecha": "2020-09-30",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "c4c65af551a71b2b88955db4c4ba4f36d2404a9674dffde072f5761ce16b1e09",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "PTON": {
+      "source": "yahoo",
+      "symbol": "PTON",
+      "role": "universe:trading_universe",
+      "filas": 1791,
+      "primera_fecha": "2019-09-26",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "2b1c68ee118ae0993e5dd7d395cad4f3bab5ec52c6c163e9236c47f9ffb5b0a2",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "PYPL": {
+      "source": "yahoo",
+      "symbol": "PYPL",
+      "role": "universe:trading_universe",
+      "filas": 2856,
+      "primera_fecha": "2015-07-06",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "9025b9547c89f7a277baeee75bda94bd1178085cf818dc6cf8939f024040762d",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "QCOM": {
+      "source": "yahoo",
+      "symbol": "QCOM",
+      "role": "universe:trading_universe",
+      "filas": 8789,
+      "primera_fecha": "1991-12-13",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "cf0a86848f877f9d3b6617fa4ad14a4112ad7103407e6602221f683e2b334323",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "RBLX": {
+      "source": "yahoo",
+      "symbol": "RBLX",
+      "role": "universe:trading_universe",
+      "filas": 1426,
+      "primera_fecha": "2021-03-10",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "48e5e9c0846ead4df74433b38972cb57301973dcad88f9e9238e5ea8f46c26f2",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "RIVN": {
+      "source": "yahoo",
+      "symbol": "RIVN",
+      "role": "universe:trading_universe",
+      "filas": 1255,
+      "primera_fecha": "2021-11-10",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "f0b226399d3a1650f91d88e3e4ab850bf92c89934a78c48cd953cb218b1daf5d",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "ROKU": {
+      "source": "yahoo",
+      "symbol": "ROKU",
+      "role": "universe:trading_universe",
+      "filas": 2,
+      "primera_fecha": "2026-11-06",
+      "ultima_fecha": "2026-11-09",
+      "sha256": "c6ac15ca451e378d61a96ba07da717f4985275556bbc89b8eae7bfc7579eae86",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "RTX": {
+      "source": "yahoo",
+      "symbol": "RTX",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "e19b4c009d490ad502bc0b506269fb748b9db89201b490608e54ff90ae9ff70d",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "S": {
+      "source": "yahoo",
+      "symbol": "S",
+      "role": "universe:trading_universe",
+      "filas": 1348,
+      "primera_fecha": "2021-06-30",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "5c4162cdecc69166f2c4ad9c297b4b8ec7e43f6ddbf1f93496f5b1ed09f17e9a",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "SBUX": {
+      "source": "yahoo",
+      "symbol": "SBUX",
+      "role": "universe:trading_universe",
+      "filas": 8654,
+      "primera_fecha": "1992-06-26",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "fb38831bb5f1dca792c0a2c1e06a83d824b3d7c1690f3e3fdc3eb048393364f4",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "SCZ": {
+      "source": "yahoo",
+      "symbol": "SCZ",
+      "role": "universe:trading_universe",
+      "filas": 4758,
+      "primera_fecha": "2007-12-12",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "9ef878fdba92a2cddd3a125098b158a402b7786e46f16801b898e15a94165ca1",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "SHOP": {
+      "source": "yahoo",
+      "symbol": "SHOP",
+      "role": "universe:trading_universe",
+      "filas": 2887,
+      "primera_fecha": "2015-05-20",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "ac79511ac9d4de9a88e4fbc503bb111664bc8a2c96a98089c29fac5544832f8f",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "SLV": {
+      "source": "yahoo",
+      "symbol": "SLV",
+      "role": "universe:trading_universe",
+      "filas": 5167,
+      "primera_fecha": "2006-04-28",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "5b783e9cbb45cda3367b32a13ed89b727f4e9d0726d9b47e86df276315fdc407",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "SMCI": {
+      "source": "yahoo",
+      "symbol": "SMCI",
+      "role": "universe:trading_universe",
+      "filas": 4937,
+      "primera_fecha": "2007-03-29",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "7a516f1e85f8d1655f422042140b5a2a65ad90f07f823a6760d8f6467cb7ac50",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "SNAP": {
+      "source": "yahoo",
+      "symbol": "SNAP",
+      "role": "universe:trading_universe",
+      "filas": 2438,
+      "primera_fecha": "2017-03-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "39e050114719e5696bc90f23c75d13daad65ba3a172e0ce3f705be419cf7657d",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "SO": {
+      "source": "yahoo",
+      "symbol": "SO",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "f18b9c8fea6aca77e3381c323f7e9924b69a0bd9c2f181a4197edfa82ab39218",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "SOFI": {
+      "source": "yahoo",
+      "symbol": "SOFI",
+      "role": "universe:trading_universe",
+      "filas": 1471,
+      "primera_fecha": "2021-01-04",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "c5014c09a138e7e5e006bc3f1b74aa34c1bbbd74a6086e67ac7999ca20a7e979",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "T": {
+      "source": "yahoo",
+      "symbol": "T",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "2b590290d8ef612f6e32366ae407600cd5b5dd4ca2c5fdd6bb2d5e3f1205dc81",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "TJX": {
+      "source": "yahoo",
+      "symbol": "TJX",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "422b93e731e18a2b9d6d09f45819b655b1654275fa9e09d104f615fb2d7dd22d",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "TMO": {
+      "source": "yahoo",
+      "symbol": "TMO",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "0d35f50a75ce50dc3ee5a03c73e291ae0f8639593de74113024c396056a99208",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "TTD": {
+      "source": "yahoo",
+      "symbol": "TTD",
+      "role": "universe:trading_universe",
+      "filas": 2549,
+      "primera_fecha": "2016-09-21",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "c9cd45c44c00d3fa7901e4ed6be3f36fc0b4026f31b00d9f25adcbcf0754d690",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "TXN": {
+      "source": "yahoo",
+      "symbol": "TXN",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "355b424d313b032a36abef730018a77d031dfbe56b913732b440adebbcc39f10",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "U": {
+      "source": "yahoo",
+      "symbol": "U",
+      "role": "universe:trading_universe",
+      "filas": 1544,
+      "primera_fecha": "2020-09-18",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "8fe54625519202f10d96ec09d5205adb0c7ed97c5931d7efbc529d63a9c54c16",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "UNH": {
+      "source": "yahoo",
+      "symbol": "UNH",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "dc605b05054eb0f6fa1135b2b72fc1a221b8dbbb4813e76b9bc2fa6096730641",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "UPS": {
+      "source": "yahoo",
+      "symbol": "UPS",
+      "role": "universe:trading_universe",
+      "filas": 6791,
+      "primera_fecha": "1999-11-10",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "33c5e20513502bb2694642405dbdd962ca02195cdb30d062c1211fed488fb48d",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "UPST": {
+      "source": "yahoo",
+      "symbol": "UPST",
+      "role": "universe:trading_universe",
+      "filas": 1482,
+      "primera_fecha": "2020-12-16",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "38b9d15b62595d01afcd8754b101e33b334788aac4f3063a735ef1834429a414",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "UPWK": {
+      "source": "yahoo",
+      "symbol": "UPWK",
+      "role": "universe:trading_universe",
+      "filas": 2037,
+      "primera_fecha": "2018-10-03",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "8b88929811e978dc0258a5fe00becf453a8d7199a3aaaf32ec400e9b06462cfd",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "USO": {
+      "source": "yahoo",
+      "symbol": "USO",
+      "role": "universe:trading_universe",
+      "filas": 5180,
+      "primera_fecha": "2006-04-10",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "5c08a63e12083405cc3d4b9aa576d62935401cd8e5829ae71264e5f49c0eb3e1",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "V": {
+      "source": "yahoo",
+      "symbol": "V",
+      "role": "universe:trading_universe",
+      "filas": 4692,
+      "primera_fecha": "2008-03-19",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "805442e1091f7a89a89fbb89f8f6873b0b96a47dd63b997dbba5c06fe26c56ce",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "VNQI": {
+      "source": "yahoo",
+      "symbol": "VNQI",
+      "role": "universe:trading_universe",
+      "filas": 4031,
+      "primera_fecha": "2010-11-01",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "c82ba0b1684707075d69325680697bbd4811e7f0fa4157fc2f328789010f5bc4",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "VTI": {
+      "source": "yahoo",
+      "symbol": "VTI",
+      "role": "universe:trading_universe",
+      "filas": 6389,
+      "primera_fecha": "2001-06-15",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "fd418bd5db48240fc8fcfcabc79d2c69155ca921f6ecf069a44c0e5513d34686",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "VWO": {
+      "source": "yahoo",
+      "symbol": "VWO",
+      "role": "universe:trading_universe",
+      "filas": 5453,
+      "primera_fecha": "2005-03-10",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "7d4dc52fd829edf1c2595271c8aec1f564d95b2b3125f7e3ca4549892d95f3d5",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "VZ": {
+      "source": "yahoo",
+      "symbol": "VZ",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "4b407a0a4b72826b3846dd8032c36ba443a29d564240ce69c5fadd8f8f5edbe6",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "W": {
+      "source": "yahoo",
+      "symbol": "W",
+      "role": "universe:trading_universe",
+      "filas": 3045,
+      "primera_fecha": "2014-10-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "ab3608dbadd7171dbbc1bfa0ff14aa9564a13641416dedcdafb6c9b8fc186923",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "WFC": {
+      "source": "yahoo",
+      "symbol": "WFC",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "b74f38632a5efdee3c5bc4a2367ac846ecb33418ea59d409af895bbd16921dfb",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "WMT": {
+      "source": "yahoo",
+      "symbol": "WMT",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "a74b5674fb158fd718a8d76a08fd4b1156b36c695817ed70c83864e341969448",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "WOLF": {
+      "source": "yahoo",
+      "symbol": "WOLF",
+      "role": "universe:trading_universe",
+      "filas": 282,
+      "primera_fecha": "2025-09-29",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "414bf270cb429c3dd688fa4ac84435bac26a3313f4c4d28f0c690a267b75ab4b",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "XOM": {
+      "source": "yahoo",
+      "symbol": "XOM",
+      "role": "universe:trading_universe",
+      "filas": 9283,
+      "primera_fecha": "1990-01-02",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "c74094fdecc206f4fba37bd0d4e0f25b2926378ddc14543c94b8419db19a7931",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 0
+      }
+    },
+    "XYZ": {
+      "source": "yahoo",
+      "symbol": "XYZ",
+      "role": "universe:trading_universe",
+      "filas": 2759,
+      "primera_fecha": "2015-11-19",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "7814049fb940260516fe36f2e07e738184eb65bca5a14364641b698358df6e61",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "ZM": {
+      "source": "yahoo",
+      "symbol": "ZM",
+      "role": "universe:trading_universe",
+      "filas": 1902,
+      "primera_fecha": "2019-04-18",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "dc13ad6b2b002c6077a35f6c5e3da882ad8071e8caf37df2451327d5ad697a5b",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    },
+    "ZS": {
+      "source": "yahoo",
+      "symbol": "ZS",
+      "role": "universe:trading_universe",
+      "filas": 2176,
+      "primera_fecha": "2018-03-16",
+      "ultima_fecha": "2026-11-10",
+      "sha256": "7baca925ce539ef3954cc1c6e5b68556f43ca2bbbb6caa83436a92cce067e76e",
+      "notas": "Sesgo de supervivencia: solo tickers vivos hoy.",
+      "hallazgos": {
+        "errores": 0,
+        "avisos": 1
+      }
+    }
+  },
+  "fallidas": {}
+}
