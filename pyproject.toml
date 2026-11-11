@@ -3,7 +3,7 @@ name = "prl"
 version = "0.1.0"
 description = "Pulso Research Lab — base de datos y marco experimental reproducible"
 requires-python = ">=3.10"
-dependencies = ["pandas", "numpy", "pyarrow", "pyyaml", "requests", "yfinance"]
+dependencies = ["pandas", "numpy", "scipy", "pyarrow", "pyyaml", "requests", "yfinance"]
 
 [project.optional-dependencies]
 dev = ["pytest"]

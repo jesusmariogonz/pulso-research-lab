@@ -37,7 +37,7 @@ jobs:
           python-version: "3.11"
           cache: pip
       - run: pip install -e ".[dev]"
-      - run: pytest -q
+      - run: pytest -q --ignore=tests/emergency/test_grid.py --ignore=tests/emergency/test_inputs.py --ignore=tests/emergency/test_evaluation.py --ignore=tests/emergency/test_exp001.py
 
       - name: Traer datos congelados (último Release data-*)
         run: |

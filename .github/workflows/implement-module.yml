@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       module:
-        description: "features | state_machine | backtest"
+        description: "features | state_machine | backtest | grid | inputs | evaluation | exp001"
         required: true
         default: "state_machine"
       model:
