@@ -1,0 +1,76 @@
+# Catálogo de series del Research Lab. Cada serie declara su fuente, su rol
+# y sus LIMITACIONES CONOCIDAS — una serie sin limitaciones documentadas
+# no entra al catálogo. Nada se agrega a un experimento que no esté aquí.
+#
+# source: yahoo | fred
+# role:   para qué se usa (índice, volatilidad, tasas, crédito, sector...)
+# notes:  limitaciones (inicio real, ajustes, revisiones, sesgos)
+
+series:
+  # ---------------- Renta variable: índices y ETFs amplios ----------------
+  - {id: GSPC,  source: yahoo, symbol: "^GSPC", role: equity_index,   notes: "Índice de precio (sin dividendos). Desde 1990. Sin volumen confiable."}
+  - {id: SPY,   source: yahoo, symbol: "SPY",   role: equity_etf,     notes: "Desde 1993-01. Usar adj_close para retorno total."}
+  - {id: IXIC,  source: yahoo, symbol: "^IXIC", role: equity_index,   notes: "Nasdaq Composite, precio. Desde 1990."}
+  - {id: QQQ,   source: yahoo, symbol: "QQQ",   role: equity_etf,     notes: "Desde 1999-03."}
+  - {id: DIA,   source: yahoo, symbol: "DIA",   role: equity_etf,     notes: "Dow, desde 1998."}
+  - {id: IWM,   source: yahoo, symbol: "IWM",   role: equity_etf,     notes: "Small caps, desde 2000-05."}
+  - {id: RSP,   source: yahoo, symbol: "RSP",   role: breadth_proxy,  notes: "S&P 500 igual ponderado, desde 2003-05. RSP/SPY es un proxy de amplitud, NO amplitud real."}
+  - {id: EFA,   source: yahoo, symbol: "EFA",   role: equity_intl,    notes: "Desarrollados ex-EE.UU., desde 2001-08."}
+  - {id: EEM,   source: yahoo, symbol: "EEM",   role: equity_intl,    notes: "Emergentes, desde 2003-04."}
+  - {id: EWJ,   source: yahoo, symbol: "EWJ",   role: equity_intl,    notes: "Japón, desde 1996."}
+  - {id: VNQ,   source: yahoo, symbol: "VNQ",   role: real_estate,    notes: "Desde 2004-09."}
+
+  # ---------------- Sectores SPDR (amplitud por sectores, desde 1998) ----------------
+  - {id: XLK, source: yahoo, symbol: "XLK", role: sector, notes: "Desde 1998-12."}
+  - {id: XLE, source: yahoo, symbol: "XLE", role: sector, notes: "Desde 1998-12."}
+  - {id: XLF, source: yahoo, symbol: "XLF", role: sector, notes: "Desde 1998-12."}
+  - {id: XLV, source: yahoo, symbol: "XLV", role: sector, notes: "Desde 1998-12."}
+  - {id: XLP, source: yahoo, symbol: "XLP", role: sector, notes: "Desde 1998-12."}
+  - {id: XLU, source: yahoo, symbol: "XLU", role: sector, notes: "Desde 1998-12."}
+  - {id: XLY, source: yahoo, symbol: "XLY", role: sector, notes: "Desde 1998-12."}
+  - {id: XLI, source: yahoo, symbol: "XLI", role: sector, notes: "Desde 1998-12."}
+  - {id: XLB, source: yahoo, symbol: "XLB", role: sector, notes: "Desde 1998-12."}
+
+  # ---------------- Volatilidad ----------------
+  - {id: VIX,   source: yahoo, symbol: "^VIX",   role: volatility, notes: "Desde 1990. Nivel de índice, sin ajustes."}
+  - {id: VIX3M, source: yahoo, symbol: "^VIX3M", role: volatility, notes: "Desde 2006-07. Estructura temporal = VIX3M/VIX."}
+  - {id: VXN,   source: yahoo, symbol: "^VXN",   role: volatility, notes: "Volatilidad Nasdaq-100, desde 2001-01."}
+
+  # ---------------- Tasas / refugios candidatos ----------------
+  - {id: TLT, source: yahoo, symbol: "TLT", role: safe_haven_long,  notes: "Tesoro 20+ años, desde 2002-07."}
+  - {id: IEF, source: yahoo, symbol: "IEF", role: safe_haven_mid,   notes: "Tesoro 7-10 años, desde 2002-07."}
+  - {id: SHY, source: yahoo, symbol: "SHY", role: safe_haven_short, notes: "Tesoro 1-3 años, desde 2002-07."}
+  - {id: BIL, source: yahoo, symbol: "BIL", role: cash_like,        notes: "T-Bills 1-3 meses, desde 2007-05. Antes: usar FRED DTB3 como retorno de efectivo."}
+  - {id: GLD, source: yahoo, symbol: "GLD", role: gold,             notes: "Oro, desde 2004-11."}
+  - {id: TNX, source: yahoo, symbol: "^TNX", role: yield, notes: "Rendimiento 10 años (x10 en Yahoo). Desde 1990."}
+  - {id: IRX, source: yahoo, symbol: "^IRX", role: yield, notes: "Rendimiento 13 semanas. Desde 1990."}
+  - {id: DXY, source: yahoo, symbol: "DX-Y.NYB", role: fx, notes: "Índice dólar. Desde 1990."}
+
+  # ---------------- Crédito ----------------
+  - {id: HYG, source: yahoo, symbol: "HYG", role: credit_etf, notes: "High yield, desde 2007-04. HYG/LQD como proxy de estrés crediticio."}
+  - {id: LQD, source: yahoo, symbol: "LQD", role: credit_etf, notes: "Grado de inversión, desde 2002-07."}
+  - {id: BAA10Y, source: fred, symbol: "BAA10Y", role: credit_spread, notes: "Moody's Baa menos Tesoro 10a. Desde 1986. Es la serie larga de crédito disponible: los OAS ICE BofA en FRED solo dan los últimos 3 años (licencia) y NO se usan."}
+  - {id: AAA10Y, source: fred, symbol: "AAA10Y", role: credit_spread, notes: "Moody's Aaa menos Tesoro 10a. Desde 1983."}
+
+  # ---------------- Macro / tasas (FRED) ----------------
+  - {id: DGS10,  source: fred, symbol: "DGS10",  role: yield,  notes: "Tesoro 10a constante. Desde 1962."}
+  - {id: DGS2,   source: fred, symbol: "DGS2",   role: yield,  notes: "Tesoro 2a constante. Desde 1976."}
+  - {id: T10Y2Y, source: fred, symbol: "T10Y2Y", role: curve,  notes: "Pendiente 10a-2a. Desde 1976."}
+  - {id: DTB3,   source: fred, symbol: "DTB3",   role: cash_rate, notes: "T-Bill 3m (tasa de efectivo para backtests antes de BIL). Desde 1954."}
+  - {id: USREC,  source: fred, symbol: "USREC",  role: recession_flag, notes: "Indicador NBER, mensual. SOLO para etiquetar episodios ex-post; JAMÁS como entrada de un modelo (se publica con meses de retraso)."}
+
+  # ---------------- Excluidas a propósito (documentado) ----------------
+  # NFCI / STLFSI4: son índices que se REVISAN hacia atrás (no point-in-time)
+  #   → usarlos en un backtest filtraría información futura. Excluidos.
+  # ICE BofA OAS (BAMLH0A0HYM2, BAMLC0A0CM): FRED solo da 3 años. Excluidos.
+  # % de acciones del S&P 500 sobre su SMA200: requiere constituyentes
+  #   históricos (point-in-time), no disponibles gratis → se usan proxies
+  #   (RSP/SPY, sectores sobre SMA200) y se declara la limitación.
+
+# Universo amplio de acciones/ETFs del proyecto de trading (para estudios
+# transversales). Lista = symbols de algo_trading_platform/config/universe_*.txt.
+# LIMITACIÓN: son los tickers ACTUALES → sesgo de supervivencia. Los
+# estudios de acción individual deben declararlo y no usarse para estimar
+# retornos absolutos.
+universes:
+  - {id: trading_universe, file: universes/trading_universe.txt, notes: "Sesgo de supervivencia: solo tickers vivos hoy."}

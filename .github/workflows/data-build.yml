@@ -1,0 +1,45 @@
+name: Construir base de datos
+
+# Corre bajo demanda (y cada domingo). No usa LLM ni la llave de DeepSeek:
+# es cómputo puro. Commitea solo el manifiesto y el reporte de calidad;
+# los datos crudos se publican como Release verificable por hash.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 12 * * 0"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: pytest -q
+      - name: Descargar, validar y congelar
+        run: python -m prl.data.build
+      - name: Empaquetar datos crudos
+        run: tar -czf data-raw.tar.gz -C data raw
+      - name: Publicar Release con los datos
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="data-$(date -u +%Y-%m-%d)"
+          gh release delete "$TAG" --yes --cleanup-tag 2>/dev/null || true
+          gh release create "$TAG" data-raw.tar.gz data/manifest.json data/quality_report.md \
+            --title "Datos congelados $TAG" \
+            --notes "Verificar contra los SHA-256 de data/manifest.json."
+      - name: Commitear manifiesto y reporte
+        run: |
+          git config user.name "prl-bot"
+          git config user.email "prl-bot@users.noreply.github.com"
+          git add data/manifest.json data/quality_report.md
+          git diff --cached --quiet || git commit -m "Datos: manifiesto y reporte de calidad $(date -u +%Y-%m-%d)"
+          git push

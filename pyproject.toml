@@ -1,0 +1,20 @@
+[project]
+name = "prl"
+version = "0.1.0"
+description = "Pulso Research Lab — base de datos y marco experimental reproducible"
+requires-python = ">=3.10"
+dependencies = ["pandas", "numpy", "pyarrow", "pyyaml", "requests", "yfinance"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

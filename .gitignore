@@ -1,0 +1,9 @@
+data/raw/
+data/processed/
+*.parquet
+data-raw.tar.gz
+__pycache__/
+*.egg-info/
+.venv/
+.env
+*.key
