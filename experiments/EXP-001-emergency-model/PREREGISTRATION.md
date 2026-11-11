@@ -1,7 +1,15 @@
 # EXP-001 — Modelo de emergencia multifactor (Emergency Model v0)
 
-**Estado:** `DRAFT` — NO bloqueado. Ninguna corrida se ejecuta hasta que
-este documento se apruebe y se bloquee con un commit.
+**Estado:** `LOCKED`
+
+Aprobado por el responsable del proyecto el 2026-11-11 y bloqueado con el
+commit que añade esta línea. Desde este punto, cualquier cambio a las
+reglas se registra en el *Registro de cambios* como nueva versión;
+todo lo decidido después de ver resultados es **exploratorio**.
+
+**Manifiesto de datos citado (SHA-256 de `data/manifest.json`):**
+`4cdc4e187fb92ff451f9cf71e48c57e7d321f07371a0e9edfffa35844db3b307`
+(datos descargados el 2026-11-11, última fecha de mercado 2026-11-10).
 
 ## Pregunta
 
@@ -72,8 +80,18 @@ intentos y se ajusta (Deflated Sharpe).
 * **Walk-forward expansivo:** entrenar (elegir variante) hasta el cierre
   de cada año; probar el año siguiente. Primera prueba: 2003.
 * **Episodios de referencia (etiquetados a priori, por drawdown del SPY
-  ≥ 20 % desde su máximo):** dot-com (2000-02), crisis financiera (2007-09),
-  COVID (2020), 2022. Se listan las fechas exactas al bloquear.
+  ≥ 20 % desde su máximo, SPY adj_close, calculados con la regla antes de
+  cualquier modelo):**
+
+  | Episodio | Máximo previo | Mínimo | Caída máx. |
+  |---|---|---|---|
+  | Dot-com | 2000-03-24 | 2002-10-09 | −47.5 % |
+  | Crisis financiera | 2007-10-09 | 2009-03-09 | −55.2 % |
+  | COVID | 2020-02-19 | 2020-03-23 | −33.7 % |
+  | 2022 | 2022-01-03 | 2022-10-12 | −24.5 % |
+
+  Son **4 episodios independientes**: la potencia estadística es baja y se
+  declara así en cualquier resultado.
 * **Métricas:** CAGR, MaxDD, Calmar, Sharpe, Sortino, tiempo en cada nivel,
   rotación y costos pagados; por episodio: días de anticipación, falsos
   positivos (CRISIS sin caída ≥ 10 % en los 60 días siguientes), crashes
@@ -92,8 +110,7 @@ intentos y se ajusta (Deflated Sharpe).
 * **INCONCLUSIVE:** cualquier otro caso (p. ej. mejora puntual pero
   intervalos que incluyen 0).
 
-> Los umbrales numéricos de éxito son una **propuesta** para tu revisión
-> antes de bloquear.
+> Los umbrales numéricos de éxito fueron aprobados tal cual el 2026-11-11.
 
 ## Fuera de alcance de v0
 
@@ -105,4 +122,5 @@ pre-registro.
 
 | Fecha | Cambio | Commit |
 |---|---|---|
-| — | borrador inicial | — |
+| 2026-11-10 | borrador inicial | bfa9810 |
+| 2026-11-11 | aprobado y bloqueado (v1); se añaden fechas de episodios y hash del manifiesto | (este commit) |
