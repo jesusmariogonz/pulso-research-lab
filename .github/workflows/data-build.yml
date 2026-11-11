@@ -22,7 +22,7 @@ jobs:
           python-version: "3.11"
           cache: pip
       - run: pip install -e ".[dev]"
-      - run: pytest -q --ignore=tests/emergency/test_exp001.py
+      - run: pytest -q --ignore=tests/emergency/test_exp001.py --ignore=tests/emergency/test_daily.py
       - name: Descargar, validar y congelar
         run: python -m prl.data.build
       - name: Empaquetar datos crudos

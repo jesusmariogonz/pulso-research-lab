@@ -201,3 +201,40 @@ COVID 2020-02-19→2020-03-23, 2022 2022-01-03→2022-10-12). Pasos:
     `label`, `notes` (lista de limitaciones: rebalanceo diario sin costo, crédito solo con BAA10Y
     —sin HYG/LQD en v0—, amplitud solo con proxies, pocos eventos independientes; y los episodios previos al primer año de prueba no se evalúan).
 Debe ser **determinista** (mismas entradas → mismo `results.json`).
+
+---
+
+# Fase 3 — Indicador diario (medidor)
+
+Indicador **informativo y EXPERIMENTAL** del mismo modelo (no es la política validada ni una
+recomendación). Parámetros fijos y neutros: pesos `"equal"`, `theta=1.0`, `k=3`, `m=10`.
+
+## `daily.py`
+
+* `LEVEL_NAMES = ["NORMAL", "VIGILANCIA", "DEFENSIVO", "EMERGENCIA", "CRISIS"]`.
+* `compute_indicator(spy, vix, baa10y, rsp, sectors, theta=1.0, k=3, m=10) -> pd.DataFrame`:
+  `spy`, `vix`, `baa10y`, `rsp` son Series de precio/valor; `sectors` es un DataFrame de precios
+  ajustados de los 9 sectores. Todo se alinea al índice de `spy` (`vix`, `baa10y`, `rsp` con
+  `reindex(spy.index).ffill()`; los retornos de sectores con `pct_change()` y `reindex`). Dimensiones
+  como en `exp001`: `trend`, `vol`, `correlation`, `credit`, `breadth`, `drawdown_velocity`. Devuelve un
+  DataFrame con el índice de `spy` y columnas: las 6 dimensiones, `score`
+  (`composite_score` con `dimension_weights("equal")`), `level` (`assign_levels`, enteros) y
+  `exposure` (`exposure_for_level`).
+* `latest_payload(df) -> dict`: usa la **última fila con `score` no-NaN**. Claves:
+  `data_through` (YYYY-MM-DD), `score` (float, 3 decimales), `gauge` (0–100, 1 decimal =
+  `clip(score, 0, 5) / 5 · 100`), `level` (int), `level_name` (de `LEVEL_NAMES`), `exposure_target`,
+  `dimensions` (`{nombre: z con 3 decimales o None}` de las 6), `dimension_gauges` (mismo cálculo
+  del gauge para cada dimensión, `None` si no hay), `params` (`weights`, `theta`, `k`, `m`),
+  `status` = `"EXPERIMENTAL"` y `disclaimer` (texto: indicador informativo, no es asesoría ni la
+  política validada). Si ninguna fila tiene `score` → `status = "SIN_DATOS"` y `data_through = None`.
+  Debe poder serializarse con `json.dumps(..., allow_nan=False)` (NaN → `None`). **Sin marcas de
+  tiempo de ejecución** (determinista).
+* `history_payload(df) -> list[dict]`: filas con `score` no-NaN, orden cronológico:
+  `{"d": YYYY-MM-DD, "s": score a 3 decimales, "l": nivel}`.
+* `run(out_dir, fetch_yahoo, fetch_fred) -> dict`: `fetch_yahoo(symbol) -> DataFrame` con `adj_close`;
+  `fetch_fred(series_id) -> DataFrame` con `value`. Descarga SPY, RSP, ^VIX, BAA10Y y los 9 sectores
+  (XLK XLE XLF XLV XLP XLU XLY XLI XLB), calcula con `compute_indicator`, y escribe
+  `out_dir/latest.json` y `out_dir/history.json` (JSON con `allow_nan=False`, `indent=2` para latest).
+  Devuelve el payload de `latest`.
+* `main()`: `run(Path("public/emergency"), descargar_yahoo, descargar_fred)` con las funciones de
+  `prl.data.build`.
