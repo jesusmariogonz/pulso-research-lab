@@ -34,7 +34,7 @@ repo, y se verifican contra los SHA-256 del manifiesto.
 
 | ID | Tema | Estado |
 |---|---|---|
-| [EXP-001](experiments/EXP-001-emergency-model/PREREGISTRATION.md) | Modelo de emergencia multifactor | `LOCKED` (pre-registro bloqueado; falta implementar el backtest) |
+| [EXP-001](experiments/EXP-001-emergency-model/PREREGISTRATION.md) | Modelo de emergencia multifactor | `LOCKED` (pre-registro bloqueado; módulos features, state_machine y backtest implementados y revisados; falta la orquestación walk-forward) |
 
 ## Aviso
 
