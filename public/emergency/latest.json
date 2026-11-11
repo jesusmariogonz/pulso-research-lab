@@ -1,0 +1,32 @@
+{
+  "data_through": "2026-11-10",
+  "score": -0.516,
+  "gauge": 0.0,
+  "level": 0,
+  "level_name": "NORMAL",
+  "exposure_target": 1.0,
+  "dimensions": {
+    "trend": 0.166,
+    "vol": -0.162,
+    "correlation": -1.716,
+    "credit": -1.093,
+    "breadth": -1.24,
+    "drawdown_velocity": 0.951
+  },
+  "dimension_gauges": {
+    "trend": 3.3,
+    "vol": 0.0,
+    "correlation": 0.0,
+    "credit": 0.0,
+    "breadth": 0.0,
+    "drawdown_velocity": 19.0
+  },
+  "params": {
+    "weights": "equal",
+    "theta": 1.0,
+    "k": 3,
+    "m": 10
+  },
+  "status": "EXPERIMENTAL",
+  "disclaimer": "Indicador informativo y EXPERIMENTAL. No es asesor\u00eda financiera ni la pol\u00edtica de inversi\u00f3n validada."
+}
