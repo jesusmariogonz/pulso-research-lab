@@ -1,0 +1,36 @@
+name: Indicador diario de estrés
+
+# Calcula el indicador (medidor) cada día hábil después del cierre de EE.UU. y publica
+# public/emergency/latest.json e history.json, que lee el sitio. Cómputo puro: sin LLM,
+# sin llaves. Es informativo y EXPERIMENTAL (ver EXP-001).
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "30 22 * * 1-5"
+
+permissions:
+  contents: write
+
+jobs:
+  indicador:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: pytest -q
+      - name: Calcular el indicador con datos frescos
+        run: python -c "from prl.emergency.daily import main; main()"
+      - name: Publicar los JSON
+        run: |
+          git config user.name "prl-bot"
+          git config user.email "prl-bot@users.noreply.github.com"
+          git add public/emergency/latest.json public/emergency/history.json
+          git diff --cached --quiet && { echo "Sin cambios"; exit 0; }
+          git commit -m "Indicador diario de estrés $(date -u +%Y-%m-%d)"
+          git pull --rebase origin main
+          git push
