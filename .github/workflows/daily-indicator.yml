@@ -23,7 +23,7 @@ jobs:
           python-version: "3.11"
           cache: pip
       - run: pip install -e ".[dev]"
-      - run: pytest -q --ignore=tests/growth_max/test_growth_evaluation.py
+      - run: pytest -q
       - name: Calcular el indicador con datos frescos
         run: python -c "from prl.emergency.daily import main; main()"
       - name: Publicar los JSON
