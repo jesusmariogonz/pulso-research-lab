@@ -47,6 +47,7 @@ MODULOS["signals"] = {"spec": _EXP002, "destino": ROOT / "src" / "prl" / "growth
 MODULOS["portfolio"] = {"spec": _EXP002, "destino": ROOT / "src" / "prl" / "growth_max" / "portfolio.py", "test": ROOT / "tests" / "growth_max" / "test_portfolio.py"}
 MODULOS["growth_backtest"] = {"spec": _EXP002, "destino": ROOT / "src" / "prl" / "growth_max" / "backtest.py", "test": ROOT / "tests" / "growth_max" / "test_growth_backtest.py"}
 MODULOS["growth_grid"] = {"spec": _EXP002, "destino": ROOT / "src" / "prl" / "growth_max" / "grid.py", "test": ROOT / "tests" / "growth_max" / "test_growth_grid.py"}
+MODULOS["growth_evaluation"] = {"spec": _EXP002, "destino": ROOT / "src" / "prl" / "growth_max" / "evaluation.py", "test": ROOT / "tests" / "growth_max" / "test_growth_evaluation.py"}
 
 SISTEMA = (
     "Eres un ingeniero cuantitativo senior. Implementas módulos de Python para que pasen un conjunto de "

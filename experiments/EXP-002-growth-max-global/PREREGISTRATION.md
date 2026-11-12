@@ -347,3 +347,30 @@ resultado.
     sin dato de precio ese día), la función **lanza `ValueError`** — eso
     nunca debería pasar si los módulos anteriores están bien conectados,
     y no se resuelve en silencio.
+* **2026-11-12 (aclaración de implementación v1.4):** antes de escribir el
+  módulo de evaluación, se fija el detalle estadístico que faltaba.
+  * **Block bootstrap pareado:** la comparación Growth50 vs. benchmark
+    usa el **mismo** algoritmo de bloques que `block_bootstrap_ci` de
+    EXP-001 (bloques de `tamaño_bloque` días consecutivos, inicio
+    uniforme, se concatenan hasta cubrir `n` filas y se recortan) pero
+    aplicando **la misma selección de bloques a ambas series** en cada
+    réplica (comparación pareada, no dos muestreos independientes) —
+    necesario para que "supera al benchmark en el X% de las réplicas"
+    tenga sentido.
+  * **Deflated Sharpe Ratio:** misma fórmula exacta que
+    `prl.emergency.evaluation.deflated_sharpe_ratio` de EXP-001
+    (reimplementada aquí, no importada — mismo criterio que
+    `composite_score`), sobre Sharpe **diario sin anualizar**.
+  * **"Menos de 3 años" en el locked test set** = menos de `3 × 252 =
+    756` retornos diarios utilizables (no días calendario).
+  * **Orden de prioridad de la etiqueta** (igual estilo que
+    `label_result` de EXP-001 — se evalúa en este orden, la primera que
+    aplica manda):
+    1. `INCONCLUSIVE` si el locked test set tiene `< 756` retornos.
+    2. `REJECTED` si la fracción de réplicas donde Growth50 supera al
+       benchmark es `≤ 0.50`, **o** si `P(pérdida ≥ 75%)` de Growth50 en
+       el locked test set excede `0.20`.
+    3. `VALIDATED` si el límite inferior del intervalo de confianza del
+       CAGR de Growth50 es `> 0.0` **y** la fracción de réplicas que
+       superan al benchmark es `≥ 0.80`.
+    4. `INCONCLUSIVE` en cualquier otro caso.

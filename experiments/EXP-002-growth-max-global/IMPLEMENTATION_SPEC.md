@@ -447,6 +447,142 @@ Implementa la sección *Grilla completa* de `PREREGISTRATION.md`: las
    leverage=1.0, spread=0.01, k=0.5`; último elemento: los últimos
    valores de cada lista, `k=0.75` al final).
 
+## `prl.growth_max.evaluation`
+
+Implementa la sección *Validación* y el *Criterio de selección* de
+`PREREGISTRATION.md`, con la aclaración v1.4. Tests en
+`tests/growth_max/test_growth_evaluation.py`.
+
+Reglas transversales: solo `pandas`/`numpy`/`scipy.stats`/`typing`/
+`dataclasses` (igual que `evaluation.py` de EXP-001 — aquí sí hace falta
+`scipy.stats.norm` para el Deflated Sharpe). Sin red/archivos/variables de
+entorno. Funciones puras. **No importa `prl.emergency` ni otros módulos de
+`prl.growth_max`** — fórmulas compartidas se reimplementan (mismo criterio
+que `composite_score`).
+
+* `tasa_crecimiento_geometrica(retornos: pd.Series) -> float`: idéntica
+  fórmula que el `cagr` de `prl.growth_max.backtest.metricas`
+  (`equity_final ** (365.25 / días_calendario) − 1`; `NaN` si
+  `días_calendario == 0`).
+
+* `bootstrap_bloques_retornos(retornos: pd.DataFrame, tamano_bloque: int,
+  n_replicas: int, seed: int) -> np.ndarray`: *block bootstrap* — con
+  `rng = np.random.default_rng(seed)`, en cada réplica concatena
+  `ceil(n/tamano_bloque)` bloques de `tamano_bloque` filas consecutivas
+  (inicio de cada bloque uniforme en `[0, n − tamano_bloque]`), recorta a
+  `n` filas. **La misma selección de bloques se aplica a todas las
+  columnas de `retornos` en una réplica dada** (bootstrap pareado — ver
+  aclaración v1.4). Devuelve un arreglo de forma
+  `(n_replicas, n, n_columnas)` (orden de columnas = `retornos.columns`).
+  Si `n < tamano_bloque` → `ValueError`.
+
+* `probabilidad_perdida(retornos: pd.Series, umbral: float,
+  tamano_bloque: int = 20, n_replicas: int = 10000, seed: int = 0) ->
+  float`: usa `bootstrap_bloques_retornos` (una sola columna). Para cada
+  réplica, calcula la curva de equity (`(1+r).cumprod()`) y su máximo
+  drawdown (`(equity/equity.cummax() − 1).min()`); cuenta la fracción de
+  réplicas donde `abs(max_drawdown) >= umbral`. `umbral` en fracción
+  (`0.5` = 50%).
+
+* `comparacion_bootstrap(ret_modelo: pd.Series, ret_benchmark: pd.Series,
+  tamano_bloque: int = 20, n_replicas: int = 10000, seed: int = 0,
+  alpha: float = 0.05) -> dict`: usa `bootstrap_bloques_retornos` con
+  ambas series como columnas (pareado). Para cada réplica calcula
+  `tasa_crecimiento_geometrica` de ambas columnas remuestreadas. Devuelve
+  `{"ci_cagr_modelo": (percentil alpha/2, percentil 1-alpha/2),
+  "frac_supera_benchmark": fracción de réplicas donde
+  cagr_modelo_replica > cagr_benchmark_replica}`.
+
+* `deflated_sharpe_ratio(returns: pd.Series, n_trials: int) -> float`:
+  **misma fórmula exacta** que `prl.emergency.evaluation.deflated_sharpe_ratio`
+  de EXP-001 (ver aclaración v1.4): `n = len(returns)`, `sr` = media/desv
+  (`ddof=1`) **diaria sin anualizar**, `g3` = asimetría (`skew()`), `g4` =
+  curtosis no-exceso (`kurt() + 3`), `sr_std =
+  sqrt((1 − g3·sr + (g4−1)/4·sr²) / (n−1))`. Si `n_trials <= 1`: `sr0 = 0`;
+  si no, `γ = 0.5772156649015329`,
+  `sr0 = sr_std · ((1−γ)·Φ⁻¹(1−1/N) + γ·Φ⁻¹(1−1/(N·e)))` con `N = n_trials`
+  (`Φ⁻¹` = `scipy.stats.norm.ppf`). Resultado: `Φ((sr − sr0)/sr_std)`
+  (`scipy.stats.norm.cdf`).
+
+* `elegir_variante(log_wealth_validation: dict[str, float],
+  prob_perdida_50: dict[str, float], prob_perdida_75: dict[str, float]) ->
+  tuple[str | None, str]`: las tres claves comparten las mismas llaves
+  (`variant_id`). Candidatos = `{v : prob_perdida_50[v] < 0.20}`. Si no
+  está vacío, devuelve `(variant_id con mayor log_wealth_validation entre
+  los candidatos, "filtro_50")` (empate → el primero según el orden de
+  iteración del dict). Si está vacío, candidatos релajados =
+  `{v : prob_perdida_75[v] < 0.20}`; si no está vacío, devuelve
+  `(ganador, "filtro_75_relajado")`. Si también está vacío, devuelve
+  `(None, "ninguna_variante_pasa_el_filtro_de_ruina")`.
+
+* `placebo_circular(retornos: pd.Series, n_placebos: int = 1000, seed:
+  int = 0) -> np.ndarray`: con `rng = np.random.default_rng(seed)`, para
+  cada placebo elige un desplazamiento entero uniforme en
+  `[1, len(retornos) − 1]` (nunca `0`, eso sería la serie original) y
+  calcula `tasa_crecimiento_geometrica` de `np.roll(retornos.to_numpy(),
+  desplazamiento)` (envuelto en una `pd.Series` con el índice original de
+  `retornos`, para que la fórmula de días calendario siga funcionando).
+  Devuelve un arreglo de `n_placebos` tasas. Si `len(retornos) < 2` →
+  `ValueError`.
+
+* `percentil_real_vs_placebo(valor_real: float, placebos: np.ndarray) ->
+  float`: fracción de `placebos` que son `<= valor_real` (incluye
+  empates). `0.0` si `placebos` está vacío.
+
+* `etiqueta(ci_cagr_modelo: tuple[float, float], frac_supera_benchmark:
+  float, prob_ruina_75: float, n_dias_locked_test: int) -> str`: aplica
+  el orden de prioridad de la aclaración v1.4 (1. `INCONCLUSIVE` si
+  `n_dias_locked_test < 756`; 2. `REJECTED` si
+  `frac_supera_benchmark <= 0.50` o `prob_ruina_75 > 0.20`; 3.
+  `VALIDATED` si `ci_cagr_modelo[0] > 0.0` y `frac_supera_benchmark >=
+  0.80`; 4. `INCONCLUSIVE` en cualquier otro caso). Nunca lanza excepción
+  por un valor `NaN` de entrada — un `NaN` en cualquier argumento numérico
+  cuenta como "no cumple" esa comparación (ni `REJECTED` ni `VALIDATED`
+  por esa condición específica), cayendo hacia `INCONCLUSIVE` si ninguna
+  otra condición aplica.
+
+### Casos de prueba obligatorios
+
+1. **`tasa_crecimiento_geometrica`**: con un retorno diario constante
+   conocido, coincide con el cálculo manual de la fórmula.
+2. **`bootstrap_bloques_retornos`**: forma de salida correcta
+   `(n_replicas, n, n_columnas)`; con `seed` igual, dos llamadas dan
+   resultados idénticos (reproducibilidad); `n < tamano_bloque` lanza
+   `ValueError`; con 2 columnas, una fila remuestreada de la réplica *r*
+   siempre corresponde a la **misma fecha original** en ambas columnas
+   (pareado: verificar reconstruyendo qué posición original se usó).
+3. **`probabilidad_perdida`**: una serie de retornos diarios todos
+   `-0.05` da probabilidad `1.0` para cualquier `umbral <= casi 100%`;
+   una serie de retornos diarios todos `+0.001` (sin drawdown posible)
+   da probabilidad `0.0` para `umbral > 0`.
+4. **`comparacion_bootstrap`**: con `ret_modelo` idéntico a
+   `ret_benchmark`, `frac_supera_benchmark` es `0.0` (nunca "supera" a
+   una serie idéntica, con `>` estricto); con `ret_modelo` uniformemente
+   mejor cada día, `frac_supera_benchmark == 1.0`.
+5. **`deflated_sharpe_ratio`**: con `n_trials=1`, el resultado coincide
+   con `Φ(sr/sr_std)` calculado a mano para una serie sintética simple;
+   aumentar `n_trials` (con los mismos retornos) nunca aumenta el DSR.
+6. **`elegir_variante`**: con dos variantes, una pasa el filtro de 50% y
+   la otra no → gana la que pasa, motivo `"filtro_50"`, sin importar cuál
+   tiene mayor `log_wealth_validation`; si ninguna pasa 50% pero una pasa
+   75% → esa gana, motivo `"filtro_75_relajado"`; si ninguna pasa ninguno
+   → `(None, "ninguna_variante_pasa_el_filtro_de_ruina")`.
+7. **`placebo_circular`**: forma de salida `(n_placebos,)`; con `seed`
+   igual, resultados idénticos; `len(retornos) < 2` lanza `ValueError`.
+8. **`percentil_real_vs_placebo`**: con `placebos = [1,2,3,4,5]` (como
+   array) y `valor_real = 3`, resultado `0.6` (3 de 5 son `<= 3`).
+9. **`etiqueta`**: los cuatro casos de la aclaración v1.4, probados por
+   separado (incluido que `n_dias_locked_test < 756` gana aunque el resto
+   de condiciones serían `VALIDATED`); un `NaN` en `ci_cagr_modelo[0]`
+   con el resto de condiciones de `VALIDATED` cumplidas da
+   `INCONCLUSIVE`, no excepción.
+
+Todas las series/arreglos de prueba son sintéticos, construidos a mano
+(sin red, sin datos reales). Los tests de bootstrap/placebo usan
+`n_replicas`/`n_placebos` chicos (decenas, no miles) para que la suite
+corra rápido — el valor por defecto de la función (miles) es para uso
+real, no para los tests.
+
 ## `prl.growth_max.backtest`
 
 Implementa la sección *Costos* de `METHODOLOGY.md` y la aclaración de
