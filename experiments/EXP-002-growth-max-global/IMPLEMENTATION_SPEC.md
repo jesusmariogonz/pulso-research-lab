@@ -398,7 +398,7 @@ Todos los DataFrames/Series de prueba son sintéticos, construidos a mano
 
 Implementa la sección *Costos* de `METHODOLOGY.md` y la aclaración de
 implementación v1.3 de `PREREGISTRATION.md`. Tests en
-`tests/growth_max/test_backtest.py`.
+`tests/growth_max/test_growth_backtest.py`.
 
 Reglas transversales (iguales a los módulos anteriores de EXP-002): sin
 look-ahead, solo `pandas`/`numpy`/`typing`/`dataclasses`, sin red/archivos/
