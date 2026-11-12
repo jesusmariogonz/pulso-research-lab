@@ -68,26 +68,36 @@ def descargar_fred(serie: str) -> pd.DataFrame:
     return df.dropna()
 
 
+FRED_MIN_REALTIME_START = "1776-07-04"  # mínimo real exigido por la API (no 1776-01-01)
+
+
 def descargar_fred_vintage(serie: str) -> pd.DataFrame:
     """Historial completo de vintages (ALFRED) de una serie FRED: una sola
     llamada con output_type=1 y ventana de tiempo real completa trae todas
     las versiones (obs_date, value, realtime_start, realtime_end) que
     existieron. Requiere FRED_API_KEY (no la usa descargar_fred: el
     fredgraph.csv público no da vintages). Ver
-    experiments/EXP-002-growth-max-global/DATA_INFRA_MACRO_VINTAGE.md."""
+    experiments/EXP-002-growth-max-global/DATA_INFRA_MACRO_VINTAGE.md.
+
+    La API no acepta realtime_end=9999-12-31 como entrada (solo lo usa como
+    valor de salida): hay que pedir hasta hoy. FRED entonces devuelve la
+    versión vigente con realtime_end = hoy (no 9999-12-31), así que se
+    normaliza aquí a 9999-12-31 para cumplir el centinela que espera
+    prl.data.macro_vintage ("vigente para siempre")."""
     import requests
 
     api_key = os.environ.get("FRED_API_KEY")
     if not api_key:
         raise RuntimeError("falta FRED_API_KEY en el entorno (requerida para series fred_vintage)")
+    hoy = datetime.now(timezone.utc).date().isoformat()
     r = requests.get(
         "https://api.stlouisfed.org/fred/series/observations",
         params={
             "series_id": serie,
             "api_key": api_key,
             "file_type": "json",
-            "realtime_start": "1776-01-01",
-            "realtime_end": "9999-12-31",
+            "realtime_start": FRED_MIN_REALTIME_START,
+            "realtime_end": hoy,
             "output_type": 1,
         },
         timeout=60,
@@ -96,6 +106,9 @@ def descargar_fred_vintage(serie: str) -> pd.DataFrame:
     crudo = r.json().get("observations", [])
     if not crudo:
         raise RuntimeError(f"ALFRED no devolvió observaciones para {serie}")
+    for obs in crudo:
+        if obs.get("realtime_end") == hoy:
+            obs["realtime_end"] = "9999-12-31"
     return parse_vintage_observations(crudo)
 
 
