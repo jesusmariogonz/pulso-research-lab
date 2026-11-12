@@ -1,8 +1,14 @@
-# EXP-002 — Contrato de implementación: `prl.data.macro_vintage`
+# EXP-002 — Contrato de implementación (lo que debe cumplir el código)
 
-Este documento y los tests en `tests/test_macro_vintage.py` son el
-**contrato**. El código de `src/prl/data/macro_vintage.py` debe hacerlos
-pasar sin tocarlos. Ver `DATA_INFRA_MACRO_VINTAGE.md` para el porqué.
+Este documento y los tests correspondientes en `tests/` son el
+**contrato**. El código de cada módulo debe hacerlos pasar sin tocarlos.
+Implementa `PREREGISTRATION.md` (con las aclaraciones de implementación
+de su *Registro de cambios*); si hay conflicto, manda el pre-registro.
+
+## `prl.data.macro_vintage`
+
+Ver `DATA_INFRA_MACRO_VINTAGE.md` para el porqué. Tests en
+`tests/test_macro_vintage.py`.
 
 Reglas transversales (iguales a EXP-001):
 * **Sin look-ahead:** ninguna función puede devolver, para una fecha de
@@ -147,3 +153,136 @@ semántica.
 Todos los DataFrames de prueba son **sintéticos**, construidos a mano en
 el test (sin red, sin fixtures externas) — igual que los tests de
 EXP-001 no descargan datos reales.
+
+## `prl.growth_max.signals`
+
+Implementa la sección *Señales* de `PREREGISTRATION.md` (incluida la
+aclaración de implementación v1.1 sobre "régimen de rango"). Tests en
+`tests/growth_max/test_signals.py`.
+
+Reglas transversales (iguales a EXP-001):
+* **Sin look-ahead:** el valor en la fecha *t* usa solo datos con fecha
+  ≤ *t*. `rolling(..., min_periods=ventana)` en vez de `min_periods=1`
+  en todos lados — antes de completar la ventana, `NaN`, nunca un valor
+  calculado con menos datos de los que pide el parámetro.
+* Solo `pandas`, `numpy`, `typing`, `dataclasses`. Sin red, sin archivos,
+  sin variables de entorno.
+* Funciones puras, con tipos y docstring breve. Todas devuelven
+  `pd.Series`/`pd.DataFrame` con el mismo índice que la entrada principal.
+* **Nunca rellenar en silencio:** `NaN` antes de tener ventana completa,
+  nunca `0` ni el valor más reciente disponible.
+
+### Señales direccionales (familias 1-3 del pre-registro)
+
+* `ts_momentum_signal(precio: pd.Series, meses: int) -> pd.Series`:
+  `ventana = meses * 21` (aproximación estándar de días hábiles por mes).
+  `retorno = precio / precio.shift(ventana) − 1`. Señal: `1.0` si
+  `retorno > 0`, `−1.0` si `retorno < 0`, `0.0` si `retorno == 0`
+  exactamente. `NaN` si `precio.shift(ventana)` es `NaN` (historia
+  insuficiente).
+* `trend_signal(precio: pd.Series, ventana: int) -> pd.Series`:
+  `sma = precio.rolling(ventana, min_periods=ventana).mean()`. Señal =
+  signo de `precio / sma − 1` (misma convención `1.0/−1.0/0.0` de
+  arriba). `NaN` antes de completar la ventana.
+* `breakout_signal(precio: pd.Series, ventana: int) -> pd.Series`:
+  `maximo = precio.rolling(ventana, min_periods=ventana).max()`,
+  `minimo` análogo. `1.0` si `precio >= maximo` (este caso tiene
+  prioridad si además `precio <= minimo`, es decir ventana con precio
+  plano); si no, `−1.0` si `precio <= minimo`; si no, `0.0`. `NaN` antes
+  de completar la ventana.
+
+### Reversión y volatilidad (familias 4 y 6)
+
+* `reversion_zscore(precio: pd.Series, ventana: int) -> pd.Series`:
+  `media = precio.rolling(ventana, min_periods=ventana).mean()`,
+  `sd = precio.rolling(ventana, min_periods=ventana).std(ddof=1)`.
+  `z = (precio − media) / sd`. Si `sd` es `0` o `NaN` → `NaN` (nunca
+  `inf`). `NaN` antes de completar la ventana.
+* `senal_reversion(precio: pd.Series, ventana: int) -> pd.Series`: signo
+  de `−reversion_zscore(precio, ventana)` (z alto = precio "caro" frente
+  a su media reciente → la reversión apuesta a baja = señal `−1.0`; z
+  bajo → `1.0`), misma convención `1.0/−1.0/0.0`/`NaN` que las señales
+  direccionales. `0.0` solo si el z-score es exactamente `0`.
+* `volatilidad_realizada(precio: pd.Series, ventana: int) -> pd.Series`:
+  retornos simples diarios `precio.pct_change()`; `vol =
+  retornos.rolling(ventana, min_periods=ventana).std(ddof=1) *
+  sqrt(252)`. `NaN` antes de completar la ventana (incluye el primer
+  `NaN` de `pct_change`).
+
+### Combinación (igual patrón que `composite_score` de EXP-001)
+
+* `composite_score(dims: pd.DataFrame, weights: dict[str, float]) ->
+  pd.Series`: por fila, promedio ponderado **solo de las columnas
+  disponibles** (no-`NaN`) de `dims`, con los pesos de `weights`
+  renormalizados entre ellas. Si ninguna columna de esa fila está
+  disponible → `NaN`. Columnas de `dims` sin peso en `weights` se
+  ignoran. (Idéntica a `prl.emergency.features.composite_score`, pero
+  este módulo no puede importar `prl.emergency` — se reimplementa aquí
+  para no crear una dependencia cruzada entre experimentos.)
+
+### Régimen macro (familia 5) — point-in-time, ya resuelto aguas arriba
+
+Estas funciones reciben series **ya** point-in-time-correctas (el
+resultado de `prl.data.macro_vintage.serie_conocida_en` alineado a días
+de trading) — no vuelven a razonar sobre `realtime_start`/`realtime_end`.
+
+* `signo_cambio_trailing(serie_conocida: pd.Series, dias: int) ->
+  pd.Series`: `cambio = serie_conocida − serie_conocida.shift(dias)`.
+  Señal `1.0`/`−1.0`/`0.0` (exacto) igual convención de arriba. `NaN` si
+  `serie_conocida[t]` o `serie_conocida[t − dias]` es `NaN` (incluye el
+  caso de que el dato todavía no existiera en esa fecha).
+* `regimen_macro(liquidez_signo: pd.Series, crecimiento_signo: pd.Series)
+  -> pd.Series`: ambos ya alineados al mismo índice. Por fila: `NaN` si
+  cualquiera de los dos es `NaN` **o** si cualquiera es exactamente `0.0`
+  (cambio trailing nulo — se trata como señal insuficiente, no como un
+  tercer valor). Si no, régimen entero (`float`, para poder llevar `NaN`):
+  `1.0` si `(liquidez=1, crecimiento=1)`; `2.0` si `(liquidez=1,
+  crecimiento=−1)`; `3.0` si `(liquidez=−1, crecimiento=1)`; `4.0` si
+  `(liquidez=−1, crecimiento=−1)`.
+* `es_regimen_de_rango(regimen: pd.Series) -> pd.Series`: `bool`. `True`
+  si `regimen ∈ {2.0, 3.0}`; `False` si `regimen ∈ {1.0, 4.0}` **o** si
+  `regimen` es `NaN` (aclaración v1.1: sin régimen claro, el overlay
+  quedas apagado, no se asume rango por defecto).
+
+### Orquestación final
+
+* `senal_compuesta_con_overlay(direccional: pd.Series, reversion: pd.Series,
+  regimen_de_rango: pd.Series) -> pd.Series`: por fila, si
+  `regimen_de_rango` es `True` → usa el valor de `reversion`; si no, usa
+  el valor de `direccional`. Todas las series ya alineadas al mismo
+  índice. Si el valor elegido para esa fila es `NaN`, el resultado es
+  `NaN` (no se cae de vuelta al otro valor).
+
+### Casos de prueba obligatorios
+
+1. **Historia insuficiente:** cada señal (`ts_momentum_signal`,
+   `trend_signal`, `breakout_signal`, `reversion_zscore`,
+   `volatilidad_realizada`) da `NaN` en todas las filas antes de
+   completar su ventana, y un valor no-`NaN` en la primera fila donde la
+   ventana se completa.
+2. **Signo correcto:** una serie de precios estrictamente creciente da
+   `1.0` en momentum/trend/breakout (una vez hay ventana); una
+   estrictamente decreciente da `−1.0`.
+3. **Empate de breakout:** una ventana de precio perfectamente plano
+   (todos los valores iguales) da `1.0`, no `−1.0` ni `0.0`.
+4. **Reversión con desviación cero:** una ventana de precio plano no
+   lanza excepción ni da `inf`; da `NaN`.
+5. **`composite_score`** con una fila donde falta una de tres columnas
+   promedia solo las otras dos con pesos renormalizados; con las tres
+   disponibles promedia las tres; con ninguna disponible da `NaN`.
+6. **`signo_cambio_trailing`** antes de `dias` observaciones da `NaN`;
+   con una serie con un hueco de `NaN` en medio (p. ej. antes de la
+   primera publicación de una serie macro), la fila que necesita ese
+   hueco da `NaN`, no se salta ni se interpola.
+7. **`regimen_macro`** da cada uno de los 4 regímenes con los signos de
+   entrada correspondientes, `NaN` si cualquier entrada es `NaN`, y
+   `NaN` si cualquier entrada es `0.0` exacto.
+8. **`es_regimen_de_rango`** da `True` solo para régimen 2 o 3, `False`
+   para 1, 4 y `NaN`.
+9. **`senal_compuesta_con_overlay`** con `regimen_de_rango` mezclando
+   `True`/`False` fila por fila elige la serie correcta en cada una, y
+   propaga `NaN` cuando el valor elegido es `NaN` (incluso si el otro
+   valor no lo es).
+
+Todas las series de prueba son sintéticas, construidas a mano (sin red,
+sin datos reales) — mismo criterio que el resto del contrato.

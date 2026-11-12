@@ -262,3 +262,20 @@ resultado.
   responsable del proyecto. Bloqueado con este commit — nada de lo de
   arriba se vuelve a tocar salvo como enmienda documentada con fecha,
   nunca después de ver resultados.
+* **2026-11-12 (aclaración de implementación v1.1):** antes de empezar a
+  escribir código, se detectó que la señal 4 ("overlay, solo en régimen
+  de rango") no tenía una definición operable de "rango" — la familia 5
+  solo define 4 regímenes por liquidez×crecimiento, ninguno llamado
+  "rango". Esto es una aclaración de cómo *implementar* una regla ya
+  fijada, no un cambio de criterio (no toca universo, grilla, splits, ni
+  criterios de éxito/fracaso). Definición fijada:
+  * **Régimen de tendencia** (familia 5 = 1 o 4: liquidez y crecimiento
+    *concuerdan* — ambos expansivos o ambos contractivos): la macro
+    empuja en una sola dirección clara. El overlay de reversión (familia
+    4) permanece **apagado**.
+  * **Régimen de rango** (familia 5 = 2 o 3: liquidez y crecimiento
+    *discrepan*): señal macro mixta/de transición, sin dirección clara.
+    El overlay de reversión (familia 4) se **activa**.
+  * Si el régimen macro es `NaN` (dato insuficiente para calcular
+    liquidez o crecimiento todavía), el overlay permanece apagado (no se
+    asume rango por defecto).
