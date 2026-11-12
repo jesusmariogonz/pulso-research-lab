@@ -44,6 +44,7 @@ MODULOS: dict[str, dict[str, Path]] = {
 }
 MODULOS["macro_vintage"] = {"spec": _EXP002, "destino": ROOT / "src" / "prl" / "data" / "macro_vintage.py", "test": ROOT / "tests" / "test_macro_vintage.py"}
 MODULOS["signals"] = {"spec": _EXP002, "destino": ROOT / "src" / "prl" / "growth_max" / "signals.py", "test": ROOT / "tests" / "growth_max" / "test_signals.py"}
+MODULOS["portfolio"] = {"spec": _EXP002, "destino": ROOT / "src" / "prl" / "growth_max" / "portfolio.py", "test": ROOT / "tests" / "growth_max" / "test_portfolio.py"}
 
 SISTEMA = (
     "Eres un ingeniero cuantitativo senior. Implementas módulos de Python para que pasen un conjunto de "

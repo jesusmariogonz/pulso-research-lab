@@ -279,3 +279,49 @@ resultado.
   * Si el régimen macro es `NaN` (dato insuficiente para calcular
     liquidez o crecimiento todavía), el overlay permanece apagado (no se
     asume rango por defecto).
+* **2026-11-12 (aclaración de implementación v1.2):** antes de escribir el
+  módulo de construcción de portafolio, se detectó que varios detalles
+  operables no estaban fijados en números. Igual que v1.1: aclara cómo
+  *implementar* reglas ya fijadas, no cambia universo/grilla/splits ni
+  criterios de éxito/fracaso.
+  * **`equal`:** entre los activos con señal compuesta (con overlay) no
+    `NaN` y distinta de `0`, peso = `signo(señal) / N` (N = cantidad de
+    esos activos ese día). Gross = 1.0 antes de apalancamiento.
+  * **`inv_vol`:** peso ∝ `signo(señal) / volatilidad_realizada(V)` entre
+    los activos con señal y volatilidad disponibles (no `NaN`, vol `> 0`),
+    normalizado para que la suma de `|peso|` sea 1.0 ese día.
+  * **`vol_target`:** parte de `inv_vol` y escala **todos** los pesos de
+    ese día por un único factor `objetivo / vol_portafolio_aprox`, donde
+    `vol_portafolio_aprox² = Σ(peso_i² · volatilidad_i²)` — **ignora
+    correlaciones entre activos a propósito** (no se construye una matriz
+    de covarianza completa de 65×65, por la misma razón de estabilidad
+    numérica que ya se decidió al excluir "maximum diversification" de la
+    grilla). Es una aproximación conservadora y simple, declarada como tal.
+  * **`kelly_frac`:** por activo, `kelly_i = μ_i,trailing / σ²_i,trailing`
+    (sin covarianza cruzada), usando la **misma ventana `V`** ya en la
+    grilla (no se agrega un parámetro de ventana nuevo): `μ_i` = media
+    móvil de retornos diarios simples en `V` días, `σ²_i` = varianza móvil
+    de esos mismos retornos en `V` días (`ddof=1`). Peso = `signo(señal) ·
+    fracción · |kelly_i|`, **capado a ±20% del libro por posición
+    individual** (constante de diseño, no variable de la grilla — una
+    cartera de 65 activos con tope de posición más laxo concentraría
+    demasiado en pocos nombres bajo Kelly agresivo). A diferencia de
+    `equal`/`inv_vol`/`vol_target`, el tamaño de `kelly_frac` no se
+    normaliza a gross 1.0 por diseño (el tamaño lo determina el propio
+    criterio), pero el **gross total del día se recorta a máximo 1.0**
+    (manteniendo las proporciones relativas entre posiciones) para que
+    "apalancamiento bruto objetivo `L`" signifique lo mismo en los 4
+    métodos: todos parten de gross ≤ 1.0 antes de multiplicar por `L`.
+  * **Cash + apalancamiento, cómo se combinan:** exposición bruta final =
+    `pesos_base · L · (1 − cash_pct)` — el cash reduce la base de capital
+    expuesta a riesgo; el apalancamiento multiplica lo que queda después
+    del cash (no al revés).
+  * **`cash_dinamico` si el régimen macro es `NaN`:** usa el valor
+    conservador (10%, el mismo que "contracción"), no el 2% — mismo
+    principio que v1.1: ante macro incierta, no se asume el escenario más
+    favorable.
+  * **Costo de apalancamiento:** `(L − 1) · (tasa_cash_anual/252 +
+    spread_anual/252)`, restado del retorno diario del portafolio (no de
+    los pesos). `tasa_cash_anual` viene de DTB3 (o BIL una vez disponible,
+    según la regla ya usada en `prl.emergency.inputs.build_cash_index` de
+    EXP-001 — mismo dato, no se reinventa).

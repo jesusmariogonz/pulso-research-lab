@@ -286,3 +286,110 @@ de trading) — no vuelven a razonar sobre `realtime_start`/`realtime_end`.
 
 Todas las series de prueba son sintéticas, construidas a mano (sin red,
 sin datos reales) — mismo criterio que el resto del contrato.
+
+## `prl.growth_max.portfolio`
+
+Implementa la sección *Construcción de portafolio y apalancamiento* de
+`PREREGISTRATION.md`, con las aclaraciones v1.2. Tests en
+`tests/growth_max/test_portfolio.py`.
+
+Reglas transversales (iguales a los módulos anteriores de EXP-002): sin
+look-ahead, solo `pandas`/`numpy`/`typing`/`dataclasses`, sin red/archivos/
+variables de entorno, funciones puras, `NaN` explícito nunca relleno en
+silencio. Todas las funciones de pesos reciben y devuelven `pd.DataFrame`
+con índice = fechas, columnas = activos (mismo universo en todos los
+argumentos de una llamada — quien orquesta ya los alineó).
+
+### Métodos de construcción (gross ≤ 1.0 antes de apalancamiento, por fila)
+
+* `pesos_equal(senales: pd.DataFrame) -> pd.DataFrame`: por fila, entre
+  las columnas con `senales` no `NaN` y `!= 0` (cuenta `N`), peso =
+  `signo(senal) / N`. Columnas sin señal válida esa fila → `0.0` (no es
+  un dato faltante, es "sin posición"). Si `N == 0` esa fila, todos los
+  pesos son `0.0`.
+* `pesos_inv_vol(senales: pd.DataFrame, vol: pd.DataFrame) -> pd.DataFrame`:
+  válidas = `senales` no `NaN` y `!=0`, **y** `vol` no `NaN` y `> 0`.
+  `crudo = signo(senal) / vol` en las válidas, `0.0` en el resto. Si
+  `Σ|crudo| > 0` esa fila, `peso = crudo / Σ|crudo|` (gross = 1.0); si
+  `Σ|crudo| == 0`, todos los pesos son `0.0`.
+* `pesos_vol_target(senales, vol, objetivo: float) -> pd.DataFrame`: parte
+  de `pesos_inv_vol(senales, vol)` (llamarla internamente, no duplicar la
+  lógica). Por fila, `vol_portafolio_aprox = sqrt(Σ(peso_i² · vol_i²))`
+  (ignora correlaciones a propósito — ver aclaración v1.2). `factor =
+  objetivo / vol_portafolio_aprox` si `vol_portafolio_aprox > 0`, si no
+  `factor = 0.0` (esa fila ya tiene todos los pesos en `0.0`). Peso final
+  = `peso_inv_vol · factor`.
+* `retorno_esperado_trailing(retornos: pd.DataFrame, ventana: int) ->
+  pd.DataFrame`: `retornos.rolling(ventana, min_periods=ventana).mean()`
+  por columna. `NaN` antes de completar la ventana.
+* `varianza_trailing(retornos: pd.DataFrame, ventana: int) ->
+  pd.DataFrame`: `retornos.rolling(ventana, min_periods=ventana).var(ddof=1)`
+  por columna. `NaN` antes de completar la ventana.
+* `pesos_kelly_frac(senales: pd.DataFrame, mu: pd.DataFrame, varianza:
+  pd.DataFrame, fraccion: float, tope_posicion: float = 0.20) ->
+  pd.DataFrame`: válidas = `senales` no `NaN` y `!=0`, **y** `varianza` no
+  `NaN` y `> 0` (si `mu` es `NaN` en una celda válida de `varianza`,
+  trátese como `mu = 0.0` para el cálculo de Kelly — una señal activa sin
+  suficiente historia de retorno trailing no debe excluirse solo por eso,
+  simplemente no aporta *edge* estimado). `kelly = mu / varianza`.
+  `crudo = signo(senal) · fraccion · |kelly|`, recortado (clip) a
+  `±tope_posicion`. `0.0` en las no válidas. Luego, por fila, si
+  `Σ|crudo| > 1.0`, reescalar toda la fila por `1.0 / Σ|crudo|`
+  (mantiene proporciones relativas, gross final ≤ 1.0); si
+  `Σ|crudo| ≤ 1.0`, no se toca.
+
+### Apalancamiento y cash
+
+* `cash_pct_dinamico(regimen: pd.Series) -> pd.Series`: `0.02` si
+  `regimen ∈ {1.0, 2.0}` (liquidez en expansión), `0.10` si
+  `regimen ∈ {3.0, 4.0}` (contracción). Si `regimen` es `NaN` → `0.10`
+  (aclaración v1.2: ante macro incierta, el valor conservador, no el
+  favorable).
+* `aplicar_leverage_y_cash(pesos_base: pd.DataFrame, L: float, cash_pct:
+  pd.Series) -> pd.DataFrame`: `pesos_base.mul(L * (1 - cash_pct), axis=0)`
+  — multiplica cada fila por el escalar `L · (1 − cash_pct)` de esa fecha.
+  Lanza `ValueError` si algún valor de `cash_pct` está fuera de `[0, 1]`.
+* `costo_apalancamiento_diario(L: float, tasa_cash_anual: pd.Series,
+  spread_anual: float) -> pd.Series`: `(L - 1) * (tasa_cash_anual / 252 +
+  spread_anual / 252)`. `tasa_cash_anual` en fracción (no porcentaje,
+  p. ej. `0.05` para 5%). Si `L == 1.0`, el resultado es `0.0` en todas
+  las fechas (sin apalancamiento, sin costo), incluso donde
+  `tasa_cash_anual` sea `NaN` (no hay nada que costear).
+
+### Casos de prueba obligatorios
+
+1. **`pesos_equal`**: con señales `[1, -1, 0, NaN]` en una fila da pesos
+   `[0.5, -0.5, 0.0, 0.0]`; una fila sin ninguna señal válida da todos
+   `0.0`, no `NaN`.
+2. **`pesos_inv_vol`**: con dos activos de vol distinta y misma señal
+   `+1`, el de menor vol recibe mayor peso, y `Σ|peso| == 1.0`; un activo
+   con vol `NaN` o `0` se excluye (peso `0.0`) sin romper la normalización
+   de los demás.
+3. **`pesos_vol_target`**: con un objetivo del doble de la vol aproximada
+   del portafolio de `pesos_inv_vol`, los pesos resultantes son
+   exactamente el doble (mismo signo, misma proporción relativa). Una
+   fila con `Σ|crudo| == 0` en `inv_vol` da `factor` sin lanzar
+   `ZeroDivisionError` ni `NaN` contagioso (pesos quedan en `0.0`).
+4. **`retorno_esperado_trailing` / `varianza_trailing`**: `NaN` antes de
+   completar `ventana`; con retornos constantes, `varianza_trailing` da
+   `0.0` (no `NaN`) una vez completa la ventana.
+5. **`pesos_kelly_frac`**: (a) un activo con `varianza` muy chica y señal
+   fuerte queda recortado exactamente en `±tope_posicion`, no más; (b)
+   una fila donde la suma de `|crudo|` excede `1.0` se reescala
+   proporcionalmente a gross `1.0` (verificar que la *proporción* entre
+   dos posiciones de esa fila no cambia, solo la escala); (c) una fila
+   con `varianza > 0` pero `mu` = `NaN` no excluye esa posición (usa
+   `mu = 0.0`, dando `kelly = 0.0`, peso `0.0` por esa celda — no `NaN`
+   contagiado al resto de la fila).
+6. **`cash_pct_dinamico`**: da `0.02`/`0.10` para cada par de regímenes, y
+   `0.10` (no `0.02` ni `NaN`) cuando el régimen es `NaN`.
+7. **`aplicar_leverage_y_cash`**: con `L=2.0` y `cash_pct=0.10` constante,
+   el resultado es exactamente `pesos_base * 1.8`; `cash_pct` fuera de
+   `[0,1]` (p. ej. `1.5` o `-0.1`) lanza `ValueError`.
+8. **`costo_apalancamiento_diario`**: con `L=1.0` da `0.0` en todas las
+   fechas aunque `tasa_cash_anual` tenga `NaN`; con `L=2.0` y
+   `tasa_cash_anual` constante, el valor coincide con el cálculo manual
+   `(L-1)*(tasa/252 + spread/252)`.
+
+Todos los DataFrames/Series de prueba son sintéticos, construidos a mano
+(sin red, sin datos reales).
