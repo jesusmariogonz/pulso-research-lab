@@ -393,3 +393,95 @@ argumentos de una llamada — quien orquesta ya los alineó).
 
 Todos los DataFrames/Series de prueba son sintéticos, construidos a mano
 (sin red, sin datos reales).
+
+## `prl.growth_max.backtest`
+
+Implementa la sección *Costos* de `METHODOLOGY.md` y la aclaración de
+implementación v1.3 de `PREREGISTRATION.md`. Tests en
+`tests/growth_max/test_backtest.py`.
+
+Reglas transversales (iguales a los módulos anteriores de EXP-002): sin
+look-ahead, solo `pandas`/`numpy`/`typing`/`dataclasses`, sin red/archivos/
+variables de entorno, funciones puras. **Validación estricta: nunca
+resultados en silencio con datos faltantes** (ver más abajo).
+
+* `costo_transaccion_diario(pesos_aplicados: pd.DataFrame, costo_por_lado:
+  float = 0.001) -> pd.Series`: `turnover_t = Σ_i |pesos_aplicados[t,i] −
+  pesos_aplicados[t−1,i]|` para `t ≥ 1`; `turnover_0 = 0.0` (no hay fila
+  anterior). `costo_t = turnover_t · costo_por_lado`. `pesos_aplicados`
+  ya viene con el rezago aplicado (ver `ejecutar_backtest`) — esta función
+  no vuelve a desplazar nada, solo calcula el turnover entre filas
+  consecutivas tal cual las recibe.
+
+* `ejecutar_backtest(pesos: pd.DataFrame, retornos: pd.DataFrame,
+  costo_apalancamiento: pd.Series, costo_por_lado: float = 0.001) ->
+  pd.DataFrame`:
+  * `pesos` y `retornos` comparten el mismo índice de fechas y las mismas
+    columnas (activos); `costo_apalancamiento` comparte el índice de
+    fechas. Si no comparten índice/columnas exactamente → `ValueError`.
+  * **Validación estricta:** si `pesos` tiene algún `NaN` → `ValueError`.
+    Si, en algún día *t* y activo *i*, `pesos.shift(1)` (los pesos ya
+    rezagados, los que de verdad generan el retorno de *t*) es distinto de
+    `0.0` **y** `retornos[t, i]` es `NaN` → `ValueError` (se sostiene una
+    posición en un activo sin dato de precio ese día).
+  * `pesos_aplicados = pesos.shift(1).fillna(0.0)` (rezago interno: el
+    primer día no tiene posición previa, por eso `0.0`, no se descarta la
+    fila).
+  * `turnover`/`costo_transaccion` = `costo_transaccion_diario(pesos_aplicados,
+    costo_por_lado)` (primer día `0.0`, ver función de arriba).
+  * `bruto_t = Σ_i (pesos_aplicados[t,i] · retornos[t,i])` (suma ignorando
+    `NaN` de activos con peso `0.0` ese día — ya cubiertos por la
+    validación de arriba cuando el peso NO es `0.0`).
+  * `ret_t = bruto_t − costo_transaccion_t − costo_apalancamiento_t`.
+    Primer día: `pesos_aplicados` es `0.0` en todas las columnas y
+    `costo_transaccion` es `0.0`, así que `ret_0 = −costo_apalancamiento_0`
+    (normalmente `0.0` si `L = 1.0`, ver `costo_apalancamiento_diario`).
+  * `equity_t = Π_{s≤t} (1 + ret_s)` (empieza efectivamente en `1.0`
+    antes de la primera fila, igual convención que `prl.emergency.backtest`
+    de EXP-001).
+  * Devuelve un `pd.DataFrame` con columnas `ret`, `equity`, `turnover`,
+    `costo_transaccion`, `costo_apalancamiento` (todas con el mismo índice
+    de fechas que `retornos`).
+
+* `metricas(returns: pd.Series) -> dict`: igual definición que
+  `prl.emergency.backtest.metrics` de EXP-001 (reimplementada aquí, sin
+  importar `prl.emergency` — misma razón que `composite_score` en
+  `signals.py`): `cagr` (`equity_final ** (365.25 / días_calendario) − 1`,
+  días_calendario = `(índice[-1] − índice[0]).days`), `max_drawdown`
+  (`(equity / equity.cummax() − 1).min()`, negativo), `calmar` (`cagr /
+  |max_drawdown|`; si `max_drawdown == 0.0` → `NaN`, no `inf`), `sharpe`
+  (`media(ret) / desv(ret, ddof=1) · √252`, rf=0; si `desv == 0` → `NaN`),
+  `sortino` (`media(ret) / desv(ret[ret<0], ddof=1) · √252`; si no hay
+  retornos negativos o la desviación a la baja es `0` → `NaN`), `n_days`
+  (`len(returns)`).
+
+### Casos de prueba obligatorios
+
+1. **Rezago correcto (sin look-ahead):** una señal/peso que cambia
+   bruscamente en la fecha *t* no debe afectar el retorno de *t*, solo el
+   de *t+1* en adelante. Construir `pesos` con un salto de `0.0` a `1.0`
+   en una fecha específica y verificar que `ret` en esa fecha usa el peso
+   **anterior** (`0.0`), y el día siguiente ya usa `1.0`.
+2. **Primer día:** `ret.iloc[0]` es `0.0` (o `−costo_apalancamiento.iloc[0]`
+   si se pasa un costo de apalancamiento no nulo en esa fecha);
+   `turnover.iloc[0] == 0.0`.
+3. **Turnover y costo:** dos activos, pesos que cambian de `(0.5, 0.5)` a
+   `(1.0, 0.0)` de una fila a la siguiente → turnover de esa transición
+   es `1.0` (`|0.5| + |0.5|`), costo = `costo_por_lado · 1.0`, aplicado en
+   la fila donde ese peso ya rezagado empieza a generar retorno (no en la
+   fila donde se "decidió").
+4. **Validación: `pesos` con `NaN` lanza `ValueError`.**
+5. **Validación: posición en activo sin retorno ese día lanza
+   `ValueError`** (peso rezagado distinto de `0.0` en una fecha donde
+   `retornos` tiene `NaN` para ese activo); el mismo caso con peso `0.0`
+   en esa fecha **no** lanza nada (el activo simplemente no se opera).
+6. **`equity`** es monótono-consistente con `ret`: `equity.iloc[-1] ==
+   (1 + ret).prod()` (dentro de tolerancia de punto flotante).
+7. **`metricas`**: con una serie de retornos diarios constantes positivos,
+   `max_drawdown == 0.0` y `calmar` es `NaN` (no `inf`, no excepción); con
+   una serie sin retornos negativos, `sortino` es `NaN`; `cagr` de una
+   serie conocida (p. ej. retorno diario constante `r` por `N` días)
+   coincide con el cálculo manual usando la fórmula de arriba.
+
+Todos los DataFrames/Series de prueba son sintéticos, construidos a mano
+(sin red, sin datos reales).

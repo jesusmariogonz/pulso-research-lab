@@ -325,3 +325,25 @@ resultado.
     los pesos). `tasa_cash_anual` viene de DTB3 (o BIL una vez disponible,
     según la regla ya usada en `prl.emergency.inputs.build_cash_index` de
     EXP-001 — mismo dato, no se reinventa).
+* **2026-11-12 (aclaración de implementación v1.3):** antes de escribir el
+  módulo de ejecución/backtest, se fija el rezago y el costo de
+  transacción multi-activo (el "costo 0.05%+0.05% por lado" de
+  `METHODOLOGY.md` está definido para una sola exposición escalar, como
+  en EXP-001; aquí hay hasta 65 pesos por día).
+  * **Rezago:** los pesos que recibe el backtest están **decididos al
+    cierre del día *t*** (misma convención que `exposure` en EXP-001);
+    la función los aplica a partir del día siguiente internamente
+    (`shift(1)`), no el llamador. El primer día de la serie no tiene
+    posición previa que aplicar → retorno `0.0` y costo `0.0` ese día.
+  * **Costo de transacción:** `costo_por_lado = 0.001` (0.05% comisión +
+    0.05% slippage, ya combinado — mismo valor total que EXP-001, pero
+    aquí **no** se multiplica por 2: con activos individuales, mover 10%
+    de A a B ya se cuenta como `|ΔA|=0.10 + |ΔB|=0.10 = 0.20` de turnover,
+    así que `costo_por_lado × turnover` ya refleja ambos lados de la
+    operación sin duplicar.
+  * **Validación estricta (igual principio que `backtest.py` de
+    EXP-001):** si algún activo tiene peso aplicado distinto de `0` en un
+    día donde su retorno es `NaN` (se sostiene una posición en un activo
+    sin dato de precio ese día), la función **lanza `ValueError`** — eso
+    nunca debería pasar si los módulos anteriores están bien conectados,
+    y no se resuelve en silencio.
