@@ -77,6 +77,70 @@ series:
   - {id: LEADING,     source: fred_vintage, symbol: "USSLIND",  role: macro_growth, notes: "Índice líder de la Fed de St. Louis, mensual. Rezago: ~1 mes."}
   - {id: FEDFUNDS,    source: fred_vintage, symbol: "FEDFUNDS", role: macro_policy, notes: "Tasa de fondos federales efectiva, mensual, publicación casi inmediata."}
 
+  # ---------------- Universo global EXP-002 (solo ETFs/índices — nunca
+  # acciones individuales: no hay point-in-time de constituyentes) --------
+  # Fechas "Desde" son la expectativa de lanzamiento del ETF (de memoria,
+  # pueden tener un margen de error de meses); la fecha REAL que cuenta es
+  # la que registre el manifiesto (primera_fecha), calculada de los datos
+  # mismos. Cualquier serie cuyo primer dato real quede muy corto para el
+  # período de prueba de EXP-002 se excluye en el pre-registro, no aquí.
+
+  # Acciones por país/región (iShares MSCI, ex-EE.UU./ex-las ya listadas arriba)
+  - {id: EWG,   source: yahoo, symbol: "EWG",   role: equity_country, notes: "Alemania. Desde ~1996."}
+  - {id: EWQ,   source: yahoo, symbol: "EWQ",   role: equity_country, notes: "Francia. Desde ~1996."}
+  - {id: EWU,   source: yahoo, symbol: "EWU",   role: equity_country, notes: "Reino Unido. Desde ~1996."}
+  - {id: EWL,   source: yahoo, symbol: "EWL",   role: equity_country, notes: "Suiza. Desde ~1996."}
+  - {id: EWI,   source: yahoo, symbol: "EWI",   role: equity_country, notes: "Italia. Desde ~1996."}
+  - {id: EWP,   source: yahoo, symbol: "EWP",   role: equity_country, notes: "España. Desde ~1996."}
+  - {id: EWN,   source: yahoo, symbol: "EWN",   role: equity_country, notes: "Países Bajos. Desde ~1996."}
+  - {id: EWA,   source: yahoo, symbol: "EWA",   role: equity_country, notes: "Australia. Desde ~1996."}
+  - {id: EWH,   source: yahoo, symbol: "EWH",   role: equity_country, notes: "Hong Kong. Desde ~1996."}
+  - {id: EWS,   source: yahoo, symbol: "EWS",   role: equity_country, notes: "Singapur. Desde ~1996."}
+  - {id: EWZ,   source: yahoo, symbol: "EWZ",   role: equity_country, notes: "Brasil. Desde ~2000. Volatilidad cambiaria además de accionaria."}
+  - {id: EWW,   source: yahoo, symbol: "EWW",   role: equity_country, notes: "México. Desde ~1996."}
+  - {id: EWY,   source: yahoo, symbol: "EWY",   role: equity_country, notes: "Corea del Sur. Desde ~2000."}
+  - {id: EWT,   source: yahoo, symbol: "EWT",   role: equity_country, notes: "Taiwán. Desde ~2000."}
+  - {id: MCHI,  source: yahoo, symbol: "MCHI",  role: equity_country, notes: "China (MSCI China). Desde ~2011. Historia corta para ciclos largos."}
+  - {id: INDA,  source: yahoo, symbol: "INDA",  role: equity_country, notes: "India (MSCI India). Desde ~2012. Historia corta."}
+  - {id: EIDO,  source: yahoo, symbol: "EIDO",  role: equity_country, notes: "Indonesia. Desde ~2010. Historia corta, liquidez menor."}
+  - {id: EZA,   source: yahoo, symbol: "EZA",   role: equity_country, notes: "Sudáfrica. Desde ~2003."}
+  - {id: TUR,   source: yahoo, symbol: "TUR",   role: equity_country, notes: "Turquía. Desde ~2008. Historia corta, episodios de devaluación extrema de la moneda local ya incorporados al retorno en USD."}
+  - {id: EPOL,  source: yahoo, symbol: "EPOL",  role: equity_country, notes: "Polonia. Desde ~2010. Historia corta, liquidez menor."}
+
+  # Factores (iShares MSCI USA factor ETFs, desde ~2011-2013: NINGUNO cubre
+  # las crisis de 2000/2008 — limitación real para cualquier señal de factor).
+  - {id: MTUM,  source: yahoo, symbol: "MTUM",  role: factor_momentum, notes: "Momentum USA. Desde ~2013-04. No cubre 2000/2008."}
+  - {id: QUAL,  source: yahoo, symbol: "QUAL",  role: factor_quality,  notes: "Calidad USA. Desde ~2013-07. No cubre 2000/2008."}
+  - {id: USMV,  source: yahoo, symbol: "USMV",  role: factor_low_vol, notes: "Mínima volatilidad USA. Desde ~2011-10. No cubre 2000/2008."}
+  - {id: VLUE,  source: yahoo, symbol: "VLUE",  role: factor_value,  notes: "Valor USA. Desde ~2013-04. No cubre 2000/2008."}
+
+  # Bonos adicionales (TLT/IEF/SHY/BIL/HYG/LQD ya están arriba)
+  - {id: TIP,   source: yahoo, symbol: "TIP",   role: bond_tips,  notes: "Treasury TIPS, desde ~2003-12."}
+  - {id: EMB,   source: yahoo, symbol: "EMB",   role: bond_em,    notes: "Deuda soberana EM en USD. Desde ~2007-12. Historia corta: no cubre 2000-01, incluye 2008."}
+  - {id: BNDX,  source: yahoo, symbol: "BNDX",  role: bond_global, notes: "Agregado global ex-US, cobertura de divisa. Desde ~2013-06. Historia corta."}
+  - {id: MBB,   source: yahoo, symbol: "MBB",   role: bond_mbs,   notes: "Hipotecarios (MBS) de agencia. Desde ~2007-03."}
+
+  # Commodities
+  - {id: SLV,   source: yahoo, symbol: "SLV",   role: commodity, notes: "Plata. Desde ~2006-04."}
+  - {id: USO,   source: yahoo, symbol: "USO",   role: commodity, notes: "Petróleo (futuros, roll). Desde ~2006-04. Sujeto a contango/decaimiento por roll — NO es exposición spot limpia; declarar en cualquier análisis de retorno absoluto."}
+  - {id: UNG,   source: yahoo, symbol: "UNG",   role: commodity, notes: "Gas natural (futuros, roll). Desde ~2007-04. Decaimiento por roll severo y conocido — igual limitación que USO, más marcada."}
+  - {id: DBC,   source: yahoo, symbol: "DBC",   role: commodity, notes: "Canasta amplia de commodities. Desde ~2006-02. También sujeto a roll, aunque diversificado."}
+  - {id: DBA,   source: yahoo, symbol: "DBA",   role: commodity, notes: "Agrícolas. Desde ~2007-01. Roll."}
+
+  # Divisas (solo las líquidas de historia larga — las de emergentes NO
+  # tienen ETFs líquidos de historia larga listados en EE.UU.; se excluyen,
+  # no se improvisa un proxy).
+  - {id: UUP,   source: yahoo, symbol: "UUP",   role: fx, notes: "Índice dólar (long USD). Desde ~2007-02."}
+  - {id: FXE,   source: yahoo, symbol: "FXE",   role: fx, notes: "Euro. Desde ~2005-12."}
+  - {id: FXY,   source: yahoo, symbol: "FXY",   role: fx, notes: "Yen. Desde ~2007-02."}
+  - {id: FXB,   source: yahoo, symbol: "FXB",   role: fx, notes: "Libra. Desde ~2006-06."}
+  - {id: FXF,   source: yahoo, symbol: "FXF",   role: fx, notes: "Franco suizo. Desde ~2006-06."}
+  - {id: FXC,   source: yahoo, symbol: "FXC",   role: fx, notes: "Dólar canadiense. Desde ~2006-06."}
+  - {id: FXA,   source: yahoo, symbol: "FXA",   role: fx, notes: "Dólar australiano. Desde ~2006-06."}
+
+  # REIT global (VNQ, EE.UU., ya está arriba)
+  - {id: VNQI,  source: yahoo, symbol: "VNQI",  role: real_estate_global, notes: "REIT global ex-US. Desde ~2010-11. Historia corta."}
+
   # ---------------- Excluidas a propósito (documentado) ----------------
   # NFCI / STLFSI4: son índices que se REVISAN hacia atrás (no point-in-time)
   #   → usarlos en un backtest filtraría información futura. Excluidos.
@@ -84,6 +148,15 @@ series:
   # % de acciones del S&P 500 sobre su SMA200: requiere constituyentes
   #   históricos (point-in-time), no disponibles gratis → se usan proxies
   #   (RSP/SPY, sectores sobre SMA200) y se declara la limitación.
+  # FX de mercados emergentes (MXN, BRL, ZAR, TRY, PLN, INR, KRW, etc.) como
+  #   posición cambiaria directa: no existen ETFs líquidos de historia larga
+  #   listados en EE.UU. (CEW, el más conocido, fue deslistado). Se excluyen
+  #   del universo de EXP-002 en vez de improvisar un proxy sintético.
+  # Acciones individuales: requieren universo point-in-time de constituyentes
+  #   (qué empresas formaban cada índice en cada fecha histórica), no
+  #   disponible gratis. EXP-002 fase 1 se queda en índices/ETFs únicamente;
+  #   esto no es una limitación temporal a resolver "después" dentro de este
+  #   experimento — es una decisión de alcance (ver README.md de EXP-002).
 
 # Universo amplio de acciones/ETFs del proyecto de trading (para estudios
 # transversales). Lista = symbols de algo_trading_platform/config/universe_*.txt.
