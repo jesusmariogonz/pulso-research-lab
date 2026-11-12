@@ -1,11 +1,14 @@
 """Ciclo de implementación guiado por tests (TDD automático con DeepSeek).
 
     python -m prl.implement features [--max-iter 6]
+    python -m prl.implement macro_vintage [--max-iter 6]
 
-Un módulo de `src/prl/emergency/` se escribe así: el LLM recibe el contrato
-(IMPLEMENTATION_SPEC.md) y los tests, escribe el módulo, se corren los tests
-SIN secretos en el entorno, y si fallan se le devuelve la salida de pytest.
-Se repite hasta pasar o agotar el tope (iteraciones y presupuesto de tokens).
+Cada módulo conocido (ver registro `MODULOS`) declara su propio contrato
+(IMPLEMENTATION_SPEC.md del experimento correspondiente), test y archivo
+destino. El LLM recibe el contrato y los tests, escribe el módulo, se corren
+los tests SIN secretos en el entorno, y si fallan se le devuelve la salida
+de pytest. Se repite hasta pasar o agotar el tope (iteraciones y presupuesto
+de tokens).
 
 Lo que el LLM NO puede hacer: editar tests, spec o pre-registro (solo se
 escribe el archivo del módulo) ni usar imports fuera de la lista blanca.
@@ -25,11 +28,21 @@ from prl.llm.deepseek import Budget, DeepSeek, PresupuestoAgotado
 from prl.sandbox import CodigoNoPermitido, revisar_codigo
 
 ROOT = Path(__file__).resolve().parents[2]
-SPEC = ROOT / "experiments" / "EXP-001-emergency-model" / "IMPLEMENTATION_SPEC.md"
 # El razonamiento del modelo cuenta contra max_tokens: con 12k las respuestas se
 # truncaban antes de cerrar el bloque de código (backtest, 11-nov-2026).
 TOKENS_POR_RESPUESTA = 32000
-MODULOS = {"features", "state_machine", "backtest", "grid", "inputs", "evaluation", "exp001", "daily", "robustness"}
+
+# Cada módulo declara su propio contrato (spec), archivo destino y test —
+# así un experimento nuevo no necesita tocar la lógica del ciclo, solo
+# agregar su entrada aquí. "spec" se manda completo al LLM igual que antes
+# (son contratos cortos pensados para eso).
+_EXP001 = ROOT / "experiments" / "EXP-001-emergency-model" / "IMPLEMENTATION_SPEC.md"
+_EXP002 = ROOT / "experiments" / "EXP-002-growth-max-global" / "IMPLEMENTATION_SPEC.md"
+MODULOS: dict[str, dict[str, Path]] = {
+    nombre: {"spec": _EXP001, "destino": ROOT / "src" / "prl" / "emergency" / f"{nombre}.py", "test": ROOT / "tests" / "emergency" / f"test_{nombre}.py"}
+    for nombre in ("features", "state_machine", "backtest", "grid", "inputs", "evaluation", "exp001", "daily", "robustness")
+}
+MODULOS["macro_vintage"] = {"spec": _EXP002, "destino": ROOT / "src" / "prl" / "data" / "macro_vintage.py", "test": ROOT / "tests" / "test_macro_vintage.py"}
 
 SISTEMA = (
     "Eres un ingeniero cuantitativo senior. Implementas módulos de Python para que pasen un conjunto de "
@@ -38,14 +51,14 @@ SISTEMA = (
 )
 
 
-def _prompt(modulo: str, spec: str, tests: str, codigo_previo: str | None, salida_pytest: str | None) -> str:
+def _prompt(modulo: str, destino_rel: str, spec: str, tests: str, codigo_previo: str | None, salida_pytest: str | None) -> str:
     previo = ""
     if codigo_previo:
-        previo = f"\nCÓDIGO ACTUAL de src/prl/emergency/{modulo}.py:\n```python\n{codigo_previo}\n```\n"
+        previo = f"\nCÓDIGO ACTUAL de {destino_rel}:\n```python\n{codigo_previo}\n```\n"
     fallo = f"\nSALIDA DE PYTEST DEL INTENTO ANTERIOR (corrige lo que falla):\n{salida_pytest}\n" if salida_pytest else ""
-    return f"""Implementa el módulo `src/prl/emergency/{modulo}.py`.
+    return f"""Implementa el módulo `{destino_rel}`.
 
-CONTRATO (solo la sección de `{modulo}.py` y las reglas transversales te aplican):
+CONTRATO (solo la sección de `{modulo}` y las reglas transversales te aplican):
 {spec}
 
 TESTS que deben pasar (no los modifiques):
@@ -70,9 +83,10 @@ def _correr_tests(test: Path) -> tuple[bool, str]:
 def implementar(modulo: str, max_iter: int = 6, cliente: DeepSeek | None = None, ahora: datetime | None = None) -> dict:
     if modulo not in MODULOS:
         raise ValueError(f"módulo desconocido: {modulo} (válidos: {sorted(MODULOS)})")
-    destino = ROOT / "src" / "prl" / "emergency" / f"{modulo}.py"
-    test = ROOT / "tests" / "emergency" / f"test_{modulo}.py"
-    spec, tests = SPEC.read_text(encoding="utf-8"), test.read_text(encoding="utf-8")
+    entrada = MODULOS[modulo]
+    destino, test, spec_path = entrada["destino"], entrada["test"], entrada["spec"]
+    destino_rel = str(destino.relative_to(ROOT))
+    spec, tests = spec_path.read_text(encoding="utf-8"), test.read_text(encoding="utf-8")
 
     ahora = ahora or datetime.now(timezone.utc)
     run_dir = ROOT / "runs" / "implement" / modulo / ahora.strftime("%Y%m%dT%H%M%SZ")
@@ -81,14 +95,14 @@ def implementar(modulo: str, max_iter: int = 6, cliente: DeepSeek | None = None,
 
     destino.parent.mkdir(parents=True, exist_ok=True)
     (destino.parent / "__init__.py").touch()
-    veredicto = {"modulo": modulo, "estado": "FALLIDO", "iteraciones": 0, "motivo": None}
+    veredicto = {"modulo": modulo, "destino": destino_rel, "estado": "FALLIDO", "iteraciones": 0, "motivo": None}
     codigo_previo = destino.read_text(encoding="utf-8") if destino.exists() else None
     salida = None
     try:
         for i in range(1, max_iter + 1):
             veredicto["iteraciones"] = i
             resp = ds.chat(
-                [{"role": "system", "content": SISTEMA}, {"role": "user", "content": _prompt(modulo, spec, tests, codigo_previo, salida)}],
+                [{"role": "system", "content": SISTEMA}, {"role": "user", "content": _prompt(modulo, destino_rel, spec, tests, codigo_previo, salida)}],
                 max_tokens=TOKENS_POR_RESPUESTA, etiqueta=f"{modulo}_iter_{i}",
             )
             m = re.search(r"```python\s*\n(.*?)```", resp, re.S)

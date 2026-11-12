@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       module:
-        description: "features | state_machine | backtest | grid | inputs | evaluation | exp001 | daily"
+        description: "features | state_machine | backtest | grid | inputs | evaluation | exp001 | daily | robustness | macro_vintage"
         required: true
         default: "state_machine"
       model:
@@ -62,10 +62,19 @@ jobs:
           git config user.email "prl-bot@users.noreply.github.com"
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}.git"
           git checkout -b "$BR"
+          # El destino real (puede ser src/prl/emergency/* o src/prl/data/* u
+          # otro, según el registro MODULOS en prl.implement) sale del último
+          # verdict.json de esta corrida — nunca se asume la ruta de EXP-001.
+          DESTINO=$(python -c "
+import glob, json
+fs = sorted(glob.glob('runs/implement/${{ inputs.module }}/*/verdict.json'))
+print(json.load(open(fs[-1])).get('destino', '') if fs else '')
+")
+          echo "Destino detectado: $DESTINO"
           # Solo el archivo del módulo y la evidencia: nunca tests, spec ni workflows.
           # Un git add por ruta: si el módulo no existe (el ciclo falló), la evidencia igual se guarda.
-          git add "src/prl/emergency/${{ inputs.module }}.py" 2>/dev/null || true
-          git add src/prl/emergency/__init__.py 2>/dev/null || true
+          [ -n "$DESTINO" ] && git add "$DESTINO" 2>/dev/null || true
+          [ -n "$DESTINO" ] && git add "$(dirname "$DESTINO")/__init__.py" 2>/dev/null || true
           git add runs/implement 2>/dev/null || true
           git diff --cached --quiet && { echo "Nada que guardar"; exit 0; }
           git commit -m "Módulo ${{ inputs.module }} implementado por DeepSeek (resultado: ${{ steps.impl.outputs.code == '0' && 'tests pasan' || 'tests NO pasan' }})"
