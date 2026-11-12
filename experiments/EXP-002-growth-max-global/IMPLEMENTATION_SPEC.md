@@ -394,6 +394,59 @@ argumentos de una llamada — quien orquesta ya los alineó).
 Todos los DataFrames/Series de prueba son sintéticos, construidos a mano
 (sin red, sin datos reales).
 
+## `prl.growth_max.grid`
+
+Implementa la sección *Grilla completa* de `PREREGISTRATION.md`: las
+**17 280 variantes exactas**, ninguna más. Tests en
+`tests/growth_max/test_growth_grid.py`. Solo `itertools`, `typing`,
+`dataclasses` (no necesita `pandas`/`numpy`). Funciones puras.
+
+* `construccion_parametros() -> list[tuple[str, float | None]]`: las
+  **8** combinaciones fijas (método, parámetro), en este orden exacto
+  (mismo orden de la tabla del pre-registro):
+  `[("equal", None), ("inv_vol", None), ("vol_target", 0.10),
+  ("vol_target", 0.15), ("vol_target", 0.20), ("kelly_frac", 0.25),
+  ("kelly_frac", 0.50), ("kelly_frac", 1.00)]`.
+* `cash_politicas() -> list[str]`: `["cash_0", "cash_5", "cash_10",
+  "cash_20", "cash_dinamico"]`, en ese orden.
+* `build_grid() -> list[dict]`: `itertools.product` en este orden exacto
+  — `L_meses ∈ [3, 6, 12]`, `W_dias ∈ [50, 100, 200]`, `B_dias ∈ [55, 252]`,
+  `V_dias ∈ [20, 60]`, `(construccion, construccion_param) ∈
+  construccion_parametros()`, `cash_politica ∈ cash_politicas()`,
+  `leverage ∈ [1.0, 1.5, 2.0]`, `spread ∈ [0.01, 0.02]`, `k ∈ [0.5, 0.75]`.
+  Total: `3·3·2·2·8·5·3·2·2 = 17280`. Cada elemento es un `dict` con las
+  claves `variant_id`, `L_meses`, `W_dias`, `B_dias`, `V_dias`,
+  `construccion`, `construccion_param`, `cash_politica`, `leverage`,
+  `spread`, `k` (`Z_dias` queda fijo en `10` fuera de la grilla, por
+  pre-registro — no es una clave de este dict).
+  `variant_id` = `"|".join([str(L_meses), str(W_dias), str(B_dias),
+  str(V_dias), f"{construccion}:{construccion_param}", cash_politica,
+  str(leverage), str(spread), str(k)])` — único por construcción (el
+  producto cartesiano nunca repite una combinación).
+
+### Casos de prueba obligatorios
+
+1. **`construccion_parametros()`** devuelve exactamente las 8 tuplas en
+   el orden de arriba (comparación de igualdad de lista completa, no solo
+   el conteo).
+2. **`cash_politicas()`** devuelve exactamente las 5 en el orden de
+   arriba.
+3. **`build_grid()`** tiene exactamente `17280` elementos.
+4. **Todos los `variant_id` son únicos** (`len(set(...)) ==
+   len(build_grid())`).
+5. **Cada combinación de parámetros aparece exactamente una vez**: tomar
+   una tupla de parámetros arbitraria (p. ej. `L_meses=6, W_dias=100,
+   B_dias=252, V_dias=20, construccion="kelly_frac",
+   construccion_param=0.5, cash_politica="cash_dinamico", leverage=1.5,
+   spread=0.02, k=0.75`) y verificar que exactamente un elemento de
+   `build_grid()` tiene esos 10 valores.
+6. **El primer y el último elemento** de `build_grid()` son exactamente
+   los que predice el orden de `itertools.product` documentado arriba
+   (primer elemento: `L_meses=3, W_dias=50, B_dias=55, V_dias=20,
+   construccion="equal", construccion_param=None, cash_politica="cash_0",
+   leverage=1.0, spread=0.01, k=0.5`; último elemento: los últimos
+   valores de cada lista, `k=0.75` al final).
+
 ## `prl.growth_max.backtest`
 
 Implementa la sección *Costos* de `METHODOLOGY.md` y la aclaración de
