@@ -674,3 +674,166 @@ resultados en silencio con datos faltantes** (ver más abajo).
 
 Todos los DataFrames/Series de prueba son sintéticos, construidos a mano
 (sin red, sin datos reales).
+
+## `prl.growth_max.exp002` (orquestador)
+
+A diferencia de los módulos anteriores, **este sí importa** a los demás
+módulos de `prl.growth_max` (`signals`, `portfolio`, `backtest`, `grid`,
+`evaluation`) y a `prl.data.macro_vintage` — su trabajo es conectarlos
+con datos reales, igual que `prl.emergency.exp001` hace para EXP-001.
+También hace E/S (lee `.parquet` de `inputs_dir`, escribe
+`run_dir/results.json`) y usa `json`/`pathlib` además de
+`pandas`/`numpy`. Debe ser **determinista**: mismas entradas → mismo
+`results.json` byte a byte.
+
+`run(inputs_dir, run_dir, discovery_end="2015-12-31",
+validation_end="2019-12-31", n_boot=500, seed=0) -> dict`. Escribe
+`run_dir/results.json` (`NaN` → `null`) y lo devuelve. Pasos:
+
+1. **Universo (65 ids, orden fijo):** `SPY, QQQ, IWM, DIA, EFA, EEM, EWJ,
+   XLK, XLE, XLF, XLV, XLP, XLU, XLY, XLI, XLB, EWG, EWQ, EWU, EWL, EWI,
+   EWP, EWN, EWA, EWH, EWS, EWZ, EWW, EWY, EWT, MCHI, INDA, EIDO, EZA,
+   TUR, EPOL, MTUM, QUAL, USMV, VLUE, TLT, IEF, SHY, BIL, HYG, LQD, TIP,
+   EMB, BNDX, MBB, GLD, SLV, USO, UNG, DBC, DBA, UUP, FXE, FXY, FXB, FXF,
+   FXC, FXA, VNQ, VNQI`. Lee `inputs_dir/<ID>.parquet` (columna
+   `adj_close`) para cada uno; arma un `DataFrame` de precios con índice
+   = unión ordenada de todas sus fechas — **no recorta a un "inicio
+   común"**: un activo antes de su propia primera fecha real queda `NaN`
+   (ver aclaración v1.5). `retornos = precios.pct_change()`.
+2. **Tasa de cash:** lee `inputs_dir/DTB3.parquet` (columna `value`,
+   % anual); `tasa_cash_diaria = value / 100 / 252`, propagada hacia
+   adelante y alineada al índice de `precios`.
+3. **Régimen macro point-in-time:** lee `inputs_dir/M2.parquet`,
+   `FED_BALANCE.parquet`, `LEADING.parquet` (formato de vintages de
+   `prl.data.macro_vintage`). Para cada una,
+   `prl.data.macro_vintage.serie_conocida_en(vintages, fechas=índice de
+   precios)` da el valor conocido en cada día de trading (columna
+   `value`). Liquidez = promedio de los cambios trailing de 126 días
+   (`signals.signo_cambio_trailing(serie, 126)`) de M2 y FED_BALANCE —
+   si ambas están disponibles esa fecha, su signo promedio redondeado al
+   signo más cercano (`1.0` si la suma de signos `> 0`, `-1.0` si `< 0`,
+   `0.0` si se cancelan exactamente); si solo una está disponible, se usa
+   esa; si ninguna, `NaN`. Crecimiento = `signals.signo_cambio_trailing`
+   de LEADING a 126 días. `regimen = signals.regimen_macro(liquidez,
+   crecimiento)`; `es_rango = signals.es_regimen_de_rango(regimen)`;
+   `cash_pct_regimen = portfolio.cash_pct_dinamico(regimen)`.
+4. **Señales por combinación única `(L_meses, W_dias, B_dias, V_dias)`**
+   (36 combinaciones — no 17 280; `construccion`/`cash_politica`/
+   `leverage`/`spread`/`k` no afectan la señal, solo la construcción del
+   portafolio, así que se calculan una sola vez por combinación y se
+   reutilizan): para cada uno de los 65 activos, momentum
+   (`ts_momentum_signal(precio, L_meses)`), tendencia
+   (`trend_signal(precio, W_dias)`), breakout
+   (`breakout_signal(precio, B_dias)`) → compuesta direccional =
+   `composite_score` con pesos iguales (`1.0` cada una). Reversión fija
+   en `Z_dias = 10` (`senal_reversion(precio, 10)`). Señal final =
+   `senal_compuesta_con_overlay(direccional, reversion, es_rango)`.
+   Volatilidad = `volatilidad_realizada(precio, V_dias)`. Para Kelly:
+   `mu = retorno_esperado_trailing(retornos, V_dias)`,
+   `varianza = varianza_trailing(retornos, V_dias)` (reutiliza `V_dias`,
+   no un parámetro nuevo — ver aclaración v1.2).
+5. **Fecha de inicio del backtest:** la primera fecha en la que al menos
+   40 de los 65 activos tienen `retornos` no `NaN` (umbral del
+   pre-registro). Todo lo anterior a esa fecha se descarta del backtest
+   (pero no de los activos individuales: un activo puede seguir
+   entrando después).
+6. **Para cada una de las 17 280 variantes de `grid.build_grid()`:**
+   tome la matriz de señales/vol/mu/varianza de su combinación
+   `(L_meses, W_dias, B_dias, V_dias)` (paso 4). Construya pesos según
+   `construccion`/`construccion_param` (`portfolio.pesos_equal`,
+   `pesos_inv_vol`, `pesos_vol_target`, o `pesos_kelly_frac`, según
+   corresponda — `kelly_frac` escalado además por `k` cuando
+   `es_regimen_de_rango` es falso y liquidez en contracción, por la
+   familia de señal 5 del pre-registro: exposición bruta ×`k` en
+   régimen de contracción de liquidez, es decir `regimen ∈ {3.0, 4.0}`).
+   `cash_pct` = fijo según `cash_politica` (`0.0/0.05/0.10/0.20`) o
+   `cash_pct_regimen` si `cash_politica == "cash_dinamico"`. Pesos
+   finales = `portfolio.aplicar_leverage_y_cash(pesos_base, leverage,
+   cash_pct)`. Agregue una columna `"CASH"` a esos pesos (valor =
+   `cash_pct` de cada fila) y a `retornos` (valor = `tasa_cash_diaria`)
+   — ver aclaración v1.5. `costo_apalancamiento =
+   portfolio.costo_apalancamiento_diario(leverage, tasa_cash_anual=
+   value de DTB3 (no la tasa diaria), spread_anual=spread)`.
+   `resultado = backtest.ejecutar_backtest(pesos, retornos_con_cash,
+   costo_apalancamiento, costo_por_lado=0.001)`, recortado a partir de
+   la fecha de inicio del paso 5. Divida `resultado["ret"]` en
+   `discovery` (hasta `discovery_end`), `validation` (`discovery_end+1`
+   a `validation_end`) y `locked_test` (después de `validation_end`).
+   Guarde solo lo necesario para el paso 7 (no los 17 280 DataFrames
+   completos en memoria todo el tiempo, por rendimiento — detalle de
+   implementación, no de contrato).
+7. **Selección:** para cada variante, `log_wealth_validation[v] =
+   evaluation.tasa_crecimiento_geometrica(ret_validation[v])`;
+   `prob_perdida_50[v]` y `prob_perdida_75[v]` =
+   `evaluation.probabilidad_perdida` sobre `ret_discovery[v]` concatenado
+   con `ret_validation[v]`, con `tamano_bloque=20`, `n_replicas=n_boot`,
+   `seed=seed` (umbrales `0.5` y `0.75`). `ganador, motivo =
+   evaluation.elegir_variante(log_wealth_validation, prob_perdida_50,
+   prob_perdida_75)`.
+8. **Si `ganador is None`:** `results.json` con `"label": "INCONCLUSIVE"`,
+   `"motivo_seleccion"` (el de `elegir_variante`), y las claves de abajo
+   en `null`/vacías donde no aplique. No se calcula nada más (el locked
+   test set nunca se toca).
+9. **Si hay `ganador`:** para cada uno de los 5 niveles de apetito
+   (`Conservative`: `cash_20`, `L=1.0`; `Growth25`: `cash_10`, `L=1.0`;
+   `Growth50`: `cash_5`, `L=1.5`; `Growth75`: `cash_0`, `L=1.5`; `Max`:
+   `cash_0`, `L=2.0` — mismo `spread`/`k`/combinación de señal que
+   `ganador`, solo cambia cash/leverage), recalcule los pesos (mismo
+   método de construcción del ganador) y corra el backtest **solo sobre
+   `locked_test`** (discovery+validation ya están "gastados"). Guarde
+   `backtest.metricas(ret)` y `evaluation.probabilidad_perdida(ret,
+   umbral)` para `umbral ∈ {0.5, 0.75, 0.9, 0.99}`, por nivel.
+10. **Benchmark:** 60% equal-weight `{SPY, EFA, EEM}` + 40% equal-weight
+    `{TLT, IEF, LQD}`, pesos fijos diarios (sin señal), mismo
+    `ejecutar_backtest` (sin costo de apalancamiento, `costo_por_lado=
+    0.001`), sobre `locked_test`.
+11. **Comparación y etiqueta:** `comparacion =
+    evaluation.comparacion_bootstrap(ret_locked["Growth50"],
+    ret_locked["benchmark"], tamano_bloque=20, n_replicas=n_boot,
+    seed=seed)`. `label = evaluation.etiqueta(comparacion["ci_cagr_modelo"],
+    comparacion["frac_supera_benchmark"], prob_ruina_75 de Growth50 (del
+    paso 9), n_dias_locked_test=len(ret_locked["Growth50"]))`.
+12. **Placebo y DSR:** `placebo =
+    evaluation.placebo_circular(ret_locked["Growth50"], n_placebos=n_boot,
+    seed=seed)`; `percentil =
+    evaluation.percentil_real_vs_placebo(tasa_crecimiento_geometrica(
+    ret_locked["Growth50"]), placebo)`. `dsr =
+    evaluation.deflated_sharpe_ratio(ret_validation[ganador],
+    n_trials=17280)`.
+13. **`results.json`** con claves: `experiment` (`"EXP-002"`),
+    `variant_id_ganador` (o `null`), `motivo_seleccion`, `n_variants`
+    (`17280`), `fecha_inicio_backtest`, `discovery_end`, `validation_end`,
+    `n_dias_locked_test`, `niveles` (dict por nombre de nivel → `metricas`
+    + `probabilidad_ruina` por umbral, vacío si `ganador is None`),
+    `comparacion_bootstrap_growth50` (`ci_cagr_modelo`,
+    `frac_supera_benchmark`), `label`, `deflated_sharpe`,
+    `percentil_vs_placebo`, `notes` (lista: limitaciones ya conocidas —
+    aproximación de `vol_target` sin correlaciones, universo solo
+    ETF/índice, macro limitada a 3 series point-in-time).
+
+### Casos de prueba obligatorios (test de integración, datos sintéticos)
+
+Mismo patrón que `tests/emergency/test_exp001.py`: un *fixture* que
+genera `.parquet` sintéticos para los 65 ids + `DTB3` + `M2` +
+`FED_BALANCE` + `LEADING` (estas 3 últimas en formato de vintages, con
+una sola versión vigente por fecha — no hace falta simular revisiones
+para este test) en `tmp_path`, con suficiente historia para que
+`discovery_end`/`validation_end` de prueba (más tempranos que los del
+pre-registro, p. ej. `discovery_end="2009-12-31"`,
+`validation_end="2010-12-31"` sobre datos sintéticos 2006-2012) dejen
+años utilizables en cada tramo.
+
+1. **`run` escribe `results.json` con las claves esperadas** (lista de la
+   sección 13 de arriba); `label` ∈ `{VALIDATED, REJECTED, INCONCLUSIVE}`;
+   si `variant_id_ganador` no es `null`, `niveles` tiene exactamente las
+   5 claves (`Conservative, Growth25, Growth50, Growth75, Max`) y cada
+   una trae `metricas` con `{cagr, max_drawdown, calmar, sharpe, sortino,
+   n_days}` y `probabilidad_ruina` con las 4 claves `{0.5, 0.75, 0.9,
+   0.99}` (como strings o floats, pero las 4 presentes).
+2. **`run` es determinista:** dos corridas con los mismos insumos y
+   `n_boot` chico (p. ej. `30`) dan el mismo `results.json` byte a byte.
+
+Dado el volumen de cómputo (17 280 variantes), el test usa `n_boot`
+chico y un universo/historia sintéticos cortos — el valor por defecto
+(`n_boot=500`) y el historial real (~20 años, 207 series) son para la
+corrida real vía `run-experiment.yml`, no para este test.

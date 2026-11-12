@@ -374,3 +374,26 @@ resultado.
        CAGR de Growth50 es `> 0.0` **y** la fracción de réplicas que
        superan al benchmark es `≥ 0.80`.
     4. `INCONCLUSIVE` en cualquier otro caso.
+* **2026-11-12 (aclaración de implementación v1.5):** antes de escribir el
+  orquestador, se fija si el cash no invertido gana interés. Los módulos
+  ya construidos (`portfolio.aplicar_leverage_y_cash`,
+  `backtest.ejecutar_backtest`) son agnósticos a esto — es una decisión
+  de cómo el orquestador los conecta, no un cambio a ningún módulo ya
+  integrado.
+  * **El cash gana la tasa libre de riesgo (DTB3), no cero.** Dejar el
+    cash sin retorno penalizaría artificialmente a las políticas
+    conservadoras (`cash_20`) frente a las agresivas (`cash_0`), sesgando
+    la frontera de apetito de riesgo. Se modela agregando una columna más
+    a `pesos`/`retornos` antes de llamar a `ejecutar_backtest`: un activo
+    sintético `"CASH"` con `retorno = tasa_cash_diaria` (misma serie que
+    ya usa `costo_apalancamiento_diario`) y `peso = cash_pct` de ese día
+    (la fracción de capital NO expuesta a riesgo, antes de apalancar) —
+    no se inventa ningún mecanismo nuevo, es el mismo framework
+    multi-activo ya construido.
+  * **Universo invertible dinámico:** un activo entra a `pesos`/`retornos`
+    desde su primera fecha real con dato (ver *Universo*); antes de esa
+    fecha, su retorno es `NaN` y su peso debe ser `0.0` en todos los
+    métodos de construcción (ya garantizado por los módulos de señales/
+    portafolio, que dan `NaN`/`0.0` sin historia suficiente) — el
+    orquestador no necesita lógica adicional para esto, solo no debe
+    recortar el panel a un "inicio común" artificial.
