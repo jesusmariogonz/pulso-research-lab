@@ -1,0 +1,10 @@
+{
+  "modulo": "macro_vintage",
+  "destino": "src/prl/data/macro_vintage.py",
+  "estado": "TESTS_PASAN",
+  "iteraciones": 1,
+  "motivo": null,
+  "llamadas": 1,
+  "tokens_salida": 22619,
+  "modelo": "deepseek-flash"
+}
