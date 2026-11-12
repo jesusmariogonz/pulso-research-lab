@@ -6,6 +6,26 @@ import pandas as pd
 import pytest
 
 from prl.growth_max import exp002
+from prl.growth_max.exp002 import escalar_por_regimen
+
+
+def test_escalar_por_regimen_aplica_k_solo_en_contraccion_sin_importar_el_metodo():
+    idx = pd.bdate_range("2020-01-01", periods=4)
+    pesos_base = pd.DataFrame({"A": [1.0] * 4, "B": [-0.5] * 4}, index=idx)
+    regimen = pd.Series([1.0, 3.0, 4.0, np.nan], index=idx)
+    out = escalar_por_regimen(pesos_base, regimen, k=0.5)
+
+    # Día 0: régimen 1.0 (concuerda) -> sin escalar.
+    assert out.loc[idx[0], "A"] == pytest.approx(1.0)
+    assert out.loc[idx[0], "B"] == pytest.approx(-0.5)
+    # Días 1 y 2: contracción (régimen 3/4) -> escalado por k, toda la fila.
+    assert out.loc[idx[1], "A"] == pytest.approx(0.5)
+    assert out.loc[idx[1], "B"] == pytest.approx(-0.25)
+    assert out.loc[idx[2], "A"] == pytest.approx(0.5)
+    assert out.loc[idx[2], "B"] == pytest.approx(-0.25)
+    # Día 3: régimen NaN -> sin escalar.
+    assert out.loc[idx[3], "A"] == pytest.approx(1.0)
+    assert out.loc[idx[3], "B"] == pytest.approx(-0.5)
 
 UNIVERSO = [
     "SPY", "QQQ", "IWM", "DIA", "EFA", "EEM", "EWJ",

@@ -686,8 +686,27 @@ También hace E/S (lee `.parquet` de `inputs_dir`, escribe
 `pandas`/`numpy`. Debe ser **determinista**: mismas entradas → mismo
 `results.json` byte a byte.
 
+`escalar_por_regimen(pesos_base: pd.DataFrame, regimen: pd.Series, k: float)
+-> pd.DataFrame`: multiplica **cada fila completa** de `pesos_base` por
+`k` en las fechas donde `regimen ∈ {3.0, 4.0}` (contracción de liquidez),
+y por `1.0` en el resto (incluido cuando `regimen` es `NaN`) — sin
+importar qué método de construcción produjo `pesos_base` (familia de
+señal 5 del pre-registro: *"la exposición bruta **total** se escala por
+un factor `k`"*, aplica a los 4 métodos por igual, no solo a
+`kelly_frac`). Función pura, independiente de `run()` — así es
+testeable por separado sin tener que ejecutar el orquestador completo.
+
+**Caso de prueba obligatorio para `escalar_por_regimen`:** con
+`pesos_base` constante (misma fila todos los días) y `regimen` que
+alterna entre `1.0` (concuerda, sin escalar) y `3.0` (contracción), el
+resultado en los días de régimen `3.0` debe ser exactamente
+`pesos_base * k`, y en los días de régimen `1.0` debe ser idéntico a
+`pesos_base` sin cambios; con `regimen = NaN` en una fila, esa fila
+tampoco se escala.
+
 `run(inputs_dir, run_dir, discovery_end="2015-12-31",
-validation_end="2019-12-31", n_boot=500, seed=0) -> dict`. Escribe
+validation_end="2019-12-31", n_boot=500, seed=0) -> dict`. Usa
+`escalar_por_regimen` en el paso 6 de abajo. Escribe
 `run_dir/results.json` (`NaN` → `null`) y lo devuelve. Pasos:
 
 1. **Universo (65 ids, orden fijo):** `SPY, QQQ, IWM, DIA, EFA, EEM, EWJ,
@@ -739,13 +758,18 @@ validation_end="2019-12-31", n_boot=500, seed=0) -> dict`. Escribe
    entrando después).
 6. **Para cada una de las 17 280 variantes de `grid.build_grid()`:**
    tome la matriz de señales/vol/mu/varianza de su combinación
-   `(L_meses, W_dias, B_dias, V_dias)` (paso 4). Construya pesos según
-   `construccion`/`construccion_param` (`portfolio.pesos_equal`,
+   `(L_meses, W_dias, B_dias, V_dias)` (paso 4). Construya `pesos_base`
+   según `construccion`/`construccion_param` (`portfolio.pesos_equal`,
    `pesos_inv_vol`, `pesos_vol_target`, o `pesos_kelly_frac`, según
-   corresponda — `kelly_frac` escalado además por `k` cuando
-   `es_regimen_de_rango` es falso y liquidez en contracción, por la
-   familia de señal 5 del pre-registro: exposición bruta ×`k` en
-   régimen de contracción de liquidez, es decir `regimen ∈ {3.0, 4.0}`).
+   corresponda). **Después**, sin importar el método, aplique
+   `escalar_por_regimen(pesos_base, regimen, k)` (definida arriba) —
+   esto es la familia de señal 5 del pre-registro: *"la exposición
+   bruta **total** se escala por un factor `k`"*, aplica a los **4**
+   métodos de construcción por igual, no solo a `kelly_frac` (la
+   combinación `(construccion="equal", k=0.5)` y `(construccion="equal",
+   k=0.75)` deben dar resultados distintos — si no, `k` no tendría
+   efecto en 3 de los 4 métodos, lo
+   que invalidaría esa dimensión de la grilla).
    `cash_pct` = fijo según `cash_politica` (`0.0/0.05/0.10/0.20`) o
    `cash_pct_regimen` si `cash_politica == "cash_dinamico"`. Pesos
    finales = `portfolio.aplicar_leverage_y_cash(pesos_base, leverage,
