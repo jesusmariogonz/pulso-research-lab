@@ -59,6 +59,24 @@ series:
   - {id: DTB3,   source: fred, symbol: "DTB3",   role: cash_rate, notes: "T-Bill 3m (tasa de efectivo para backtests antes de BIL). Desde 1954."}
   - {id: USREC,  source: fred, symbol: "USREC",  role: recession_flag, notes: "Indicador NBER, mensual. SOLO para etiquetar episodios ex-post; JAMÁS como entrada de un modelo (se publica con meses de retraso)."}
 
+  # ---------------- Macro point-in-time (ALFRED, para EXP-002) ----------------
+  # A diferencia de las series FRED de arriba (fredgraph.csv = última revisión,
+  # válidas como entrada de un modelo SOLO si no se revisan), estas usan la
+  # API de vintages de ALFRED: se guarda el historial completo de versiones
+  # (obs_date, value, realtime_start, realtime_end) y cada experimento
+  # reconstruye, con prl.data.macro_vintage, el valor que se conocía en cada
+  # fecha de corte — sin look-ahead. Requiere FRED_API_KEY (secret de GitHub
+  # Actions; el fredgraph.csv de las series de arriba no la necesita).
+  # Ver experiments/EXP-002-growth-max-global/DATA_INFRA_MACRO_VINTAGE.md.
+  - {id: FED_BALANCE, source: fred_vintage, symbol: "WALCL",    role: macro_liquidity, notes: "Activos totales de la Fed, semanal. Rezago de primera publicación: pocos días."}
+  - {id: M2,          source: fred_vintage, symbol: "M2SL",     role: macro_liquidity, notes: "Oferta monetaria M2, mensual. Rezago: ~2 semanas. Sujeta a revisión."}
+  - {id: CPI,         source: fred_vintage, symbol: "CPIAUCSL", role: macro_inflation, notes: "Índice de precios al consumidor, mensual. Rezago: ~2 semanas. Sujeta a revisión (ajuste estacional)."}
+  - {id: PCE_PRICE,   source: fred_vintage, symbol: "PCEPI",    role: macro_inflation, notes: "Deflactor de gasto en consumo personal, mensual. Rezago: ~1 mes."}
+  - {id: IND_PROD,    source: fred_vintage, symbol: "INDPRO",   role: macro_growth, notes: "Producción industrial, mensual. Rezago: ~2 semanas. Sujeta a revisión."}
+  - {id: UNEMP,       source: fred_vintage, symbol: "UNRATE",   role: macro_growth, notes: "Tasa de desempleo, mensual. Rezago: ~1 semana. Sujeta a revisión por ajuste estacional."}
+  - {id: LEADING,     source: fred_vintage, symbol: "USSLIND",  role: macro_growth, notes: "Índice líder de la Fed de St. Louis, mensual. Rezago: ~1 mes."}
+  - {id: FEDFUNDS,    source: fred_vintage, symbol: "FEDFUNDS", role: macro_policy, notes: "Tasa de fondos federales efectiva, mensual, publicación casi inmediata."}
+
   # ---------------- Excluidas a propósito (documentado) ----------------
   # NFCI / STLFSI4: son índices que se REVISAN hacia atrás (no point-in-time)
   #   → usarlos en un backtest filtraría información futura. Excluidos.

@@ -20,6 +20,7 @@ import argparse
 import hashlib
 import io
 import json
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -27,6 +28,7 @@ from pathlib import Path
 import pandas as pd
 import yaml
 
+from prl.data.macro_vintage import parse_vintage_observations, validar_vintages
 from prl.data.validate import validar_serie, reporte_markdown
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -66,6 +68,48 @@ def descargar_fred(serie: str) -> pd.DataFrame:
     return df.dropna()
 
 
+def descargar_fred_vintage(serie: str) -> pd.DataFrame:
+    """Historial completo de vintages (ALFRED) de una serie FRED: una sola
+    llamada con output_type=1 y ventana de tiempo real completa trae todas
+    las versiones (obs_date, value, realtime_start, realtime_end) que
+    existieron. Requiere FRED_API_KEY (no la usa descargar_fred: el
+    fredgraph.csv público no da vintages). Ver
+    experiments/EXP-002-growth-max-global/DATA_INFRA_MACRO_VINTAGE.md."""
+    import requests
+
+    api_key = os.environ.get("FRED_API_KEY")
+    if not api_key:
+        raise RuntimeError("falta FRED_API_KEY en el entorno (requerida para series fred_vintage)")
+    r = requests.get(
+        "https://api.stlouisfed.org/fred/series/observations",
+        params={
+            "series_id": serie,
+            "api_key": api_key,
+            "file_type": "json",
+            "realtime_start": "1776-01-01",
+            "realtime_end": "9999-12-31",
+            "output_type": 1,
+        },
+        timeout=60,
+    )
+    r.raise_for_status()
+    crudo = r.json().get("observations", [])
+    if not crudo:
+        raise RuntimeError(f"ALFRED no devolvió observaciones para {serie}")
+    return parse_vintage_observations(crudo)
+
+
+def validar_vintage_serie(df: pd.DataFrame) -> dict:
+    """Adapta validar_vintages (lista de strings) a la misma forma
+    {resumen, hallazgos} que usa validar_serie, para que el manifiesto y
+    reporte_markdown no necesiten dos formatos distintos. Cada problema de
+    validar_vintages es, por diseño, un error (no un aviso): son
+    inconsistencias de integridad, no anomalías de mercado."""
+    problemas = validar_vintages(df)
+    hallazgos = [{"codigo": p.split(" ", 1)[0], "severidad": "error", "detalle": p} for p in problemas]
+    return {"resumen": {"errores": len(hallazgos), "avisos": 0}, "hallazgos": hallazgos}
+
+
 def sha256_archivo(path: Path) -> str:
     h = hashlib.sha256()
     with path.open("rb") as f:
@@ -95,23 +139,26 @@ def construir(only: list[str] | None = None) -> dict:
         "series": {},
         "fallidas": {},
     }
+    descargadores = {"yahoo": descargar_yahoo, "fred": descargar_fred, "fred_vintage": descargar_fred_vintage}
     resultados_validacion = {}
     for s in objetivos:
         try:
-            df = descargar_yahoo(s["symbol"]) if s["source"] == "yahoo" else descargar_fred(s["symbol"])
+            df = descargadores[s["source"]](s["symbol"])
         except Exception as e:  # noqa: BLE001 - se reporta, no se esconde
             manifiesto["fallidas"][s["id"]] = f"{type(e).__name__}: {e}"
             continue
         destino = RAW / f"{s['id']}.parquet"
         df.to_parquet(destino)
-        resultados_validacion[s["id"]] = validar_serie(df, s)
+        es_vintage = s["source"] == "fred_vintage"
+        resultados_validacion[s["id"]] = validar_vintage_serie(df) if es_vintage else validar_serie(df, s)
+        primera_fecha, ultima_fecha = (df["obs_date"].min(), df["obs_date"].max()) if es_vintage else (df.index.min(), df.index.max())
         manifiesto["series"][s["id"]] = {
             "source": s["source"],
             "symbol": s["symbol"],
             "role": s["role"],
             "filas": int(len(df)),
-            "primera_fecha": str(df.index.min().date()),
-            "ultima_fecha": str(df.index.max().date()),
+            "primera_fecha": str(primera_fecha.date()),
+            "ultima_fecha": str(ultima_fecha.date()),
             "sha256": sha256_archivo(destino),
             "notas": s.get("notes", ""),
             "hallazgos": resultados_validacion[s["id"]]["resumen"],
