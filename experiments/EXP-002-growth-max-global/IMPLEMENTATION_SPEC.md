@@ -42,10 +42,13 @@ las que entrega el JSON de ALFRED) al DataFrame de arriba.
   del resultado (no `NaN`: una versión que no tenía valor publicado para
   ese período no es información, no entra).
 * Filas con `realtime_start > realtime_end` → `ValueError`.
-* Filas con `realtime_start` posterior a `obs_date` en más de 50 años,
-  o `realtime_start` **anterior** a `obs_date` → `ValueError` (un valor
-  no puede conocerse antes del período que describe; ver
-  `validar_vintages` para el chequeo reutilizable).
+* Filas con `realtime_start` **anterior** a `obs_date` → `ValueError` (un
+  valor no puede conocerse antes del período que describe; ver
+  `validar_vintages` para el chequeo reutilizable). **No** hay límite
+  superior en cuánto más tarde puede ser `realtime_start`: series macro
+  como M2 o producción industrial se re-benchmarkean décadas después
+  (cambios de metodología de la agencia que las publica) — una revisión
+  real de un dato de 1960 publicada en 2020 es válida, no corrupta.
 * Si `raw` está vacío → DataFrame vacío con las columnas correctas (no
   `KeyError`, no excepción).
 

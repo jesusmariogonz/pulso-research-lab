@@ -2,6 +2,23 @@
 
 ## 2026-11-12
 
+* **Depuración de `data-build.yml` contra la API real de ALFRED** (6
+  corridas): (1) `FRED_API_KEY` no se inyectaba como variable de entorno
+  al paso de descarga — corregido. (2) El error 400 "api_key is not
+  registered" resultó ser engañoso: la clave era válida; el problema real
+  eran los parámetros `realtime_start=1776-01-01` (el mínimo real es
+  `1776-07-04`) y `realtime_end=9999-12-31` (la API no lo acepta como
+  entrada, solo como valor de salida — hay que pedir hasta hoy y
+  normalizar la versión vigente de vuelta a `9999-12-31`). Verificado
+  probando la API directamente antes de cambiar el código, no a ciegas
+  reintentando el workflow. (3) Con eso corregido, M2/PCE/producción
+  industrial/FEDFUNDS seguían fallando por un chequeo **mío**, de más,
+  en `parse_vintage_observations`: rechazaba revisiones a más de 50 años
+  del dato original como "corruptas". Es un supuesto incorrecto — estas
+  series SÍ se re-benchmarkean décadas después (cambios de metodología de
+  la agencia publicadora), y es información real, no corrupción. Se quitó
+  la regla de `IMPLEMENTATION_SPEC.md` y de `macro_vintage.py` (ningún
+  test dependía de ella).
 * Propuesta inicial del responsable del proyecto: cambiar la función
   objetivo respecto a EXP-001 (de "reducir drawdown sin sacrificar CAGR"
   a "maximizar crecimiento geométrico compuesto, aceptando pérdidas

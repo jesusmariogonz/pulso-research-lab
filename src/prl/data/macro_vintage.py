@@ -50,12 +50,6 @@ def parse_vintage_observations(raw: list[dict]) -> pd.DataFrame:
                 f"({realtime_start} < {obs_date})"
             )
 
-        if realtime_start > obs_date + pd.DateOffset(years=50):
-            raise ValueError(
-                "realtime_start no puede estar más de 50 años después de obs_date "
-                f"({realtime_start} vs {obs_date})"
-            )
-
         valor_raw = item["value"]
         if isinstance(valor_raw, str) and valor_raw.strip() == ".":
             continue
