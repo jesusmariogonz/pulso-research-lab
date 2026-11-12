@@ -24,6 +24,8 @@ jobs:
       - run: pip install -e ".[dev]"
       - run: pytest -q
       - name: Descargar, validar y congelar
+        env:
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: python -m prl.data.build
       - name: Empaquetar datos crudos
         run: tar -czf data-raw.tar.gz -C data raw
