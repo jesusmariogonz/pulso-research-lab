@@ -62,17 +62,18 @@ tiraría ~15 años de historial solo por los 4 factores, que arrancan en
 2011-2013).
 
 **Fecha de inicio del backtest:** la primera fecha en la que al menos
-**40 de los 65** instrumentos tienen datos reales, calculada contra el
-manifiesto una vez congelado. Estimación previa a ver el manifiesto real
-(de memoria, con margen de error): alrededor de 2007-2008. **Si la fecha
-real resulta posterior a 2015** (lo que dejaría un discovery set
-inválido, ver más abajo), se documenta como enmienda en el *Registro de
-cambios* **antes** de correr cualquier variante — igual que EXP-001 ajustó
-su primer año de prueba de 2003 a 2004 por la historia de TLT.
+**40 de los 65** instrumentos tienen datos reales. **Confirmada contra el
+manifiesto congelado (ver hash abajo): 2006-02-06** (el instrumento 40 en
+sumarse es DBC). Cae bien antes de 2015, así que el discovery set es
+válido — no hace falta la enmienda prevista para el caso de que cayera
+después de 2015.
 
-**Manifiesto de datos citado:** _pendiente — se completa al bloquear, tras
-correr `data-build.yml` con el universo + las 8 series macro ya en el
-catálogo._
+**Manifiesto de datos citado (SHA-256 de `data/manifest.json`):**
+`bd5bae2b97b7725c30a8370e269aba0750fea976c63c0aaa48c07a0c7c7d490b`
+(generado 2026-11-12T20:12:27Z, 207 series, 0 fallidas). Hallazgo
+documentado (no bloqueante): CPI/PCE_PRICE/IND_PROD tienen huecos reales
+en su historial de vintages entre ~1970 y 2003 (el archivo electrónico de
+ALFRED no cubre completo esa época) — ver `data/quality_report.md`.
 
 ## Señales (familias fijas, combinadas — no se prueba cada familia aislada)
 
