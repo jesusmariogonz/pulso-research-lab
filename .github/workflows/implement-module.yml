@@ -65,11 +65,7 @@ jobs:
           # El destino real (puede ser src/prl/emergency/* o src/prl/data/* u
           # otro, según el registro MODULOS en prl.implement) sale del último
           # verdict.json de esta corrida — nunca se asume la ruta de EXP-001.
-          DESTINO=$(python -c "
-import glob, json
-fs = sorted(glob.glob('runs/implement/${{ inputs.module }}/*/verdict.json'))
-print(json.load(open(fs[-1])).get('destino', '') if fs else '')
-")
+          DESTINO=$(python -c "import glob, json; fs = sorted(glob.glob('runs/implement/${{ inputs.module }}/*/verdict.json')); print(json.load(open(fs[-1])).get('destino', '') if fs else '')")
           echo "Destino detectado: $DESTINO"
           # Solo el archivo del módulo y la evidencia: nunca tests, spec ni workflows.
           # Un git add por ruta: si el módulo no existe (el ciclo falló), la evidencia igual se guarda.
