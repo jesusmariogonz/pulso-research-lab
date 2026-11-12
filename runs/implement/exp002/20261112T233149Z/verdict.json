@@ -1,0 +1,10 @@
+{
+  "modulo": "exp002",
+  "destino": "src/prl/growth_max/exp002.py",
+  "estado": "TESTS_PASAN",
+  "iteraciones": 3,
+  "motivo": null,
+  "llamadas": 3,
+  "tokens_salida": 87961,
+  "modelo": "deepseek-flash"
+}
