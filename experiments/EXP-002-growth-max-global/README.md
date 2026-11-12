@@ -1,8 +1,11 @@
 # EXP-002 — Growth-Max Global
 
-**Estado actual:** `EN DISEÑO` (no LOCKED todavía). Este experimento está en
-su **fase 0: infraestructura de datos**, prerrequisito acordado con el
-responsable del proyecto antes de poder pre-registrar el experimento en sí.
+**Estado actual:** `LOCKED` (2026-11-12). El pre-registro está bloqueado
+con manifiesto de datos citado (207 series, 0 fallidas). Sigue la
+implementación de los módulos (señales, construcción de portafolio,
+walk-forward/bootstrap/placebo) bajo el ciclo TDD con DeepSeek — ver
+`IMPLEMENTATION_SPEC.md` para lo ya construido (`prl.data.macro_vintage`)
+y lo que falta.
 
 ## Qué es esto
 
@@ -51,16 +54,18 @@ Antes de ver un solo dato real, el responsable del proyecto decidió:
   (lo implementa DeepSeek vía `implement-module.yml`; lo revisa el
   responsable del proyecto antes de aceptarlo en `main`).
 * `LOG.md` — bitácora cronológica.
-* `PREREGISTRATION.md` — **todavía no existe.** Se escribe después de que
-  la infraestructura de datos macro esté construida y validada, porque el
-  pre-registro debe poder citar qué series macro point-in-time existen
-  realmente (no las que *querríamos* tener).
+* `PREREGISTRATION.md` — **`LOCKED`** (2026-11-12). Universo de 65
+  ETFs/índices, señales, construcción de portafolio, grilla de 17 280
+  variantes, split discovery/validation/locked-test, criterios de éxito —
+  todo fijado antes de ver resultados.
 
 ## Lo que NO se ha hecho todavía (para que no se asuma)
 
-* No hay universo de activos definido todavía (ETFs/índices globales).
-* No hay biblioteca de señales de mercado (momentum/trend/vol/reversión)
-  implementada.
-* No hay pre-registro bloqueado. Nada de esto corrió sobre datos reales.
+* El universo y la grilla están **definidos** (pre-registro), pero el
+  código que los implementa (señales, construcción de portafolio,
+  régimen, walk-forward/bootstrap/placebo) **todavía no existe** — falta
+  el ciclo spec+tests+DeepSeek para cada módulo, igual que EXP-001.
+* Nada corrió todavía sobre el locked test set ni sobre ningún dato real
+  más allá de la descarga/congelado (`data/manifest.json`).
 * No se ha tocado `main` del repo `jesus-site`: no hay nada que publicar
   todavía.

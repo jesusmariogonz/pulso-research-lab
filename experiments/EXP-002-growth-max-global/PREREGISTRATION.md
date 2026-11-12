@@ -1,12 +1,12 @@
 # EXP-002 — Growth-Max Global Portfolio
 
-**Estado:** `DRAFT` (NO bloqueado todavía). Falta: (a) congelar el manifiesto
-de datos con el universo completo de abajo + las 8 series macro
-point-in-time (`FRED_API_KEY` ya configurada, pendiente correr
-`data-build.yml`), y (b) aprobación explícita del responsable del proyecto
-para bloquear con un commit, exactamente como se hizo con EXP-001
-(`ad02967`). Hasta que ese commit exista, nada de esto se corre sobre datos
-reales.
+**Estado:** `LOCKED`
+
+Aprobado por el responsable del proyecto el 2026-11-12 y bloqueado con el
+commit que añade esta línea. Desde este punto, cualquier cambio a las
+reglas se registra en el *Registro de cambios* como nueva versión; todo
+lo decidido después de ver resultados es **exploratorio** y no puede
+mover la etiqueta final.
 
 ## Pregunta
 
@@ -256,3 +256,9 @@ resultado.
   apalancamiento con tope + costo explícito, grilla grande con
   discovery/validation/locked-test) ya registradas en `LOG.md` del
   2026-11-12.
+* **2026-11-12 (LOCKED v1):** manifiesto congelado (hash citado arriba,
+  207 series, 0 fallidas), fecha de inicio del backtest confirmada
+  (2006-02-06, sin necesidad de enmienda), y aprobación explícita del
+  responsable del proyecto. Bloqueado con este commit — nada de lo de
+  arriba se vuelve a tocar salvo como enmienda documentada con fecha,
+  nunca después de ver resultados.

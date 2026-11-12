@@ -1,5 +1,24 @@
 # LOG — EXP-002 Growth-Max Global
 
+## 2026-11-12 (continuación — bloqueo)
+
+* El responsable del proyecto aprobó y bloqueó `PREREGISTRATION.md` v1
+  (manifiesto citado: hash `bd5bae2b...`, 207 series, 0 fallidas; fecha
+  de inicio del backtest confirmada en 2006-02-06). A partir de este
+  commit, cualquier cambio a las reglas es una enmienda documentada con
+  fecha, nunca algo decidido después de ver resultados.
+* Pregunta del responsable: ¿la infraestructura macro point-in-time
+  permite revisar/mejorar EXP-001 (hoy `INCONCLUSIVE` por pocos episodios
+  de crisis evaluables)? Respuesta registrada en la conversación: no
+  directamente — el problema de EXP-001 es de **pocos eventos
+  independientes** (~3 crisis desde 2000), no de señales faltantes. Más
+  variables macro no crean más crisis históricas; agregarlas al mismo
+  modelo con la misma muestra pequeña aumentaría el riesgo de
+  sobreajuste, no lo reduciría. La infra nueva sí es un insumo legítimo
+  para **EXP-002** (y para una futura revisión etiquetada explícitamente
+  como tal, con su propio pre-registro) — pero no es un atajo para
+  mover la etiqueta de EXP-001.
+
 ## 2026-11-12
 
 * **Depuración de `data-build.yml` contra la API real de ALFRED** (6
