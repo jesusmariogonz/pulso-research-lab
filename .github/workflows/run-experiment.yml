@@ -37,7 +37,7 @@ jobs:
           python-version: "3.11"
           cache: pip
       - run: pip install -e ".[dev]"
-      - run: pytest -q --ignore=tests/growth_max/test_portfolio.py
+      - run: pytest -q
 
       - name: Traer datos congelados (último Release data-*)
         run: |
