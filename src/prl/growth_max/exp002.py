@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import json
 import math
+import os
+from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 from typing import Any
 
@@ -144,6 +146,29 @@ def escalar_por_regimen(
     contraccion = regimen.isin([3.0, 4.0]).astype(float)
     factor = 1.0 + (k - 1.0) * contraccion
     return pesos_base.mul(factor, axis=0)
+
+
+# --------------------------------------------------------------------------- #
+# Worker de proceso para la selección (paso 7): todas las variantes comparten
+# la misma ventana discovery+validation, así que la matriz de posiciones del
+# block bootstrap (``pos``) se calcula una sola vez y se reparte a cada
+# proceso trabajador por el ``initializer``, en vez de regenerarla o
+# volver a serializarla en cada tarea.
+# --------------------------------------------------------------------------- #
+_POS_WORKER: np.ndarray | None = None
+
+
+def _init_pos_worker(pos: np.ndarray) -> None:
+    global _POS_WORKER
+    _POS_WORKER = pos
+
+
+def _pl_umbrales_worker(item: tuple[str, np.ndarray]) -> tuple[str, float, float]:
+    vid, valores = item
+    probs = evaluation.probabilidades_perdida_con_posiciones(
+        valores, _POS_WORKER, [0.5, 0.75]
+    )
+    return vid, probs[0.5], probs[0.75]
 
 
 # --------------------------------------------------------------------------- #
@@ -308,29 +333,48 @@ def run(
         tienda[v["variant_id"]] = {"disc": disc, "val": val, "offset": v}
 
     # 7. Selección --------------------------------------------------------
+    # Todas las variantes comparten exactamente la misma ventana
+    # discovery+validation (mismos límites fecha_inicio/d_end/v_end sobre el
+    # mismo índice de fechas): la longitud de "comb" es igual para las
+    # 17 280. Por eso la matriz de posiciones del block bootstrap se calcula
+    # una sola vez (no una vez por variante ni una vez por umbral) y la
+    # evaluación de cada variante se reparte entre procesos.
     lw_val: dict[str, float] = {}
     pl50: dict[str, float] = {}
     pl75: dict[str, float] = {}
 
-    def _pp(serie: pd.Series, umbral: float) -> float:
-        if len(serie) < 20:
-            return 1.0
-        try:
-            return float(
-                evaluation.probabilidad_perdida(
-                    serie, umbral, tamano_bloque=20, n_replicas=n_boot, seed=seed
-                )
-            )
-        except ValueError:
-            return 1.0
+    vids = list(tienda.keys())
+    combs: dict[str, np.ndarray] = {}
+    n_comb: int | None = None
+    for vid in vids:
+        t = tienda[vid]
+        lw_val[vid] = float(evaluation.tasa_crecimiento_geometrica(t["val"]))
+        comb = pd.concat([t["disc"], t["val"]]).to_numpy()
+        combs[vid] = comb
+        if n_comb is None:
+            n_comb = len(comb)
 
-    for vid, t in tienda.items():
-        disc = t["disc"]
-        val = t["val"]
-        lw_val[vid] = float(evaluation.tasa_crecimiento_geometrica(val))
-        comb = pd.concat([disc, val])
-        pl50[vid] = _pp(comb, 0.5)
-        pl75[vid] = _pp(comb, 0.75)
+    pos = None
+    if n_comb is not None and n_comb >= 20:
+        try:
+            pos = evaluation.posiciones_bootstrap_bloques(n_comb, 20, n_boot, seed)
+        except ValueError:
+            pos = None
+
+    if pos is None:
+        for vid in vids:
+            pl50[vid] = 1.0
+            pl75[vid] = 1.0
+    else:
+        items = [(vid, combs[vid]) for vid in vids]
+        n_workers = min(len(items), os.cpu_count() or 1)
+        with ProcessPoolExecutor(
+            max_workers=n_workers, initializer=_init_pos_worker, initargs=(pos,)
+        ) as ex:
+            chunksize = max(1, len(items) // (4 * n_workers))
+            for vid, p50, p75 in ex.map(_pl_umbrales_worker, items, chunksize=chunksize):
+                pl50[vid] = p50
+                pl75[vid] = p75
 
     ganador, motivo = evaluation.elegir_variante(lw_val, pl50, pl75)
 
@@ -372,6 +416,18 @@ def run(
         "Max": ("cash_0", 2.0),
     }
 
+    def _pp(serie: pd.Series, umbral: float) -> float:
+        if len(serie) < 20:
+            return 1.0
+        try:
+            return float(
+                evaluation.probabilidad_perdida(
+                    serie, umbral, tamano_bloque=20, n_replicas=n_boot, seed=seed
+                )
+            )
+        except ValueError:
+            return 1.0
+
     ret_locked: dict[str, pd.Series] = {}
     niveles_out: dict[str, dict[str, Any]] = {}
 
@@ -396,8 +452,13 @@ def run(
             prob[str(u)] = _pp(ret_lk, float(u))
         niveles_out[nombre] = {"metricas": met, "probabilidad_ruina": prob}
 
-    # 10. Benchmark ------------------------------------------------------
-    pesos_bench = pd.DataFrame(0.0, index=idx, columns=retornos.columns)
+    # 10. Benchmark --------------------------------------------------------
+    # Igual que cada variante del grid, el benchmark arranca en fecha_inicio:
+    # antes de eso, algunos de sus componentes (EFA/EEM/TLT/IEF/LQD) todavía
+    # no cotizaban y tendrían retorno NaN.
+    idx_bench = idx[idx >= fecha_inicio]
+    retornos_bench = retornos_con_cash.loc[idx_bench]
+    pesos_bench = pd.DataFrame(0.0, index=idx_bench, columns=retornos.columns)
     for t in _BENCH_RV:
         if t in pesos_bench.columns:
             pesos_bench[t] = 0.6 / len(_BENCH_RV)
@@ -406,9 +467,9 @@ def run(
             pesos_bench[t] = 0.4 / len(_BENCH_RF)
     pesos_bench["CASH"] = 0.0
 
-    costo_cero = pd.Series(0.0, index=idx)
+    costo_cero = pd.Series(0.0, index=idx_bench)
     res_bench = backtest.ejecutar_backtest(
-        pesos_bench, retornos_con_cash, costo_cero, costo_por_lado=0.001
+        pesos_bench, retornos_bench, costo_cero, costo_por_lado=0.001
     )
     ret_bench_locked = res_bench["ret"].loc[res_bench["ret"].index > v_end]
     ret_locked["benchmark"] = ret_bench_locked

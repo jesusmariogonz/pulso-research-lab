@@ -45,6 +45,36 @@ def tasa_crecimiento_geometrica(retornos: pd.Series) -> float:
 # ---------------------------------------------------------------------------
 
 
+def posiciones_bootstrap_bloques(
+    n: int, tamano_bloque: int, n_replicas: int, seed: int
+) -> np.ndarray:
+    """Matriz de posiciones ``(n_replicas, n)`` para un block bootstrap.
+
+    Misma regla que ``bootstrap_bloques_retornos``: en cada réplica se
+    concatenan ``ceil(n / tamano_bloque)`` bloques de ``tamano_bloque``
+    filas consecutivas (inicio uniforme en ``[0, n - tamano_bloque]``),
+    recortando a ``n``. Depende solo de ``(n, tamano_bloque, n_replicas,
+    seed)``: reutilizable para remuestrear varias series con esas mismas
+    dimensiones sin volver a generar números aleatorios.
+
+    Lanza ``ValueError`` si ``n < tamano_bloque``.
+    """
+    if n < tamano_bloque:
+        raise ValueError(
+            f"n ({n}) < tamaño de bloque ({tamano_bloque}): imposible remuestrear"
+        )
+    rng = np.random.default_rng(seed)
+    n_bloques = int(math.ceil(n / tamano_bloque))
+    max_start = n - tamano_bloque
+
+    # Mismo orden de extracción del RNG que la versión por-réplica/por-bloque
+    # (réplica-mayor, bloque-menor), pero vectorizado: sin loops de Python.
+    starts = rng.integers(0, max_start + 1, size=(n_replicas, n_bloques))
+    offsets = np.arange(tamano_bloque)
+    pos = (starts[:, :, None] + offsets[None, None, :]).reshape(n_replicas, n_bloques * tamano_bloque)
+    return pos[:, :n]
+
+
 def bootstrap_bloques_retornos(
     retornos: pd.DataFrame,
     tamano_bloque: int,
@@ -53,34 +83,50 @@ def bootstrap_bloques_retornos(
 ) -> np.ndarray:
     """Block bootstrap pareado de las columnas de ``retornos``.
 
-    En cada réplica se concatenan ``ceil(n / tamano_bloque)`` bloques de
-    ``tamano_bloque`` filas consecutivas (inicio uniforme en
-    ``[0, n - tamano_bloque]``), recortando a ``n`` filas. La **misma**
-    selección de bloques se aplica a todas las columnas (bootstrap
-    pareado). Devuelve un arreglo ``(n_replicas, n, n_columnas)``.
+    La **misma** selección de bloques se aplica a todas las columnas
+    (bootstrap pareado). Devuelve un arreglo ``(n_replicas, n, n_columnas)``.
 
     Lanza ``ValueError`` si ``n < tamano_bloque``.
     """
-    n = len(retornos)
-    if n < tamano_bloque:
-        raise ValueError(
-            f"n ({n}) < tamaño de bloque ({tamano_bloque}): imposible remuestrear"
-        )
-    valores = retornos.to_numpy()
-    n_cols = valores.shape[1]
-    rng = np.random.default_rng(seed)
-    n_bloques = int(math.ceil(n / tamano_bloque))
-    max_start = n - tamano_bloque
+    pos = posiciones_bootstrap_bloques(len(retornos), tamano_bloque, n_replicas, seed)
+    return retornos.to_numpy()[pos]
 
-    out = np.empty((n_replicas, n, n_cols), dtype=float)
-    for r in range(n_replicas):
-        posiciones: list[int] = []
-        for _ in range(n_bloques):
-            start = int(rng.integers(0, max_start + 1))
-            posiciones.extend(range(start, start + tamano_bloque))
-        pos = np.asarray(posiciones[:n], dtype=int)
-        out[r] = valores[pos]
-    return out
+
+def _max_drawdowns_por_replica(valores: np.ndarray, pos: np.ndarray) -> np.ndarray:
+    """Máximo drawdown (negativo) de cada réplica, dado un vector 1D y posiciones."""
+    rep = valores[pos]
+    equity = np.cumprod(1.0 + rep, axis=1)
+    picos = np.maximum.accumulate(equity, axis=1)
+    dd = equity / picos - 1.0
+    return dd.min(axis=1)
+
+
+def probabilidades_perdida_con_posiciones(
+    valores: np.ndarray, pos: np.ndarray, umbrales: Sequence[float]
+) -> dict[float, float]:
+    """Como ``probabilidad_perdida``, para varios umbrales a la vez.
+
+    Reutiliza una matriz ``pos`` ya calculada con ``posiciones_bootstrap_bloques``
+    (misma ``n``, mismo ``seed``) en vez de volver a generarla: pensada para
+    evaluar muchas series distintas (p. ej. variantes de un grid) con el
+    mismo tamaño de ventana y la misma semilla sin repetir el muestreo.
+    """
+    max_dd = _max_drawdowns_por_replica(np.asarray(valores, dtype=float), pos)
+    abs_dd = np.abs(max_dd)
+    n_replicas = pos.shape[0]
+    return {float(u): float(np.sum(abs_dd >= u)) / n_replicas for u in umbrales}
+
+
+def probabilidades_perdida(
+    retornos: pd.Series,
+    umbrales: Sequence[float],
+    tamano_bloque: int = 20,
+    n_replicas: int = 10000,
+    seed: int = 0,
+) -> dict[float, float]:
+    """Como ``probabilidad_perdida``, para varios umbrales con un solo bootstrap."""
+    pos = posiciones_bootstrap_bloques(len(retornos), tamano_bloque, n_replicas, seed)
+    return probabilidades_perdida_con_posiciones(retornos.to_numpy(), pos, umbrales)
 
 
 def probabilidad_perdida(
@@ -91,18 +137,9 @@ def probabilidad_perdida(
     seed: int = 0,
 ) -> float:
     """Fracción de réplicas de bootstrap con max-drawdown ``|dd| >= umbral``."""
-    df = retornos.to_frame(name="ret")
-    boot = bootstrap_bloques_retornos(df, tamano_bloque, n_replicas, seed)
-    exitos = 0
-    for r in range(n_replicas):
-        rep = boot[r, :, 0]
-        equity = np.cumprod(1.0 + rep)
-        picos = np.maximum.accumulate(equity)
-        dd = equity / picos - 1.0
-        max_dd = float(np.min(dd))
-        if abs(max_dd) >= umbral:
-            exitos += 1
-    return exitos / n_replicas
+    return probabilidades_perdida(retornos, [umbral], tamano_bloque, n_replicas, seed)[
+        float(umbral)
+    ]
 
 
 def comparacion_bootstrap(
