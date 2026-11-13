@@ -1,25 +1,25 @@
 {
-  "data_through": "2026-11-12",
-  "score": -0.681,
+  "data_through": "2026-11-13",
+  "score": -0.679,
   "gauge": 0.0,
   "level": 0,
   "level_name": "NORMAL",
   "exposure_target": 1.0,
   "dimensions": {
-    "trend": 0.049,
-    "vol": -1.523,
-    "correlation": -1.633,
+    "trend": 0.126,
+    "vol": -1.022,
+    "correlation": -1.665,
     "credit": -1.093,
-    "breadth": -0.518,
-    "drawdown_velocity": 0.635
+    "breadth": -0.664,
+    "drawdown_velocity": 0.244
   },
   "dimension_gauges": {
-    "trend": 1.0,
+    "trend": 2.5,
     "vol": 0.0,
     "correlation": 0.0,
     "credit": 0.0,
     "breadth": 0.0,
-    "drawdown_velocity": 12.7
+    "drawdown_velocity": 4.9
   },
   "params": {
     "weights": "equal",
