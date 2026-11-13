@@ -1,0 +1,55 @@
+name: Correr EXP-002 (datos reales)
+
+# Corre EXP-002-growth-max-global contra el último Release de datos congelados.
+# prl.growth_max.exp002.run es código determinístico (ya fusionado y revisado):
+# esta corrida NO llama a ningún LLM (ni DeepSeek ni Claude). Deja evidencia
+# en una rama run/* (también si el experimento resulta REJECTED/INCONCLUSIVE).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: pytest -q
+
+      - name: Traer datos congelados (último Release data-*)
+        run: |
+          TAG=$(gh release list --limit 30 --json tagName -q '.[] | select(.tagName | startswith("data-")) | .tagName' | head -1)
+          test -n "$TAG" || { echo "No hay Release de datos: corre primero 'Construir base de datos'"; exit 1; }
+          mkdir -p dl data
+          gh release download "$TAG" -p data-raw.tar.gz -p manifest.json -D dl
+          tar -xzf dl/data-raw.tar.gz -C data
+          cp dl/manifest.json data/manifest.json
+          python -m prl.data.build --verify
+
+      - name: Ejecutar EXP-002 (sin LLM, código determinístico)
+        run: python scripts/run_exp002.py
+
+      - name: Guardar evidencia en una rama y abrir PR
+        if: always()
+        run: |
+          BR="run/EXP-002-growth-max-global-$(date -u +%Y%m%dT%H%M%SZ)"
+          git config user.name "prl-bot"
+          git config user.email "prl-bot@users.noreply.github.com"
+          git checkout -b "$BR"
+          git add runs/EXP-002-growth-max-global
+          git diff --cached --quiet && { echo "Sin evidencia que guardar"; exit 0; }
+          git commit -m "Corrida real de EXP-002-growth-max-global (ver results.json)"
+          git push -u origin "$BR"
+          gh pr create --title "Corrida real EXP-002-growth-max-global" \
+            --body "Evidencia automática. Revisar results.json (label, variant_id_ganador, niveles). No es LLM: prl.growth_max.exp002.run es código determinístico." \
+            || echo "No se pudo abrir el PR (habilita 'Allow GitHub Actions to create pull requests' en Settings > Actions)."
