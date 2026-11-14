@@ -1,0 +1,107 @@
+{
+  "comparacion_bootstrap_growth50": {
+    "ci_cagr_modelo": [
+      -0.043858515743552234,
+      0.020193081064695525
+    ],
+    "frac_supera_benchmark": 0.0844
+  },
+  "deflated_sharpe": 1.7869102754789993e-08,
+  "discovery_end": "2015-12-31",
+  "experiment": "EXP-002",
+  "fecha_inicio_backtest": "2006-02-07T00:00:00",
+  "label": "REJECTED",
+  "motivo_seleccion": "filtro_50",
+  "n_dias_locked_test": 1726,
+  "n_variants": 17280,
+  "niveles": {
+    "Conservative": {
+      "metricas": {
+        "cagr": 0.009442019732837537,
+        "calmar": 0.14878663180894366,
+        "max_drawdown": -0.06346013494654545,
+        "n_days": 1726,
+        "sharpe": 0.36764524860324976,
+        "sortino": 0.46181564997120544
+      },
+      "probabilidad_ruina": {
+        "0.5": 0.0,
+        "0.75": 0.0,
+        "0.9": 0.0,
+        "0.99": 0.0
+      }
+    },
+    "Growth25": {
+      "metricas": {
+        "cagr": 0.006961236761116929,
+        "calmar": 0.08824694832179593,
+        "max_drawdown": -0.07888359760308661,
+        "n_days": 1726,
+        "sharpe": 0.2474737613184741,
+        "sortino": 0.3112074378501632
+      },
+      "probabilidad_ruina": {
+        "0.5": 0.0,
+        "0.75": 0.0,
+        "0.9": 0.0,
+        "0.99": 0.0
+      }
+    },
+    "Growth50": {
+      "metricas": {
+        "cagr": -0.011800696226332064,
+        "calmar": -0.06820720820650152,
+        "max_drawdown": -0.17301245039387525,
+        "n_days": 1726,
+        "sharpe": -0.22769281274491543,
+        "sortino": -0.2878218671465965
+      },
+      "probabilidad_ruina": {
+        "0.5": 0.0,
+        "0.75": 0.0,
+        "0.9": 0.0,
+        "0.99": 0.0
+      }
+    },
+    "Growth75": {
+      "metricas": {
+        "cagr": -0.01296504749746974,
+        "calmar": -0.0712096095035297,
+        "max_drawdown": -0.18206879082558503,
+        "n_days": 1726,
+        "sharpe": -0.23759348709397787,
+        "sortino": -0.30034609261269546
+      },
+      "probabilidad_ruina": {
+        "0.5": 0.0,
+        "0.75": 0.0,
+        "0.9": 0.0,
+        "0.99": 0.0
+      }
+    },
+    "Max": {
+      "metricas": {
+        "cagr": -0.030371000422236394,
+        "calmar": -0.11578277236235222,
+        "max_drawdown": -0.2623101848622843,
+        "n_days": 1726,
+        "sharpe": -0.4320340381733799,
+        "sortino": -0.5475464125544541
+      },
+      "probabilidad_ruina": {
+        "0.5": 0.004,
+        "0.75": 0.0,
+        "0.9": 0.0,
+        "0.99": 0.0
+      }
+    }
+  },
+  "notes": [
+    "vol_target: aproximación de la volatilidad del portafolio ignorando correlaciones (raíz de la suma de (peso·vol)²)",
+    "universo restringido a ETF/índices; sin acciones individuales ni otros activos",
+    "régimen macro limitado a 3 series point-in-time (M2, FED_BALANCE, LEADING)"
+  ],
+  "percentil_vs_placebo": 0.5635,
+  "validation_end": "2019-12-31",
+  "variant_id_ganador": "12|200|252|60|inv_vol:None|cash_20|1.0|0.01|0.5"
+}
