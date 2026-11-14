@@ -1,5 +1,44 @@
 # LOG — EXP-002 Growth-Max Global
 
+## 2026-11-13 — Resultado: REJECTED
+
+* Primera corrida real contra los datos congelados se canceló por
+  timeout (300 min) sin terminar. Perfilado contra los datos reales
+  (no el fixture de tests) mostró que el costo no estaba en
+  `backtest.ejecutar_backtest` (~5 min extrapolado a las 17 280
+  variantes), sino en `evaluation.bootstrap_bloques_retornos`: generaba
+  las posiciones de cada réplica con un doble loop puro de Python
+  (10 000 réplicas x ~175 bloques ≈ 1.75M llamadas individuales a
+  `rng.integers()`), llamado dos veces por variante (umbrales 50%/75%)
+  → ~37h extrapoladas. Se vectorizó con numpy (salida idéntica bit a
+  bit, verificada antes del cambio) y se aprovechó que las 17 280
+  variantes comparten la misma ventana discovery+validation para
+  calcular la matriz de posiciones una sola vez y repartir la
+  evaluación entre procesos. De paso se encontró y arregló un bug real
+  separado: el benchmark 60/40 arrancaba en 1993 (el ticker más viejo
+  del universo) en vez de en `fecha_inicio` del backtest, cargando peso
+  en EFA/EEM/TLT/IEF/LQD antes de que existieran. Ambos fixes se
+  hicieron directamente (no vía DeepSeek, por la urgencia), validados
+  con la suite completa (193 tests) y una corrida real de punta a
+  punta sobre una muestra de 201/17 280 variantes antes de relanzar.
+* Segunda corrida real (datos congelados, `fecha_inicio_backtest`
+  2006-02-07, discovery hasta 2015-12-31, validation hasta 2019-12-31,
+  locked test 2020-01-01 a 2026-11-13, `n_boot=10000`, semilla 0)
+  terminó en ~61 minutos sin errores. Hubo variante ganadora (pasó el
+  filtro de probabilidad de pérdida sobre discovery+validation), pero
+  en el locked test el nivel Growth50 superó al benchmark 60/40 en
+  solo **8.4%** de las réplicas bootstrap pareado (se exigía ≥80% para
+  `VALIDATED`). CAGR de Growth50 en locked test: −1.18% anual, Sharpe
+  negativo. Deflated Sharpe Ratio ≈ 1.8e-8 (prácticamente nulo tras
+  corregir por los 17 280 intentos); percentil vs. placebo circular =
+  56% (no se distingue del ruido). Los niveles más conservadores
+  (Conservative, Growth25) sí dieron CAGR positivo (+0.94%/+0.70%) con
+  probabilidad de ruina ≈0, pero los niveles con más apalancamiento
+  (Growth50/75/Max) perdieron dinero en 2020–2026.
+* **Etiqueta: `REJECTED`**, calculada por código (`evaluation.etiqueta`),
+  no por el LLM. Ver `results_published.json` y el `README.md` del
+  experimento.
+
 ## 2026-11-12 (continuación — bloqueo)
 
 * El responsable del proyecto aprobó y bloqueó `PREREGISTRATION.md` v1

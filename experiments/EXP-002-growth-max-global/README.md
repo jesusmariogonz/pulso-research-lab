@@ -1,71 +1,25 @@
-# EXP-002 — Growth-Max Global
+# EXP-002 · Growth-Max Global — espacio del experimento
 
-**Estado actual:** `LOCKED` (2026-11-12). El pre-registro está bloqueado
-con manifiesto de datos citado (207 series, 0 fallidas). Sigue la
-implementación de los módulos (señales, construcción de portafolio,
-walk-forward/bootstrap/placebo) bajo el ciclo TDD con DeepSeek — ver
-`IMPLEMENTATION_SPEC.md` para lo ya construido (`prl.data.macro_vintage`)
-y lo que falta.
+Índice único de todo lo que existe sobre este experimento. **Estado: REJECTED** (etiqueta calculada por código con los criterios pre-registrados).
+Reporte público (pendiente de publicar en el sitio): https://jgonzalez.app/pulso-mercado/research/exp-002-growth-max-global
 
-## Qué es esto
+## Resultado en una línea
+La variante ganadora (seleccionada solo con discovery 2006–2015 y validation 2016–2019, sin tocar el locked test) **no superó al benchmark 60/40 fuera de muestra** (2020–2026): en el nivel Growth50 solo le ganó en el 8.4% de las réplicas bootstrap, muy por debajo del 80% exigido para `VALIDATED`. Deflated Sharpe ≈ 0 tras corregir por los 17 280 intentos.
 
-Cambio deliberado de función objetivo respecto a EXP-001: en vez de
-minimizar drawdown manteniendo CAGR, aquí la pregunta es
+## Documentos (en este directorio)
+| Archivo | Qué es |
+|---|---|
+| `PREREGISTRATION.md` | Pre-registro (v1.5, LOCKED antes de ver datos reales): universo de 65 instrumentos, señales, construcción de portafolio, grilla de 17 280 variantes, split discovery/validation/locked test, criterios de etiqueta. |
+| `IMPLEMENTATION_SPEC.md` | Contrato de implementación por módulo (lo que DeepSeek debe cumplir). |
+| `DATA_INFRA_MACRO_VINTAGE.md` | Diseño de la infraestructura de datos macro point-in-time (ALFRED) que sostiene el régimen macro del experimento. |
+| `results_published.json` | Métricas publicadas: copia exacta de `runs/EXP-002-growth-max-global/20261113T202608Z/results.json`. |
+| `LOG.md` | Bitácora cronológica: decisiones, errores, correcciones. |
 
-> ¿Cuál es la máxima tasa de crecimiento geométrico compuesto alcanzable
-> por un sistema sistemático de selección/asignación/entrada/salida/
-> apalancamiento sobre un universo global de activos, usando solo
-> información disponible en cada momento, y cuáles son los costos y
-> probabilidades de ruina asociados?
+## Código y pruebas
+- Módulos: `src/prl/data/macro_vintage.py`, `src/prl/growth_max/{signals,portfolio,backtest,grid,evaluation,exp002}.py`. Escritos por DeepSeek con ciclo TDD (`implement-module`); los tests y contratos los escribió Claude. El orquestador `exp002.run` es código determinístico: no llama a ningún LLM al ejecutarse.
+- Tests: `tests/test_macro_vintage.py`, `tests/growth_max/`.
+- Evidencia de la corrida real: `runs/EXP-002-growth-max-global/20261113T202608Z/` (datos congelados reales, `n_boot=10000`, semilla 0).
+- Datos congelados: Release `data-2026-11-12` (ver `data/manifest.json`).
 
-El resultado esperado no es un único portafolio, sino una **frontera de
-apetito de riesgo** (CAGR esperado vs. drawdown/probabilidad de ruina),
-de la que más adelante salen los perfiles comerciales de Pulso de Mercado
-(Conservador → Growth 25/50/75/100 → Máximo).
-
-## Decisiones de alcance ya tomadas (2026-11-12)
-
-Antes de ver un solo dato real, el responsable del proyecto decidió:
-
-1. **Invertir primero en infraestructura macro point-in-time** (en vez de
-   arrancar solo con señales de mercado). Sin esto, cualquier señal macro
-   (CPI, PMI, balance de la Fed, etc.) tendría look-ahead, porque el
-   catálogo actual (`data/catalog.yaml`) solo tiene series *revisadas*
-   (el valor "actual", no el que se conocía en cada fecha histórica). Ver
-   `DATA_INFRA_MACRO_VINTAGE.md`.
-2. **Apalancamiento con tope realista + costo de préstamo explícito
-   pre-registrado**, no apalancamiento libre hasta la ruina. No existe en
-   el laboratorio un dato real de costo de margen por activo; inventar un
-   escenario de leverage infinito sin costo sería ficción, no ciencia.
-3. **Grilla grande** (miles de variantes de señales × construcción de
-   portafolio), controlada con disciplina de **discovery set / validation
-   set / locked test set** (en vez de depender solo de corrección
-   Deflated Sharpe sobre una grilla pequeña, como en EXP-001). Esto exige
-   más disciplina operativa: el *locked test set* no se toca hasta el
-   final, bajo ninguna circunstancia, ni siquiera para "mirar si el
-   pipeline corre bien".
-
-## Archivos de este experimento
-
-* `README.md` — este índice.
-* `DATA_INFRA_MACRO_VINTAGE.md` — diseño de la infraestructura de datos
-  macro point-in-time (prerrequisito, fase 0).
-* `IMPLEMENTATION_SPEC.md` — contrato TDD del módulo `prl.data.macro_vintage`
-  (lo implementa DeepSeek vía `implement-module.yml`; lo revisa el
-  responsable del proyecto antes de aceptarlo en `main`).
-* `LOG.md` — bitácora cronológica.
-* `PREREGISTRATION.md` — **`LOCKED`** (2026-11-12). Universo de 65
-  ETFs/índices, señales, construcción de portafolio, grilla de 17 280
-  variantes, split discovery/validation/locked-test, criterios de éxito —
-  todo fijado antes de ver resultados.
-
-## Lo que NO se ha hecho todavía (para que no se asuma)
-
-* El universo y la grilla están **definidos** (pre-registro), pero el
-  código que los implementa (señales, construcción de portafolio,
-  régimen, walk-forward/bootstrap/placebo) **todavía no existe** — falta
-  el ciclo spec+tests+DeepSeek para cada módulo, igual que EXP-001.
-* Nada corrió todavía sobre el locked test set ni sobre ningún dato real
-  más allá de la descarga/congelado (`data/manifest.json`).
-* No se ha tocado `main` del repo `jesus-site`: no hay nada que publicar
-  todavía.
+## Flujo (metodología)
+Pre-registro bloqueado → datos congelados con SHA-256 → cómputo con código fijo (sin LLM en la corrida) → etiqueta determinista (VALIDATED/REJECTED/INCONCLUSIVE, nunca decidida por un LLM). Un resultado negativo se documenta igual que uno positivo.

@@ -34,7 +34,8 @@ repo, y se verifican contra los SHA-256 del manifiesto.
 
 | ID | Tema | Estado |
 |---|---|---|
-| [EXP-001](experiments/EXP-001-emergency-model/PREREGISTRATION.md) | Modelo de emergencia multifactor | `LOCKED` (pre-registro bloqueado; módulos features, state_machine y backtest implementados y revisados; falta la orquestación walk-forward) |
+| [EXP-001](experiments/EXP-001-emergency-model/PREREGISTRATION.md) | Modelo de emergencia multifactor | `INCONCLUSIVE` (cumple 3 de 4 criterios; pocos episodios independientes para distinguir la mejora de ruido — ver [README](experiments/EXP-001-emergency-model/README.md)) |
+| [EXP-002](experiments/EXP-002-growth-max-global/PREREGISTRATION.md) | Growth-Max Global (crecimiento geométrico, universo multi-activo, frontera de apetito de riesgo) | `REJECTED` (no superó al benchmark 60/40 en el locked test 2020–2026 — ver [README](experiments/EXP-002-growth-max-global/README.md)) |
 
 ## Aviso
 
