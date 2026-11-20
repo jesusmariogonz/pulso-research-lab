@@ -36,6 +36,7 @@ repo, y se verifican contra los SHA-256 del manifiesto.
 |---|---|---|
 | [EXP-001](experiments/EXP-001-emergency-model/PREREGISTRATION.md) | Modelo de emergencia multifactor | `INCONCLUSIVE` (cumple 3 de 4 criterios; pocos episodios independientes para distinguir la mejora de ruido — ver [README](experiments/EXP-001-emergency-model/README.md)) |
 | [EXP-002](experiments/EXP-002-growth-max-global/PREREGISTRATION.md) | Growth-Max Global (crecimiento geométrico, universo multi-activo, frontera de apetito de riesgo) | `REJECTED` (no superó al benchmark 60/40 en el locked test 2020–2026 — ver [README](experiments/EXP-002-growth-max-global/README.md)) |
+| [EXP-003](experiments/EXP-003-validacion-motor-produccion/PREREGISTRATION.md) | Validación estadística y robustez del motor de trading algorítmico (3 buckets de producción, repositorio externo `algo_trading_platform`) | **mixto, sin etiqueta única** — ninguno de los 3 buckets muestra ventaja distinguible del azar en DSR/placebo; `riesgo_alto` además `REJECTED` por sesgo de supervivencia; ninguno es frágil a parámetros/sector/ejecución — ver [RESULTADOS](experiments/EXP-003-validacion-motor-produccion/RESULTADOS.md) |
 
 ## Aviso
 
