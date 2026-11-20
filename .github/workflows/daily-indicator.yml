@@ -1,13 +1,15 @@
 name: Indicador diario de estrés
 
-# Calcula el indicador (medidor) cada día hábil por la mañana (6:30am CDMX, antes de la
-# apertura de EE.UU., con el cierre oficial del día anterior ya disponible) y publica
-# public/emergency/latest.json e history.json, que lee el sitio. Cómputo puro: sin LLM,
-# sin llaves. Es informativo y EXPERIMENTAL (ver EXP-001).
+# DESACTIVADO (17-nov-2026): por decisión del autor, el indicador de EXP-001 dejó de
+# actualizarse. El medidor se retiró de la página principal de Pulso de Mercado y su
+# última lectura quedó congelada en la página del experimento. Se quitó el `schedule`;
+# el workflow solo puede correrse a mano (workflow_dispatch). Para reactivarlo, restaurar:
+#   schedule:
+#     - cron: "30 12 * * 1-5"
+# Calcula el indicador a partir de los datos públicos y publica public/emergency/latest.json
+# e history.json. Cómputo puro: sin LLM, sin llaves. Informativo y EXPERIMENTAL (ver EXP-001).
 on:
   workflow_dispatch:
-  schedule:
-    - cron: "30 12 * * 1-5"
 
 permissions:
   contents: write
