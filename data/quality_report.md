@@ -1,11 +1,131 @@
 # Reporte de calidad de datos
 
-Generado (UTC): 2026-11-21T08:17:55.019197+00:00
+Generado (UTC): 2026-11-21T08:45:18.625545+00:00
 
-Series descargadas: **1501** · fallidas: **1**
+Series descargadas: **1621** · fallidas: **1**
 
 | Serie | Fuente | Desde | Hasta | Filas | Errores | Avisos |
 |---|---|---|---|---:|---:|---:|
+| GSPC | yahoo | 1990-01-02 | 2026-11-13 | 9286 | 0 | 0 |
+| SPY | yahoo | 1993-01-29 | 2026-11-13 | 8507 | 0 | 0 |
+| IXIC | yahoo | 1990-01-02 | 2026-11-13 | 9286 | 0 | 0 |
+| QQQ | yahoo | 1999-03-10 | 2026-11-13 | 6965 | 0 | 0 |
+| DIA | yahoo | 1998-01-20 | 2026-11-13 | 7251 | 0 | 0 |
+| IWM | yahoo | 2000-05-26 | 2026-11-13 | 6657 | 0 | 0 |
+| RSP | yahoo | 2003-05-01 | 2026-11-13 | 5924 | 0 | 0 |
+| EFA | yahoo | 2001-08-27 | 2026-11-13 | 6342 | 0 | 0 |
+| EEM | yahoo | 2003-04-14 | 2026-11-13 | 5936 | 0 | 0 |
+| EWJ | yahoo | 1996-03-18 | 2026-11-13 | 7716 | 0 | 0 |
+| VNQ | yahoo | 2004-09-29 | 2026-11-13 | 5568 | 0 | 0 |
+| XLK | yahoo | 1998-12-22 | 2026-11-13 | 7017 | 0 | 0 |
+| XLE | yahoo | 1998-12-22 | 2026-11-13 | 7017 | 0 | 0 |
+| XLF | yahoo | 1998-12-22 | 2026-11-13 | 7017 | 0 | 0 |
+| XLV | yahoo | 1998-12-22 | 2026-11-13 | 7017 | 0 | 0 |
+| XLP | yahoo | 1998-12-22 | 2026-11-13 | 7017 | 0 | 0 |
+| XLU | yahoo | 1998-12-22 | 2026-11-13 | 7017 | 0 | 0 |
+| XLY | yahoo | 1998-12-22 | 2026-11-13 | 7017 | 0 | 0 |
+| XLI | yahoo | 1998-12-22 | 2026-11-13 | 7017 | 0 | 0 |
+| XLB | yahoo | 1998-12-22 | 2026-11-13 | 7017 | 0 | 0 |
+| VIX | yahoo | 1990-01-02 | 2026-11-13 | 9288 | 0 | 1 |
+| VIX3M | yahoo | 2006-07-17 | 2026-11-13 | 5116 | 0 | 1 |
+| VXN | yahoo | 2001-01-23 | 2026-11-13 | 6492 | 0 | 2 |
+| TLT | yahoo | 2002-07-30 | 2026-11-13 | 6114 | 0 | 0 |
+| IEF | yahoo | 2002-07-30 | 2026-11-13 | 6114 | 0 | 0 |
+| SHY | yahoo | 2002-07-30 | 2026-11-13 | 6114 | 0 | 0 |
+| BIL | yahoo | 2007-05-30 | 2026-11-13 | 4898 | 0 | 1 |
+| GLD | yahoo | 2004-11-18 | 2026-11-13 | 5532 | 0 | 0 |
+| TNX | yahoo | 1990-01-02 | 2026-11-13 | 9255 | 0 | 0 |
+| IRX | yahoo | 1990-01-02 | 2026-11-13 | 9255 | 0 | 1 |
+| DXY | yahoo | 1990-01-01 | 2026-11-13 | 9395 | 0 | 0 |
+| HYG | yahoo | 2007-04-11 | 2026-11-13 | 4932 | 0 | 0 |
+| LQD | yahoo | 2002-07-30 | 2026-11-13 | 6114 | 0 | 0 |
+| BAA10Y | fred | 1986-01-02 | 2026-11-12 | 10216 | 0 | 0 |
+| AAA10Y | fred | 1983-01-03 | 2026-11-12 | 10963 | 0 | 0 |
+| DGS10 | fred | 1962-01-02 | 2026-11-12 | 16201 | 0 | 0 |
+| DGS2 | fred | 1976-06-01 | 2026-11-12 | 12609 | 0 | 0 |
+| T10Y2Y | fred | 1976-06-01 | 2026-11-13 | 12610 | 0 | 0 |
+| DTB3 | fred | 1954-01-04 | 2026-11-12 | 18207 | 0 | 0 |
+| USREC | fred | 1854-12-01 | 2026-10-01 | 2063 | 0 | 1 |
+| FED_BALANCE | fred_vintage | 2002-12-18 | 2026-11-11 | 1787 | 0 | 0 |
+| M2 | fred_vintage | 1959-01-01 | 2026-09-01 | 28657 | 0 | 0 |
+| CPI | fred_vintage | 1947-01-01 | 2026-10-01 | 3105 | 258 | 0 |
+| PCE_PRICE | fred_vintage | 1959-01-01 | 2026-09-01 | 8167 | 963 | 0 |
+| IND_PROD | fred_vintage | 1919-01-01 | 2026-09-01 | 38768 | 600 | 0 |
+| UNEMP | fred_vintage | 1948-01-01 | 2026-10-01 | 2199 | 0 | 0 |
+| LEADING | fred_vintage | 1982-01-01 | 2020-02-01 | 26568 | 0 | 0 |
+| FEDFUNDS | fred_vintage | 1954-07-01 | 2026-10-01 | 922 | 0 | 0 |
+| EWG | yahoo | 1996-03-18 | 2026-11-13 | 7716 | 0 | 1 |
+| EWQ | yahoo | 1996-03-18 | 2026-11-13 | 7716 | 0 | 0 |
+| EWU | yahoo | 1996-03-18 | 2026-11-13 | 7716 | 0 | 1 |
+| EWL | yahoo | 1996-03-18 | 2026-11-13 | 7716 | 0 | 0 |
+| EWI | yahoo | 1996-03-18 | 2026-11-13 | 7716 | 0 | 1 |
+| EWP | yahoo | 1996-03-18 | 2026-11-13 | 7716 | 0 | 1 |
+| EWN | yahoo | 1996-03-18 | 2026-11-13 | 7716 | 0 | 1 |
+| EWA | yahoo | 1996-03-18 | 2026-11-13 | 7716 | 0 | 1 |
+| EWH | yahoo | 1996-03-18 | 2026-11-13 | 7716 | 0 | 0 |
+| EWS | yahoo | 1996-03-18 | 2026-11-13 | 7716 | 0 | 1 |
+| EWZ | yahoo | 2000-07-14 | 2026-11-13 | 6624 | 0 | 1 |
+| EWW | yahoo | 1996-03-18 | 2026-11-13 | 7716 | 0 | 0 |
+| EWY | yahoo | 2000-05-12 | 2026-11-13 | 6667 | 0 | 0 |
+| EWT | yahoo | 2000-06-23 | 2026-11-13 | 6638 | 0 | 0 |
+| MCHI | yahoo | 2011-03-31 | 2026-11-13 | 3930 | 0 | 0 |
+| INDA | yahoo | 2012-02-03 | 2026-11-13 | 3717 | 0 | 0 |
+| EIDO | yahoo | 2010-05-07 | 2026-11-13 | 4157 | 0 | 0 |
+| EZA | yahoo | 2003-02-07 | 2026-11-13 | 5981 | 0 | 1 |
+| TUR | yahoo | 2008-03-28 | 2026-11-13 | 4689 | 0 | 0 |
+| EPOL | yahoo | 2010-05-26 | 2026-11-13 | 4144 | 0 | 0 |
+| MTUM | yahoo | 2013-04-18 | 2026-11-13 | 3416 | 0 | 0 |
+| QUAL | yahoo | 2013-07-18 | 2026-11-13 | 3353 | 0 | 0 |
+| USMV | yahoo | 2011-10-20 | 2026-11-13 | 3789 | 0 | 0 |
+| VLUE | yahoo | 2013-04-18 | 2026-11-13 | 3416 | 0 | 1 |
+| TIP | yahoo | 2003-12-05 | 2026-11-13 | 5772 | 0 | 0 |
+| EMB | yahoo | 2007-12-19 | 2026-11-13 | 4756 | 0 | 0 |
+| BNDX | yahoo | 2013-06-04 | 2026-11-13 | 3384 | 0 | 0 |
+| MBB | yahoo | 2007-03-16 | 2026-11-13 | 4949 | 0 | 0 |
+| SLV | yahoo | 2006-04-28 | 2026-11-13 | 5170 | 0 | 1 |
+| USO | yahoo | 2006-04-10 | 2026-11-13 | 5183 | 0 | 1 |
+| UNG | yahoo | 2007-04-18 | 2026-11-13 | 4927 | 0 | 0 |
+| DBC | yahoo | 2006-02-06 | 2026-11-13 | 5227 | 0 | 0 |
+| DBA | yahoo | 2007-01-05 | 2026-11-13 | 4997 | 0 | 0 |
+| UUP | yahoo | 2007-03-01 | 2026-11-13 | 4960 | 0 | 0 |
+| FXE | yahoo | 2005-12-12 | 2026-11-13 | 5264 | 0 | 0 |
+| FXY | yahoo | 2007-02-13 | 2026-11-13 | 4971 | 0 | 0 |
+| FXB | yahoo | 2006-06-26 | 2026-11-13 | 5130 | 0 | 0 |
+| FXF | yahoo | 2006-06-26 | 2026-11-13 | 5130 | 0 | 0 |
+| FXC | yahoo | 2006-06-26 | 2026-11-13 | 5130 | 0 | 0 |
+| FXA | yahoo | 2006-06-26 | 2026-11-13 | 5130 | 0 | 0 |
+| VNQI | yahoo | 2010-11-01 | 2026-11-13 | 4034 | 0 | 0 |
+| AFRM | yahoo | 2021-01-13 | 2026-11-13 | 1467 | 0 | 1 |
+| AGG | yahoo | 2003-09-29 | 2026-11-13 | 5820 | 0 | 0 |
+| AI | yahoo | 2020-12-09 | 2026-11-13 | 1490 | 0 | 1 |
+| ASAN | yahoo | 2020-09-30 | 2026-11-13 | 1539 | 0 | 1 |
+| DKNG | yahoo | 2019-07-25 | 2026-11-13 | 1838 | 0 | 2 |
+| FUBO | yahoo | 2019-03-27 | 2026-11-13 | 1921 | 0 | 2 |
+| FVRR | yahoo | 2019-06-13 | 2026-11-13 | 1867 | 0 | 1 |
+| FXI | yahoo | 2004-10-08 | 2026-11-13 | 5561 | 0 | 0 |
+| IJH | yahoo | 2000-05-26 | 2026-11-13 | 6657 | 0 | 0 |
+| IJR | yahoo | 2000-05-26 | 2026-11-13 | 6657 | 0 | 0 |
+| IONQ | yahoo | 2021-01-04 | 2026-11-13 | 1474 | 0 | 1 |
+| MUB | yahoo | 2007-09-10 | 2026-11-13 | 4827 | 0 | 0 |
+| NET | yahoo | 2019-09-13 | 2026-11-13 | 1803 | 0 | 1 |
+| OPEN | yahoo | 2020-06-18 | 2026-11-13 | 1611 | 0 | 1 |
+| RBLX | yahoo | 2021-03-10 | 2026-11-13 | 1429 | 0 | 1 |
+| RIVN | yahoo | 2021-11-10 | 2026-11-13 | 1258 | 0 | 1 |
+| ROKU | yahoo | 2017-09-28 | 2026-11-06 | 2290 | 0 | 1 |
+| S | yahoo | 2021-06-30 | 2026-11-13 | 1351 | 0 | 1 |
+| SCZ | yahoo | 2007-12-12 | 2026-11-13 | 4761 | 0 | 0 |
+| SHOP | yahoo | 2015-05-20 | 2026-11-13 | 2890 | 0 | 1 |
+| SNAP | yahoo | 2017-03-02 | 2026-11-13 | 2441 | 0 | 1 |
+| SOFI | yahoo | 2021-01-04 | 2026-11-13 | 1474 | 0 | 1 |
+| TTD | yahoo | 2016-09-21 | 2026-11-13 | 2552 | 0 | 1 |
+| U | yahoo | 2020-09-18 | 2026-11-13 | 1547 | 0 | 1 |
+| UPST | yahoo | 2020-12-16 | 2026-11-13 | 1485 | 0 | 1 |
+| VTI | yahoo | 2001-06-15 | 2026-11-13 | 6392 | 0 | 0 |
+| VWO | yahoo | 2005-03-10 | 2026-11-13 | 5456 | 0 | 0 |
+| W | yahoo | 2014-10-02 | 2026-11-13 | 3048 | 0 | 1 |
+| WOLF | yahoo | 2025-09-29 | 2026-11-13 | 285 | 0 | 1 |
+| ZM | yahoo | 2019-04-18 | 2026-11-13 | 1905 | 0 | 1 |
+| ZS | yahoo | 2018-03-16 | 2026-11-13 | 2179 | 0 | 1 |
 | A | yahoo | 1999-11-18 | 2026-11-20 | 6793 | 0 | 1 |
 | AA | yahoo | 1990-01-02 | 2026-11-20 | 9291 | 0 | 1 |
 | AAL | yahoo | 2005-09-27 | 2026-11-20 | 5322 | 0 | 1 |
@@ -1288,7 +1408,7 @@ Series descargadas: **1501** · fallidas: **1**
 | T | yahoo | 1990-01-02 | 2026-11-20 | 9291 | 0 | 0 |
 | TALO | yahoo | 2018-05-10 | 2026-11-20 | 2146 | 0 | 1 |
 | TBBK | yahoo | 2004-02-03 | 2026-11-20 | 5738 | 0 | 2 |
-| TCBI | yahoo | 2026-11-09 | 2026-11-19 | 9 | 0 | 0 |
+| TCBI | yahoo | 2026-11-09 | 2026-11-20 | 10 | 0 | 0 |
 | TDC | yahoo | 2007-10-01 | 2026-11-20 | 4817 | 0 | 1 |
 | TDG | yahoo | 2006-03-15 | 2026-11-20 | 5206 | 0 | 0 |
 | TDS | yahoo | 1990-01-02 | 2026-11-20 | 9291 | 0 | 1 |
@@ -1635,7 +1755,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RETORNOS_EXTREMOS` — 5 días con |retorno| > 25%: 2008-07-22 (-40%), 2008-09-19 (+37%), 2008-10-13 (+26%)
 
 ### AGX
-- [aviso] `RETORNOS_EXTREMOS` — 24 días con |retorno| > 25%: 1995-10-13 (+3100%), 1995-10-24 (+33%), 1995-10-25 (-33%)
+- [aviso] `RETORNOS_EXTREMOS` — 27 días con |retorno| > 25%: 1995-10-13 (+3100%), 1995-10-24 (+33%), 1995-10-25 (-33%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 50 cierres idénticos (posible dato rancio)
 
 ### AGYS
@@ -1716,7 +1836,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RETORNOS_EXTREMOS` — 3 días con |retorno| > 25%: 2019-07-10 (-36%), 2019-12-12 (+45%), 2020-05-11 (+28%)
 
 ### AMT
-- [aviso] `RETORNOS_EXTREMOS` — 5 días con |retorno| > 25%: 2001-11-06 (-35%), 2002-08-07 (-29%), 2002-10-23 (+27%)
+- [aviso] `RETORNOS_EXTREMOS` — 5 días con |retorno| > 25%: 2001-11-06 (-35%), 2002-07-16 (+25%), 2002-08-07 (-29%)
 
 ### AMTM
 - [aviso] `RETORNOS_EXTREMOS` — 1 días con |retorno| > 25%: 2024-09-30 (+26%)
@@ -1994,7 +2114,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RETORNOS_EXTREMOS` — 3 días con |retorno| > 25%: 2008-10-09 (-31%), 2008-11-24 (+38%), 2009-02-27 (+26%)
 
 ### BXMT
-- [aviso] `RETORNOS_EXTREMOS` — 14 días con |retorno| > 25%: 1997-01-10 (+28%), 1997-07-23 (+28%), 1999-12-31 (+25%)
+- [aviso] `RETORNOS_EXTREMOS` — 13 días con |retorno| > 25%: 1997-01-10 (+28%), 1997-07-23 (+28%), 2008-10-10 (+42%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 22 cierres idénticos (posible dato rancio)
 
 ### BYD
@@ -2080,7 +2200,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RETORNOS_EXTREMOS` — 5 días con |retorno| > 25%: 2001-09-17 (-32%), 2020-03-12 (-31%), 2020-03-18 (-27%)
 
 ### CCOI
-- [aviso] `RETORNOS_EXTREMOS` — 28 días con |retorno| > 25%: 2002-02-06 (-37%), 2002-10-16 (-29%), 2002-11-08 (+26%)
+- [aviso] `RETORNOS_EXTREMOS` — 29 días con |retorno| > 25%: 2002-02-06 (-37%), 2002-10-16 (-29%), 2002-11-08 (+26%)
 
 ### CCS
 - [aviso] `RETORNOS_EXTREMOS` — 2 días con |retorno| > 25%: 2020-03-16 (-33%), 2020-03-18 (-28%)
@@ -2144,7 +2264,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RETORNOS_EXTREMOS` — 6 días con |retorno| > 25%: 2016-08-03 (-29%), 2020-03-16 (-43%), 2020-03-18 (-53%)
 
 ### CHRD
-- [aviso] `RETORNOS_EXTREMOS` — 18 días con |retorno| > 25%: 2014-11-28 (-27%), 2016-11-30 (+28%), 2019-08-07 (-31%)
+- [aviso] `RETORNOS_EXTREMOS` — 19 días con |retorno| > 25%: 2014-11-28 (-27%), 2016-11-30 (+28%), 2019-08-07 (-31%)
 
 ### CHTR
 - [aviso] `RETORNOS_EXTREMOS` — 1 días con |retorno| > 25%: 2026-04-24 (-25%)
@@ -2207,7 +2327,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RETORNOS_EXTREMOS` — 2 días con |retorno| > 25%: 2020-12-01 (+31%), 2025-03-27 (+42%)
 
 ### CNXN
-- [aviso] `RETORNOS_EXTREMOS` — 14 días con |retorno| > 25%: 1998-07-08 (+26%), 1998-09-29 (-52%), 1998-12-24 (+59%)
+- [aviso] `RETORNOS_EXTREMOS` — 15 días con |retorno| > 25%: 1998-07-08 (+26%), 1998-09-29 (-52%), 1998-12-24 (+59%)
 
 ### COCO
 - [aviso] `RETORNOS_EXTREMOS` — 1 días con |retorno| > 25%: 2026-04-29 (+30%)
@@ -2240,7 +2360,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RETORNOS_EXTREMOS` — 1 días con |retorno| > 25%: 1999-03-31 (+37%)
 
 ### COO
-- [aviso] `RETORNOS_EXTREMOS` — 12 días con |retorno| > 25%: 1992-11-02 (-27%), 1993-06-07 (+71%), 1993-09-30 (+67%)
+- [aviso] `RETORNOS_EXTREMOS` — 9 días con |retorno| > 25%: 1992-11-02 (-27%), 1993-06-07 (+71%), 1993-09-30 (+67%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 10 cierres idénticos (posible dato rancio)
 
 ### COP
@@ -2374,7 +2494,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RETORNOS_EXTREMOS` — 2 días con |retorno| > 25%: 2008-07-16 (+27%), 2020-03-18 (-26%)
 
 ### DAN
-- [aviso] `RETORNOS_EXTREMOS` — 18 días con |retorno| > 25%: 2008-10-23 (-29%), 2008-11-19 (-44%), 2008-11-20 (+27%)
+- [aviso] `RETORNOS_EXTREMOS` — 18 días con |retorno| > 25%: 2008-10-23 (-29%), 2008-11-19 (-44%), 2008-11-20 (+28%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 20 cierres idénticos (posible dato rancio)
 
 ### DAR
@@ -2551,7 +2671,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 7 cierres idénticos (posible dato rancio)
 
 ### EHC
-- [aviso] `RETORNOS_EXTREMOS` — 17 días con |retorno| > 25%: 1998-09-30 (-28%), 1999-09-10 (-28%), 2002-08-27 (-44%)
+- [aviso] `RETORNOS_EXTREMOS` — 16 días con |retorno| > 25%: 1998-09-30 (-28%), 1999-09-10 (-28%), 2002-08-27 (-44%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 5 cierres idénticos (posible dato rancio)
 
 ### EIX
@@ -2654,7 +2774,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RETORNOS_EXTREMOS` — 5 días con |retorno| > 25%: 2006-05-12 (-26%), 2009-04-30 (+29%), 2011-12-21 (-34%)
 
 ### EXPO
-- [aviso] `RETORNOS_EXTREMOS` — 3 días con |retorno| > 25%: 1991-08-13 (-25%), 1995-10-17 (+28%), 2000-02-10 (+25%)
+- [aviso] `RETORNOS_EXTREMOS` — 2 días con |retorno| > 25%: 1995-10-17 (+28%), 2000-02-10 (+25%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 8 cierres idénticos (posible dato rancio)
 
 ### EXTR
@@ -2668,7 +2788,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 6 cierres idénticos (posible dato rancio)
 
 ### F
-- [aviso] `RETORNOS_EXTREMOS` — 2 días con |retorno| > 25%: 2008-11-26 (+30%), 2008-11-28 (+25%)
+- [aviso] `RETORNOS_EXTREMOS` — 3 días con |retorno| > 25%: 2008-11-19 (-25%), 2008-11-26 (+30%), 2008-11-28 (+25%)
 
 ### FANG
 - [aviso] `RETORNOS_EXTREMOS` — 2 días con |retorno| > 25%: 2020-03-09 (-45%), 2020-11-09 (+31%)
@@ -2868,7 +2988,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 5 cierres idénticos (posible dato rancio)
 
 ### GIII
-- [aviso] `RETORNOS_EXTREMOS` — 21 días con |retorno| > 25%: 1990-09-24 (-26%), 1991-08-13 (+33%), 1994-03-04 (+37%)
+- [aviso] `RETORNOS_EXTREMOS` — 22 días con |retorno| > 25%: 1990-09-24 (-26%), 1991-08-13 (+33%), 1994-03-04 (+37%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 9 cierres idénticos (posible dato rancio)
 
 ### GILD
@@ -2915,14 +3035,14 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RETORNOS_EXTREMOS` — 5 días con |retorno| > 25%: 2001-09-17 (-26%), 2008-11-26 (+42%), 2008-12-01 (-27%)
 
 ### GPK
-- [aviso] `RETORNOS_EXTREMOS` — 12 días con |retorno| > 25%: 1999-11-02 (+29%), 2000-01-03 (+42%), 2000-03-10 (+33%)
+- [aviso] `RETORNOS_EXTREMOS` — 11 días con |retorno| > 25%: 1999-11-02 (+29%), 2000-01-03 (+42%), 2000-03-10 (+33%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 6 cierres idénticos (posible dato rancio)
 
 ### GRBK
 - [aviso] `RETORNOS_EXTREMOS` — 36 días con |retorno| > 25%: 2008-08-12 (-63%), 2008-08-13 (+40%), 2008-08-14 (+38%)
 
 ### GS
-- [aviso] `RETORNOS_EXTREMOS` — 2 días con |retorno| > 25%: 2008-10-13 (+25%), 2008-11-24 (+26%)
+- [aviso] `RETORNOS_EXTREMOS` — 1 días con |retorno| > 25%: 2008-11-24 (+26%)
 
 ### GSHD
 - [aviso] `RETORNOS_EXTREMOS` — 1 días con |retorno| > 25%: 2024-07-25 (+29%)
@@ -2998,7 +3118,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 5 cierres idénticos (posible dato rancio)
 
 ### HL
-- [aviso] `RETORNOS_EXTREMOS` — 12 días con |retorno| > 25%: 2000-11-20 (+25%), 2000-11-27 (+30%), 2001-01-04 (+25%)
+- [aviso] `RETORNOS_EXTREMOS` — 10 días con |retorno| > 25%: 2000-11-27 (+30%), 2001-05-16 (+27%), 2001-05-18 (+28%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 7 cierres idénticos (posible dato rancio)
 
 ### HLIT
@@ -3045,7 +3165,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 6 cierres idénticos (posible dato rancio)
 
 ### HSTM
-- [aviso] `RETORNOS_EXTREMOS` — 15 días con |retorno| > 25%: 2000-06-01 (+36%), 2000-08-08 (-25%), 2000-11-21 (-33%)
+- [aviso] `RETORNOS_EXTREMOS` — 16 días con |retorno| > 25%: 2000-06-01 (+36%), 2000-11-20 (-25%), 2000-11-21 (-33%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 6 cierres idénticos (posible dato rancio)
 
 ### HSY
@@ -3081,7 +3201,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RETORNOS_EXTREMOS` — 1 días con |retorno| > 25%: 2020-03-24 (+26%)
 
 ### HXL
-- [aviso] `RETORNOS_EXTREMOS` — 6 días con |retorno| > 25%: 1993-12-08 (-60%), 1993-12-13 (+25%), 1993-12-31 (+28%)
+- [aviso] `RETORNOS_EXTREMOS` — 5 días con |retorno| > 25%: 1993-12-08 (-60%), 1993-12-31 (+28%), 1994-08-31 (+28%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 6 cierres idénticos (posible dato rancio)
 
 ### HZN
@@ -3141,7 +3261,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RETORNOS_EXTREMOS` — 14 días con |retorno| > 25%: 1994-11-07 (+26%), 1999-09-13 (-34%), 1999-10-04 (-28%)
 
 ### INDB
-- [aviso] `RETORNOS_EXTREMOS` — 32 días con |retorno| > 25%: 1990-07-31 (+33%), 1990-09-14 (+27%), 1990-09-19 (+27%)
+- [aviso] `RETORNOS_EXTREMOS` — 31 días con |retorno| > 25%: 1990-07-31 (+33%), 1990-08-01 (-25%), 1990-09-14 (+27%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 17 cierres idénticos (posible dato rancio)
 
 ### INSP
@@ -3183,7 +3303,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RETORNOS_EXTREMOS` — 11 días con |retorno| > 25%: 1995-07-18 (-25%), 1996-05-31 (-32%), 1996-09-11 (-28%)
 
 ### IVT
-- [aviso] `RETORNOS_EXTREMOS` — 18 días con |retorno| > 25%: 2014-12-18 (-27%), 2015-02-11 (-43%), 2015-03-30 (+43%)
+- [aviso] `RETORNOS_EXTREMOS` — 17 días con |retorno| > 25%: 2014-12-18 (-27%), 2015-02-11 (-43%), 2015-03-30 (+43%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 302 cierres idénticos (posible dato rancio)
 
 ### IVZ
@@ -3197,7 +3317,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 5 cierres idénticos (posible dato rancio)
 
 ### JBL
-- [aviso] `RETORNOS_EXTREMOS` — 4 días con |retorno| > 25%: 1993-07-29 (-25%), 1995-12-15 (-42%), 1996-01-31 (-34%)
+- [aviso] `RETORNOS_EXTREMOS` — 5 días con |retorno| > 25%: 1993-07-29 (-25%), 1993-12-22 (+25%), 1995-12-15 (-42%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 7 cierres idénticos (posible dato rancio)
 
 ### JBLU
@@ -3219,7 +3339,7 @@ Series descargadas: **1501** · fallidas: **1**
 
 ### JHX
 - [aviso] `RETORNOS_EXTREMOS` — 1 días con |retorno| > 25%: 2025-08-20 (-34%)
-- [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 8 cierres idénticos (posible dato rancio)
+- [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 10 cierres idénticos (posible dato rancio)
 
 ### JJSF
 - [aviso] `RETORNOS_EXTREMOS` — 1 días con |retorno| > 25%: 1992-06-18 (-28%)
@@ -3308,7 +3428,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 6 cierres idénticos (posible dato rancio)
 
 ### LAD
-- [aviso] `RETORNOS_EXTREMOS` — 6 días con |retorno| > 25%: 2008-02-21 (-32%), 2008-10-27 (-28%), 2008-10-29 (+123%)
+- [aviso] `RETORNOS_EXTREMOS` — 5 días con |retorno| > 25%: 2008-02-21 (-32%), 2008-10-27 (-28%), 2008-10-29 (+123%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 5 cierres idénticos (posible dato rancio)
 
 ### LAMR
@@ -3321,7 +3441,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RETORNOS_EXTREMOS` — 5 días con |retorno| > 25%: 2018-01-12 (+28%), 2020-04-23 (+27%), 2020-04-29 (+35%)
 
 ### LCII
-- [aviso] `RETORNOS_EXTREMOS` — 5 días con |retorno| > 25%: 1990-05-17 (+55%), 1991-05-08 (+33%), 1991-05-22 (+33%)
+- [aviso] `RETORNOS_EXTREMOS` — 7 días con |retorno| > 25%: 1990-05-17 (+55%), 1991-05-08 (+33%), 1991-05-09 (-25%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 13 cierres idénticos (posible dato rancio)
 
 ### LECO
@@ -3467,7 +3587,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 7 cierres idénticos (posible dato rancio)
 
 ### MCRI
-- [aviso] `RETORNOS_EXTREMOS` — 10 días con |retorno| > 25%: 1994-01-06 (+27%), 1996-08-22 (+39%), 1997-04-29 (+33%)
+- [aviso] `RETORNOS_EXTREMOS` — 10 días con |retorno| > 25%: 1994-01-06 (+27%), 1996-08-22 (+39%), 1997-04-29 (+32%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 12 cierres idénticos (posible dato rancio)
 
 ### MD
@@ -3506,7 +3626,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 6 cierres idénticos (posible dato rancio)
 
 ### MIDD
-- [aviso] `RETORNOS_EXTREMOS` — 13 días con |retorno| > 25%: 1990-08-22 (-26%), 1990-12-21 (+63%), 1991-05-14 (+27%)
+- [aviso] `RETORNOS_EXTREMOS` — 15 días con |retorno| > 25%: 1990-08-22 (-26%), 1990-12-21 (+63%), 1991-05-14 (+27%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 28 cierres idénticos (posible dato rancio)
 
 ### MKTX
@@ -4004,7 +4124,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 5 cierres idénticos (posible dato rancio)
 
 ### POWI
-- [aviso] `RETORNOS_EXTREMOS` — 5 días con |retorno| > 25%: 2000-03-24 (-40%), 2000-04-18 (+40%), 2000-12-08 (+27%)
+- [aviso] `RETORNOS_EXTREMOS` — 4 días con |retorno| > 25%: 2000-03-24 (-40%), 2000-04-18 (+40%), 2000-12-08 (+27%)
 
 ### POWL
 - [aviso] `RETORNOS_EXTREMOS` — 6 días con |retorno| > 25%: 1993-01-14 (+26%), 2001-09-28 (+27%), 2020-03-19 (+30%)
@@ -4022,7 +4142,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 6 cierres idénticos (posible dato rancio)
 
 ### PR
-- [aviso] `RETORNOS_EXTREMOS` — 11 días con |retorno| > 25%: 2019-09-16 (+32%), 2020-03-09 (-63%), 2020-03-12 (+25%)
+- [aviso] `RETORNOS_EXTREMOS` — 10 días con |retorno| > 25%: 2019-09-16 (+32%), 2020-03-09 (-63%), 2020-03-17 (-33%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 10 cierres idénticos (posible dato rancio)
 
 ### PRDO
@@ -4165,7 +4285,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 6 cierres idénticos (posible dato rancio)
 
 ### RGLD
-- [aviso] `RETORNOS_EXTREMOS` — 50 días con |retorno| > 25%: 1990-10-23 (-27%), 1990-10-24 (+50%), 1990-10-25 (-25%)
+- [aviso] `RETORNOS_EXTREMOS` — 56 días con |retorno| > 25%: 1990-10-23 (-27%), 1990-10-24 (+50%), 1990-10-25 (-25%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 61 cierres idénticos (posible dato rancio)
 
 ### RH
@@ -4217,7 +4337,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RETORNOS_EXTREMOS` — 1 días con |retorno| > 25%: 2008-10-13 (+26%)
 
 ### RRC
-- [aviso] `RETORNOS_EXTREMOS` — 14 días con |retorno| > 25%: 1990-04-10 (-67%), 1990-04-16 (+25%), 1990-04-25 (+33%)
+- [aviso] `RETORNOS_EXTREMOS` — 9 días con |retorno| > 25%: 1990-04-10 (-67%), 1990-04-25 (+33%), 1990-05-22 (+40%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 68 cierres idénticos (posible dato rancio)
 
 ### RRR
@@ -4250,7 +4370,7 @@ Series descargadas: **1501** · fallidas: **1**
 
 ### SAFE
 - [error] `PRECIO_NO_POSITIVO` — 994 precios <= 0
-- [aviso] `RETORNOS_EXTREMOS` — 40 días con |retorno| > 25%: 1993-12-06 (-126%), 1994-01-20 (+27%), 1994-08-01 (-26%)
+- [aviso] `RETORNOS_EXTREMOS` — 36 días con |retorno| > 25%: 1993-12-06 (-126%), 1994-01-20 (+27%), 1994-08-01 (-26%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 48 cierres idénticos (posible dato rancio)
 
 ### SAFT
@@ -4276,7 +4396,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RETORNOS_EXTREMOS` — 1 días con |retorno| > 25%: 2008-11-26 (+28%)
 
 ### SBRA
-- [aviso] `RETORNOS_EXTREMOS` — 24 días con |retorno| > 25%: 2002-08-21 (-33%), 2002-11-18 (-34%), 2002-11-21 (+33%)
+- [aviso] `RETORNOS_EXTREMOS` — 26 días con |retorno| > 25%: 2002-08-21 (-33%), 2002-11-18 (-34%), 2002-11-21 (+33%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 7 cierres idénticos (posible dato rancio)
 
 ### SBSI
@@ -4346,14 +4466,14 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 6 cierres idénticos (posible dato rancio)
 
 ### SIG
-- [aviso] `RETORNOS_EXTREMOS` — 49 días con |retorno| > 25%: 1992-04-30 (+27%), 1992-06-25 (+25%), 1992-07-22 (+25%)
+- [aviso] `RETORNOS_EXTREMOS` — 47 días con |retorno| > 25%: 1991-11-11 (-25%), 1992-04-30 (+27%), 1992-06-25 (+25%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 15 cierres idénticos (posible dato rancio)
 
 ### SIGI
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 5 cierres idénticos (posible dato rancio)
 
 ### SIRI
-- [aviso] `RETORNOS_EXTREMOS` — 28 días con |retorno| > 25%: 1995-01-06 (+100%), 1996-03-01 (+28%), 1996-04-30 (+27%)
+- [aviso] `RETORNOS_EXTREMOS` — 29 días con |retorno| > 25%: 1995-01-06 (+100%), 1996-03-01 (+28%), 1996-04-30 (+27%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 6 cierres idénticos (posible dato rancio)
 
 ### SITM
@@ -4744,7 +4864,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RETORNOS_EXTREMOS` — 1 días con |retorno| > 25%: 2000-01-06 (-39%)
 
 ### URI
-- [aviso] `RETORNOS_EXTREMOS` — 3 días con |retorno| > 25%: 1998-08-31 (-25%), 2007-11-14 (-31%), 2008-09-18 (+31%)
+- [aviso] `RETORNOS_EXTREMOS` — 2 días con |retorno| > 25%: 2007-11-14 (-31%), 2008-09-18 (+31%)
 
 ### USB
 - [aviso] `RETORNOS_EXTREMOS` — 1 días con |retorno| > 25%: 1992-04-20 (+29%)
@@ -4844,7 +4964,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RETORNOS_EXTREMOS` — 11 días con |retorno| > 25%: 1999-12-10 (+28%), 2000-04-04 (-26%), 2000-04-05 (+29%)
 
 ### VSEC
-- [aviso] `RETORNOS_EXTREMOS` — 10 días con |retorno| > 25%: 1992-02-06 (+25%), 1995-08-18 (+66%), 1998-11-04 (+91%)
+- [aviso] `RETORNOS_EXTREMOS` — 9 días con |retorno| > 25%: 1995-08-18 (+66%), 1998-11-04 (+91%), 2000-04-05 (+30%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 24 cierres idénticos (posible dato rancio)
 
 ### VSH
@@ -4988,7 +5108,7 @@ Series descargadas: **1501** · fallidas: **1**
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 6 cierres idénticos (posible dato rancio)
 
 ### WT
-- [aviso] `RETORNOS_EXTREMOS` — 81 días con |retorno| > 25%: 1996-05-23 (+25%), 1996-06-28 (+26%), 1998-07-07 (+33%)
+- [aviso] `RETORNOS_EXTREMOS` — 75 días con |retorno| > 25%: 1996-05-23 (+25%), 1996-06-28 (+26%), 1998-07-07 (+33%)
 - [aviso] `RACHA_DE_PRECIOS_IDENTICOS` — racha máxima de 46 cierres idénticos (posible dato rancio)
 
 ### WTRG

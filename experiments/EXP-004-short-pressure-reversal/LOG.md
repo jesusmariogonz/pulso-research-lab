@@ -109,3 +109,41 @@ mismo patrón que el resto del repo).
 **Siguiente paso**: contrato de implementación (`IMPLEMENTATION_SPEC.md`)
 para los módulos de cómputo vía DeepSeek (features, grid, baselines,
 evaluation, orquestador) — todavía no empieza.
+
+## 2026-11-21 — Corrección: bug de `construir(only=...)` en `build.py`
+
+Antes de cerrar la fase de arriba, verificando el manifiesto final a
+mano se encontró que `src/prl/data/build.py::construir()` siempre
+partía de un manifiesto VACÍO, nunca cargaba el existente — correr
+`construir(only=["sp1500_short_pressure"])` había borrado las 207
+series de ETF/macro de EXP-001/EXP-002 de `data/manifest.json`
+(SPY, GSPC, VIX, etc.), dejando solo las 1,501 acciones nuevas. Los
+archivos crudos en `data/raw/` seguían intactos (nada se perdió de
+verdad), pero el manifiesto —la prueba de hash/procedencia que
+sostiene la reproducibilidad ya publicada de esos 2 experimentos—
+quedó incompleto. Es un bug pre-existente de `build.py` (nunca antes
+se había usado `only` con un universo nuevo sobre un manifiesto ya
+poblado), no algo introducido por la corrida de EXP-004 en sí.
+
+**Corrección**: `construir()` ahora carga el manifiesto previo (si
+existe) como base y solo actualiza las series que procesa esa corrida
+(limpiando su entrada vieja de `series`/`fallidas` antes de
+reintentarla, para que una serie que antes falló y ahora tiene éxito
+no quede duplicada en ambos lados). 4 tests de regresión nuevos en
+`tests/test_build.py` (no existía ningún test para este módulo antes)
+— cubren: corrida sin `only`, corrida con `only` no debe borrar una
+serie de una corrida previa, re-correr una serie existente debe
+actualizarla, y una serie que falló y luego tiene éxito debe salir de
+`fallidas`.
+
+Se restauró `data/manifest.json`/`quality_report.md` al estado previo
+al bug (las 207 series intactas) y se volvió a correr la descarga real
+del universo de EXP-004 con el código ya corregido — no hizo falta
+re-descargar los datos de FINRA (módulo separado, no afectado).
+**Resultado final correcto: 1,621 series únicas** (207 originales +
+1,501 nuevas, con ~87 traslapes esperados entre el universo
+`trading_universe` ya existente y el `sp1500_short_pressure` nuevo —
+mismo ticker, la entrada queda con los datos de la corrida más
+reciente, sin duplicarse). Único fallo: `CWEN-A`, igual que antes.
+
+**Suite completa: 211/211 tests pasan** (207 + 4 nuevos). Pusheado.

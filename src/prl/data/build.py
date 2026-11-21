@@ -146,15 +146,24 @@ def construir(only: list[str] | None = None) -> dict:
             for sym in archivo.read_text().split():
                 objetivos.append({"id": sym, "source": "yahoo", "symbol": sym, "role": f"universe:{u['id']}", "notes": u["notes"]})
 
+    # Con `only`, esta corrida toca solo un subconjunto del catálogo — el
+    # manifiesto previo (si existe) se usa como base y se actualiza en vez
+    # de reemplazarse entero, para no perder el hash/procedencia de series
+    # ya congeladas por una corrida anterior con un `only` distinto (bug
+    # real encontrado el 2026-11-21: `construir(only=[...])` para EXP-004
+    # había borrado las 207 series de EXP-001/EXP-002 del manifiesto).
+    previo = json.loads(MANIFIESTO.read_text()) if MANIFIESTO.exists() else None
     manifiesto = {
         "generado_utc": datetime.now(timezone.utc).isoformat(),
         "librerias": {"pandas": pd.__version__, "python": sys.version.split()[0]},
-        "series": {},
-        "fallidas": {},
+        "series": dict(previo["series"]) if previo else {},
+        "fallidas": dict(previo["fallidas"]) if previo else {},
     }
     descargadores = {"yahoo": descargar_yahoo, "fred": descargar_fred, "fred_vintage": descargar_fred_vintage}
     resultados_validacion = {}
     for s in objetivos:
+        manifiesto["fallidas"].pop(s["id"], None)
+        manifiesto["series"].pop(s["id"], None)
         try:
             df = descargadores[s["source"]](s["symbol"])
         except Exception as e:  # noqa: BLE001 - se reporta, no se esconde
