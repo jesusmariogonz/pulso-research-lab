@@ -1,0 +1,22 @@
+{
+  "generado_utc": "2026-11-21T08:14:13.620736+00:00",
+  "n_sp500": 503,
+  "n_sp400": 400,
+  "n_sp600": 603,
+  "n_universo_final": 1502,
+  "fuentes": {
+    "sp500": {
+      "url": "https://raw.githubusercontent.com/datasets/s-and-p-500-companies/main/data/constituents.csv",
+      "sha256": "5307d7ebfe868913b59c53463993b4ce4544a9bd031cf9d4fe4f093d743c4995"
+    },
+    "sp400": {
+      "url": "https://en.wikipedia.org/wiki/List_of_S%26P_400_companies",
+      "sha256": "5e08976f7f6341ec3b40a5f4d84d67be354860e4a629221c7f4730f4009e9256"
+    },
+    "sp600": {
+      "url": "https://en.wikipedia.org/wiki/List_of_S%26P_600_companies",
+      "sha256": "666e07b0fce48e71ffa0145b0bb3d468d4ebf7c22228234b612c187342f5c417"
+    }
+  },
+  "limitacion": "Constituyentes ACTUALES, no point-in-time históricos. Elimina sesgo de selección manual con hindsight; NO elimina sesgo de supervivencia completo (empresas que salieron de estos 3 índices entre 2019-2026 no aparecen)."
+}

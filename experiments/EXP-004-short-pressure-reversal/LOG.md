@@ -39,3 +39,73 @@ fijados antes de correr nada.
 **Siguiente paso**: fase de infraestructura de datos (precios de
 ~1,500 acciones + short volume/interest de FINRA) — no se ha corrido
 nada todavía, no se ha tocado ningún dato real.
+
+## 2026-11-21 — Infraestructura de datos (universo, FINRA, precios)
+
+Construidos 2 módulos nuevos, escritos directamente (no vía DeepSeek:
+son plomería de red/parsing, mismo criterio que `build.py` existente —
+`macro_vintage.py` sí fue vía DeepSeek por ser cómputo de
+reconstrucción point-in-time, categoría distinta).
+
+**`src/prl/data/equity_universe.py`** — universo S&P 1500: descarga
+real de S&P 500 (GitHub) + S&P 400 + S&P 600 (Wikipedia, confirmado
+parseable con `pandas.read_html` + `lxml`, agregado a `pyproject.toml`).
+Normaliza símbolos tipo "BRK.B"→"BRK-B" (gotcha real de yfinance).
+**Resultado real: 1,502 símbolos únicos** (S&P500=503, S&P400=400,
+S&P600=603, con solapamiento esperado entre índices). Congelado en
+`data/universes/sp1500_short_pressure.txt` + manifiesto con hash
+SHA-256 de cada fuente cruda. Agregado a `data/catalog.yaml` como
+`universes: sp1500_short_pressure`, reusando el mecanismo YA existente
+(`trading_universe` ya lo usaba) — no hizo falta tocar `build.py`.
+5 tests, todos sobre funciones puras (parsing/normalización/dedupe),
+nunca contra la red real.
+
+**`src/prl/data/finra.py`** — short volume diario + short interest
+bi-mensual, con el mecanismo point-in-time explícito (`fecha_publicacion`
+= settlement + 7 días hábiles; `ultimo_short_interest_vigente` nunca
+devuelve un snapshot antes de su fecha de publicación real — probado
+explícitamente con un caso que distingue "antes de publicarse" de
+"después"). 8 tests sobre funciones puras.
+
+**Bug real encontrado y corregido antes de confiar en el parseo**: el
+archivo de short volume diario trae una línea de pie con el conteo de
+registros (un solo campo, sin pipes, ej. "12343") que `pandas.read_csv`
+no rechaza — la rellena con NaN en el resto de columnas, y revienta
+después al convertir esa fila a fecha. Se corrigió descartando filas
+incompletas antes de la conversión de tipos, con test de regresión
+(`test_parse_short_volume_diario_descarta_linea_de_pie`).
+
+**Descarga real completa 2019-02-01 → 2026-11-21** (filtrada al
+universo de 1,502 símbolos antes de acumular, con `ThreadPoolExecutor`
+de 10 hilos — ambas fuentes cubren TODO el mercado, no solo nuestro
+universo):
+* Short volume diario: 2,036 días hábiles intentados, **1,963
+  exitosos**, 73 fallidos — los 73 son feriados bursátiles reales
+  (verificados uno por uno contra el calendario: Good Friday, Memorial
+  Day, Juneteenth, 4 de julio, Labor Day, Thanksgiving, Navidad, Año
+  Nuevo, MLK, Presidents Day — cero fallos "raros"). 2,723,471 filas.
+  Tiempo real: 224.4s (~3.7 min).
+* Short interest bi-mensual: 187 settlements intentados, **186
+  exitosos** — el único fallido (2026-11-13, el settlement de
+  noviembre ajustado por caer el 15 en domingo) todavía no se ha
+  publicado (7 días hábiles después caen después de hoy) — es el
+  comportamiento point-in-time CORRECTO, no un error. 258,109 filas.
+  Tiempo real: 31.7s.
+* Ambas consolidadas en un parquet único por fuente (no miles de
+  archivos sueltos) + `data/raw/finra_manifest.json`.
+
+**Precios/indicadores (reusando `build.py` existente sin tocarlo, vía
+`construir(only=["sp1500_short_pressure"])`)**: **1,501 de 1,502
+símbolos exitosos** en 13.1 minutos. Único fallo: `CWEN-A` (Clearway
+Energy clase A) — yfinance no devuelve datos para ese símbolo exacto
+("possibly delisted"), probablemente necesita otro formato de ticker;
+documentado en `data/manifest.json["fallidas"]` por el propio
+mecanismo existente de `build.py`, no se ocultó ni se forzó.
+
+**Suite completa: 207/207 tests pasan** (sin regresión en nada
+existente). `data/raw/` creció a 461MB (gitignored, no se commitea —
+mismo patrón que el resto del repo).
+
+**Siguiente paso**: contrato de implementación (`IMPLEMENTATION_SPEC.md`)
+para los módulos de cómputo vía DeepSeek (features, grid, baselines,
+evaluation, orquestador) — todavía no empieza.

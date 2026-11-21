@@ -165,3 +165,4 @@ series:
 # retornos absolutos.
 universes:
   - {id: trading_universe, file: universes/trading_universe.txt, notes: "Sesgo de supervivencia: solo tickers vivos hoy."}
+  - {id: sp1500_short_pressure, file: universes/sp1500_short_pressure.txt, notes: "EXP-004 (Short Pressure Reversal). S&P 500+400+600 ACTUALES (ver data/universes/sp1500_short_pressure_manifest.json para fuentes/hashes). Elimina selección manual con hindsight; NO elimina sesgo de supervivencia completo."}
