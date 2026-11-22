@@ -48,3 +48,56 @@ construye (mismo criterio que la Capa 5 de EXP-003 de
 **Siguiente paso**: construir `prl.reverse_winners.features` (módulo
 de indicadores técnicos + discriminación estadística) — no se ha
 corrido nada todavía, no se ha tocado ningún dato real.
+
+## Módulo `prl.reverse_winners.features` implementado
+
+Se escribió `IMPLEMENTATION_SPEC.md` con el contrato completo de
+`prl.reverse_winners.features`: 15 funciones base (momentum,
+distancia_sma, cruce_sma, atr, volatilidad_realizada, volumen_relativo,
+volume_spike_zscore, rsi, drawdown_previo, gap, fuerza_relativa, beta,
+sharpe_reciente, distancia_extremo, aceleracion) con fórmula y reglas
+de borde exactas, el ensamblador `calcular_features_simbolo` (20
+columnas con nombres y parámetros fijos), `universo_elegible`,
+`features_cross_sectional`, `normalizar_percentil_cross_sectional`,
+`discriminacion_features` y `features_discriminantes`, más 11 casos de
+prueba obligatorios. ~40 tests escritos en
+`tests/reverse_winners/test_reverse_winners_features.py` antes de
+mandar nada a DeepSeek.
+
+DeepSeek implementó el módulo vía `implement-module.yml` (2
+iteraciones, veredicto `TESTS_PASAN`). El workflow no abrió el PR
+automático (el `gh pr create` del workflow falló en silencio — ver
+nota técnica abajo); se revisó la rama `implement/
+reverse_winners_features-20261122T232029Z` directamente: lectura
+completa de las 399 líneas contra el contrato (propagación de NaN,
+manejo de booleanos nullable en `cruce_sma`, las tres ramas exactas de
+`rsi` para gain/loss=0, el guard de `volume_spike_zscore` cuando la
+desviación es cero, el orden determinístico de
+`discriminacion_features`) y re-ejecución independiente de la suite en
+un `git worktree` aislado (31 passed) antes de mergear a `main` por
+fast-forward.
+
+**Bug encontrado y corregido tras el merge** (no antes, porque no se
+había corrido la suite completa con el módulo nuevo adentro):
+`tests/reverse_winners/test_features.py` compartía basename con
+`tests/emergency/test_features.py`; como ningún directorio de `tests/`
+usa `__init__.py`, pytest exige basenames únicos en todo el árbol y la
+colección completa se interrumpía con error. Se corrigió renombrando a
+`test_reverse_winners_features.py` (mismo criterio que ya usa
+`growth_max` para sus propios archivos de test) y actualizando la
+entrada `MODULOS["reverse_winners_features"]` en `src/prl/implement.py`.
+Re-verificado: suite completa 242 passed (211 previos + 31 nuevos).
+
+Nota técnica sobre el PR automático: el workflow intentó `gh pr create
+|| echo "No se pudo abrir el PR."`, que se tragó el error sin dejar
+rastro visible más allá del log del run. Al no haber PR, la revisión
+se hizo directamente sobre la rama (lectura de código + test
+independiente) y el merge se hizo a mano — no se saltó la revisión
+humana, solo el mecanismo de PR.
+
+**Pendiente**: construir la grilla cerrada de buckets (hasta 243
+variantes), los baselines (incluyendo el de momentum simple que decide
+si el experimento aporta algo), el módulo de evaluación
+(DSR/PBO/placebo/concentración) y el orquestador — todavía no se ha
+tocado ningún dato real de precios, solo se construyó y verificó el
+módulo de features.
