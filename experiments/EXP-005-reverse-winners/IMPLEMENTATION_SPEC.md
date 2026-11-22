@@ -560,3 +560,301 @@ EXP-002.
 Todas las series/tablas de prueba son sintéticas, construidas a mano.
 Los tests de bootstrap/placebo usan `n_replicas`/`n_placebos` chicos
 (decenas) para que la suite corra rápido.
+
+## `prl.reverse_winners.exp005` (orquestador)
+
+A diferencia de los módulos anteriores, **este sí importa** a
+`prl.reverse_winners.{features, grid, baselines, evaluation}` — su
+trabajo es conectarlos con datos reales, igual que
+`prl.growth_max.exp002` hace para EXP-002. Hace E/S (lee `.parquet` de
+`inputs_dir` y un archivo de texto de universo, escribe
+`run_dir/results.json`) y usa `json`/`pathlib` además de
+`pandas`/`numpy`. Debe ser **determinista**: mismas entradas → mismo
+`results.json` byte a byte. Tests en
+`tests/reverse_winners/test_reverse_winners_exp005.py`.
+
+### Funciones puras auxiliares (testeables sin tocar datos reales)
+
+* `ajustar_ohlc(df: pd.DataFrame) -> pd.DataFrame`: `df` tiene columnas
+  `["open", "high", "low", "close", "adj_close", "volume"]` (formato de
+  `data/raw/*.parquet`). `factor = adj_close / close` fila por fila,
+  **con una excepción explícita**: donde `close` sea `0` o `NaN`, el
+  `factor` se fuerza a `NaN` (`.mask(close.isna() | (close == 0))`) —
+  **no basta con la división estándar**, porque `x / 0.0` da `inf`, no
+  `NaN` (solo `0/0` da `NaN` de forma natural); este caso debe quedar
+  `NaN` siempre, nunca `inf`. Si `adj_close` es `NaN` con `close`
+  distinto de `0`, el resultado natural de la división (`NaN`) ya es
+  correcto sin necesidad de máscara adicional. Devuelve un
+  `DataFrame` con columnas `["open", "high", "low", "close", "volume"]`
+  donde `close = adj_close` (directo, no recalculado), `open = open *
+  factor`, `high = high * factor`, `low = low * factor`, `volume` sin
+  cambios — esto evita que splits/dividendos sin ajustar generen saltos
+  artificiales en momentum/ATR/gap sobre 17 años de historia (mismo
+  motivo por el que el resto del proyecto usa `adj_close` para
+  retornos, ver `src/prl/runner.py`).
+* `fechas_t0(calendario: pd.DatetimeIndex, inicio: str, paso: int = 10)
+  -> pd.DatetimeIndex`: de `calendario` (ya ordenado ascendente), toma
+  las fechas `>= inicio`, y de esa subserie toma una de cada `paso`
+  posiciones empezando por la posición `0` (`subserie[::paso]`).
+* `retorno_forward(precio_cierre: pd.Series, dias: int) -> pd.Series`:
+  `precio_cierre.shift(-dias) / precio_cierre - 1`. `NaN` en las
+  últimas `dias` filas (no hay suficiente futuro).
+
+### `run(inputs_dir, universo_path, run_dir, benchmark="SPY", discovery_start="2010-01-01", discovery_end="2018-12-31", validation_end="2021-12-31", paso_dias=10, min_historia=252, ventana_forward=30, pct_ganadores=0.10, umbral_correlacion=0.05, max_features=5, min_senales_discovery=30, max_frac_ticker=0.20, n_particiones_pbo=10, n_boot=10000, n_placebos=1000, seed=0) -> dict`
+
+Escribe `run_dir/results.json` (`NaN`/`NaT` → `null`) y lo devuelve.
+Pasos:
+
+1. **Universo**: lee `universo_path` (un símbolo por línea, texto
+   plano) → lista ordenada tal cual el archivo (no se reordena).
+   Agrega `benchmark` por separado (no es parte del universo
+   seleccionable, solo referencia). Lee `inputs_dir/<símbolo>.parquet`
+   para cada uno (incluido `benchmark`); si un archivo no existe para
+   un símbolo del universo, se omite ese símbolo — se agrega a `notes`
+   una entrada que incluya literalmente el nombre del símbolo (p. ej.
+   `f"{símbolo}: sin archivo de datos, omitido"`), no se lanza
+   excepción (un símbolo sin datos no bloquea el resto). Aplica
+   `ajustar_ohlc` a cada uno.
+2. **Features por símbolo, historia completa (no truncada por
+   fecha)**: para cada símbolo del universo, llama
+   `features.calcular_features_simbolo(df_ajustado, benchmark_ajustado
+   .reindex(df_ajustado.index))` **una sola vez**, sobre toda su
+   historia disponible — no una vez por cada fecha de corte. Esto es
+   **matemáticamente equivalente** a llamar
+   `features.features_cross_sectional` fecha por fecha (los bloques de
+   `calcular_features_simbolo` son estrictamente hacia atrás —
+   `rolling`/`shift`—, nunca usan una fila futura, así que el valor en
+   la fila de fecha *t* calculado sobre la historia completa es
+   idéntico al que se obtendría truncando la serie a `<= t` antes de
+   llamar la función); se hace así por rendimiento (recalcular sobre
+   ~1,500 símbolos en cada una de las ~400 fechas de corte sería
+   cientos de miles de llamadas redundantes) — detalle de
+   implementación, no de contrato, pero la equivalencia debe quedar
+   verificada por el caso de prueba 1 de abajo. También calcula
+   `retorno_forward(close_ajustado, 30)` (y, para las métricas
+   descriptivas del paso 9, también a 10/20/60 días) por símbolo, sobre
+   la historia completa.
+3. **Fechas de corte**: `fechas_t0(calendario=índice de
+   benchmark_ajustado, inicio=discovery_start, paso=paso_dias)`,
+   recortadas a las que tienen al menos `ventana_forward` filas de
+   benchmark después (para que el retorno forward de 30 días sea
+   calculable) — las últimas fechas sin suficiente futuro se descartan
+   del conjunto de fechas de corte, no se inventan. Divide esas fechas
+   en `discovery` (`< discovery_end`... ver nota de límites abajo),
+   `validation` (`discovery_end <= fecha <= validation_end`), `locked`
+   (`> validation_end`) — límites inclusivos en el extremo superior de
+   cada tramo, igual convención simple que el resto del proyecto.
+4. **Tabla cross-sectional por fecha de corte**: para cada fecha de
+   corte, un símbolo es elegible esa fecha si cumple **las dos**
+   condiciones (no basta una sola): (a) tiene al menos `min_historia`
+   filas en su serie de precio **original** (antes de cualquier
+   recorte) con índice `<= fecha` — mismo criterio exacto que
+   `features.universo_elegible` del pre-registro (≥252 sesiones), aquí
+   calculado a partir del conteo de filas ya precalculado por símbolo
+   (no se truncan DataFrames repetidamente: basta
+   `np.searchsorted(índice_del_símbolo, fecha, side="right")`); (b) su
+   fila de features en o antes de esa fecha —última fila con índice
+   `<= fecha`— no tiene `NaN` en ninguna de las 20 columnas (red de
+   seguridad adicional: un hueco de datos puntual, aunque la historia
+   total sea suficiente, también excluye al símbolo esa fecha, no se
+   incluye con huecos). Arma `features_crudas` (un
+   `DataFrame`, índice = símbolos elegibles esa fecha, columnas = las
+   20) y `features.normalizar_percentil_cross_sectional(features_crudas)`.
+   También junta el `retorno_30d` correspondiente de cada símbolo
+   elegible esa fecha (de las series precalculadas en el paso 2).
+5. **Discovery — discriminación**: dentro de las fechas de
+   `discovery`, para cada fecha, `es_ganador` = `True` para el
+   `pct_ganadores` superior por `retorno_30d` esa fecha
+   (`retorno_30d.rank(pct=True) >= 1 - pct_ganadores`), `False` para el
+   resto de elegibles esa fecha. Junta (apila) los `features_percentil`
+   y `es_ganador` de TODAS las fechas de discovery en una sola tabla
+   (índice compuesto `f"{fecha.isoformat()}_{símbolo}"`, único por
+   construcción). Llama `features.discriminacion_features(tabla_apilada,
+   es_ganador_apilado)` → `features.features_discriminantes(...,
+   umbral=umbral_correlacion, max_features=max_features)`. Si el
+   resultado es una lista vacía, el experimento termina aquí:
+   `results.json` con `"label": "INCONCLUSIVE"`, `"motivo":
+   "ninguna_feature_discrimina"`, resto de claves numéricas en `null`.
+6. **Grilla**: `grid.direccion_features(discriminacion, features_disc)`
+   → `grid.build_grid(features_disc, direcciones)`. Guarda
+   `n_variantes_grid_total = len(build_grid(...))`.
+7. **Filtro de soporte (solo discovery) y selección (solo
+   validation)**: para cada variante, para cada fecha de `discovery`,
+   `grid.aplicar_bucket(variante, features_percentil_de_esa_fecha)` →
+   símbolos seleccionados esa fecha → sus `retorno_30d`. Acumula todas
+   las señales `(fecha, símbolo, retorno_30d)` de esa variante en
+   discovery. La variante sobrevive si `len(señales_discovery) >=
+   min_senales_discovery` **y**
+   `evaluation.concentracion_maxima(señales_discovery)["frac_max_ticker"]
+   <= max_frac_ticker` (el chequeo de concentración por **sector**
+   declarado en el pre-registro queda fuera de alcance de v1 — no hay
+   clasificación GICS en este laboratorio, mismo motivo que la feature
+   de fuerza relativa vs. sector; se documenta en `notes`, no se omite
+   en silencio). Para las variantes que sobreviven, repite la
+   recolección de señales sobre las fechas de `validation` y calcula
+   la media de `retorno_30d` de esas señales. La variante **ganadora**
+   es la de mayor media en validation (empate exacto → la primera en
+   orden alfabético de `variant_id`). Si ninguna variante sobrevive el
+   filtro de soporte: `results.json` con `"label": "INCONCLUSIVE"`,
+   `"motivo": "ninguna_variante_pasa_el_filtro_de_soporte"`, resto en
+   `null` — **el locked test nunca se toca en este caso**.
+8. **Señales del ganador y de los 4 baselines, SOLO en locked test**:
+   para cada fecha de `locked`, aplica el bucket ganador
+   (`grid.aplicar_bucket`) y cada uno de los 4 baselines
+   (`baselines.baseline_momentum_simple`,
+   `baseline_buy_hold(lista de elegibles esa fecha)`,
+   `baseline_rsi_simple`, `baseline_combo_ingenuo` — el último sobre
+   `features_crudas`, los otros tres sobre `features_percentil`, según
+   su contrato) a la tabla cross-sectional de esa fecha, y recolecta
+   las señales `(fecha, símbolo, retorno_30d)` de cada uno. Construye,
+   por cada uno de los 5 (ganador + 4 baselines), una serie indexada
+   por fecha de corte de locked test = media de `retorno_30d` de sus
+   señales esa fecha (fechas sin ninguna señal de ese bucket/baseline
+   quedan fuera de esa serie, no se rellenan).
+9. **Métricas descriptivas** (reportadas, no determinan el label): para
+   el ganador y cada baseline en locked test, media y mediana de
+   `retorno_30d`, fracción de señales con `retorno_30d > 0`, y media de
+   `retorno_10d/20d/60d` de las mismas señales (de las series
+   precalculadas en el paso 2). **MFE, MAE, máximo drawdown
+   post-señal y tiempo hasta +5%/+10%** (declarados en la sección
+   *Targets* del pre-registro) quedan **fuera de alcance de v1** —
+   requieren seguimiento día-por-día después de cada señal, no solo el
+   retorno a horizontes fijos; se documenta en `notes`, no se omite en
+   silencio.
+10. **Comparación vs. Baseline 1 y supera_los_4_baselines**:
+    `supera_los_4_baselines = all(media(retorno_30d del ganador en
+    locked) > media(retorno_30d de baseline_i en locked) for i in
+    1..4)` (comparación simple de medias, `>` estricto). Alinea la
+    serie por-fecha del ganador y la de baseline 1 (momentum simple) a
+    su índice común (fechas donde ambas tienen una señal esa fecha —
+    fechas sin señal en alguno de los dos quedan fuera de esta
+    comparación pareada específica, declarado así); si el índice común
+    queda vacío, `frac_bootstrap_vs_baseline1 = NaN` (no se puede
+    bootstrapear sin observaciones). Si no, `evaluation.
+    comparacion_bootstrap(serie_ganador, serie_baseline1,
+    tamano_bloque=2, n_replicas=n_boot, seed=seed)`.
+11. **DSR**: `evaluation.deflated_sharpe_ratio(serie_ganador_validation
+    (la del paso 7, media de `retorno_30d` por fecha de validation),
+    n_trials=n_variantes_grid_total)` — se usa el tamaño TOTAL de la
+    grilla original (antes del filtro de soporte), no solo las
+    sobrevivientes, porque ese es el número real de hipótesis
+    probadas.
+12. **PBO**: sobre las fechas de `discovery + validation` combinadas,
+    divide en `n_particiones_pbo` bloques contiguos (mismo criterio de
+    truncamiento que `evaluation.probabilidad_backtest_overfitting`).
+    Usa únicamente las variantes que sobrevivieron el filtro de
+    soporte del paso 7 **y** que tienen al menos una señal en CADA uno
+    de los `n_particiones_pbo` bloques (si quedan menos de 2 variantes
+    así, `pbo = null` y se documenta en `notes` por qué). Construye
+    `matriz_desempeno` (filas = bloques en orden, columnas =
+    `variant_id`, valores = media de `retorno_30d` de las señales de
+    esa variante en ese bloque) y llama
+    `evaluation.probabilidad_backtest_overfitting(matriz_desempeno,
+    n_particiones_pbo)`.
+13. **Concentración y leave-one-ticker-out (sobre las señales del
+    ganador en locked test)**: `evaluation.concentracion_maxima(
+    señales_ganador_locked)` → `frac_max_ticker`, `ticker_max`.
+    `evaluation.leave_one_ticker_out_signo(señales_ganador_locked,
+    columna_retorno="retorno_30d")` → `revierte_con_algun_ticker`.
+14. **Sensibilidad a vecinos de la grilla**: para cada feature en el
+    bucket ganador, construye hasta 2 variantes "vecinas" cambiando
+    SOLO el percentil de esa feature al nivel adyacente en `UMBRALES =
+    [0.60, 0.75, 0.90]` (`0.60` solo tiene vecino `0.75`; `0.90` solo
+    tiene vecino `0.75`; `0.75` tiene los dos) — el resto de features
+    del bucket quedan iguales al ganador. Para cada vecino, recolecta
+    sus señales en locked test (mismo procedimiento del paso 8) y su
+    media de `retorno_30d`. `vecino_revierte_signo = True` si algún
+    vecino tiene signo opuesto al del ganador (y el ganador no es
+    exactamente `0`); `vecino_destruye_mas_50pct = True` si algún
+    vecino tiene `|media_vecino| < 0.5 * |media_ganador|` (y el
+    ganador no es exactamente `0`). Si el ganador no tiene ninguna
+    feature (grilla de 0 features — no debería ocurrir porque el paso
+    5 ya habría terminado el experimento antes, pero se declara:
+    ambos flags quedan en `False`).
+15. **Placebo**: pool de retornos = `retorno_30d` de TODAS las señales
+    elegibles (no solo las del bucket) en las fechas de locked test,
+    sin estructura de bucket. `n_senales_locked = len(señales_ganador_
+    locked)`. `evaluation.placebo_aleatorio(pool, n_senales=
+    n_senales_locked, n_placebos=n_placebos, seed=seed)`.
+    `potencia_confirmada = std(placebos) > 1e-8`. `percentil =
+    evaluation.percentil_real_vs_placebo(media(retorno_30d del
+    ganador en locked), placebos)`. `placebo_distingue = (percentil >=
+    0.95) if potencia_confirmada else None`.
+16. **Etiqueta**: `label_base = evaluation.etiqueta(
+    supera_los_4_baselines, frac_bootstrap_vs_baseline1 (o `0.0` si es
+    `NaN` — cuenta como "no supera" por seguridad, ver aclaración de
+    `NaN` del contrato de `evaluation.etiqueta`), dsr, n_senales_locked,
+    frac_max_ticker, vecino_revierte_signo, vecino_destruye_mas_50pct,
+    placebo_distingue)`. **Anulación explícita**: si
+    `revierte_con_algun_ticker` (paso 13) es `True`, el label final es
+    `"REJECTED"` sin importar `label_base` — regla declarada en el
+    pre-registro ("...o si un leave-one-ticker-out revierte el signo
+    del efecto") que no vive dentro de `evaluation.etiqueta()` (esa
+    función no conoce las señales individuales por ticker), se aplica
+    aquí.
+17. **`results.json`** con claves: `experiment` (`"EXP-005"`),
+    `n_simbolos_universo`, `n_simbolos_con_datos`, `fechas_t0` (conteo
+    `discovery`/`validation`/`locked`), `features_discriminantes` (lista
+    con nombre, dirección, diferencia de medianas, correlación
+    punto-biserial — de la tabla de discriminación), `direcciones`,
+    `n_variantes_grid_total`, `n_variantes_sobreviven_filtro_soporte`,
+    `variant_id_ganador` (o `null`), `motivo`, `metricas_locked`
+    (ganador + 4 baselines, cada uno con media/mediana/frac_positivo/
+    retorno 10d/20d/60d), `comparacion_bootstrap_vs_baseline1`, `dsr`,
+    `n_trials_dsr`, `pbo` (o `null`), `n_variantes_pbo`, `concentracion`
+    (`frac_max_ticker`, `ticker_max`), `leave_one_ticker_out`,
+    `sensibilidad_vecinos` (`vecino_revierte_signo`,
+    `vecino_destruye_mas_50pct`, detalle por vecino evaluado), `placebo`
+    (`percentil`, `potencia_confirmada`, `placebo_distingue`), `label`,
+    `notes` (lista: fuerza relativa vs. sector fuera de alcance,
+    concentración por sector fuera de alcance, MFE/MAE/tiempo-a-objetivo
+    fuera de alcance v1, autocorrelación serial por solapamiento de
+    ventanas de 30 días con paso de 10 declarada, cualquier símbolo
+    sin archivo de datos omitido).
+
+### Casos de prueba obligatorios (test de integración, datos sintéticos)
+
+Mismo patrón que `tests/growth_max/test_growth_exp002.py`: un *fixture*
+genera `.parquet` sintéticos (formato `open/high/low/close/adj_close/
+volume`, con al menos un split simulado —`adj_close` divergiendo de
+`close`— para ejercitar `ajustar_ohlc`) para un universo chico (8-12
+símbolos sintéticos con trayectorias de precio claramente distintas —
+algunos con momentum fuerte sostenido, otros planos, otros con caídas)
+más `SPY` como benchmark, con suficiente historia (varios años
+sintéticos) para que `discovery_start`/`discovery_end`/`validation_end`
+de prueba (más chicos que los del pre-registro) dejen fechas usables
+en los 3 tramos, y un archivo de universo en `tmp_path`.
+
+1. **Equivalencia del paso 2** (la optimización de rendimiento):
+   sobre un símbolo sintético, comparar la columna `mom_20d` calculada
+   por `calcular_features_simbolo` sobre la historia completa vs. sobre
+   la misma historia truncada a una fecha intermedia — el valor en esa
+   fecha debe ser idéntico en ambos casos (confirma que la optimización
+   no cambia el resultado).
+2. **`ajustar_ohlc`**: con una fila donde `close=100, adj_close=90`
+   (factor `0.9`) y `open=110` → `open` ajustado `= 99`; con
+   `close=0` → factor `NaN`, `open`/`high`/`low` ajustados `NaN`.
+3. **`fechas_t0`**: calendario sintético de 30 fechas hábiles, `paso=10`
+   → exactamente 3 fechas (posiciones 0, 10, 20 de la subserie desde
+   `inicio`).
+4. **`run` escribe `results.json`** con todas las claves de la sección
+   17; `label` ∈ `{VALIDATED, REJECTED, INCONCLUSIVE}`.
+5. **`run` es determinista**: dos corridas con los mismos insumos y
+   `seed` dan el mismo `results.json` byte a byte.
+6. **Si `variant_id_ganador` no es `null`**, `metricas_locked` tiene
+   exactamente 5 claves (`ganador`, `baseline_momentum_simple`,
+   `baseline_buy_hold`, `baseline_rsi_simple`, `baseline_combo_ingenuo`),
+   cada una con `{media, mediana, frac_positivo, retorno_10d, retorno_20d,
+   retorno_60d}`.
+7. **Caso "ninguna feature discrimina"**: con datos sintéticos
+   construidos a propósito para que ninguna feature tenga señal (todas
+   las trayectorias de precio idénticas o con ruido puro sin relación
+   con qué símbolo termina "ganador") → `label == "INCONCLUSIVE"`,
+   `motivo == "ninguna_feature_discrimina"`.
+8. **Un símbolo del universo sin archivo `.parquet`** no lanza
+   excepción — se omite y queda registrado en `notes`.
+
+Todos los datos de prueba son sintéticos, construidos a mano (sin red).
+`n_boot`/`n_placebos` de prueba usan valores chicos (decenas) para que
+la suite corra rápido — los valores por defecto (miles) son para la
+corrida real.

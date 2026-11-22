@@ -55,6 +55,7 @@ MODULOS["reverse_winners_features"] = {"spec": _EXP005, "destino": ROOT / "src" 
 MODULOS["reverse_winners_grid"] = {"spec": _EXP005, "destino": ROOT / "src" / "prl" / "reverse_winners" / "grid.py", "test": ROOT / "tests" / "reverse_winners" / "test_reverse_winners_grid.py"}
 MODULOS["reverse_winners_baselines"] = {"spec": _EXP005, "destino": ROOT / "src" / "prl" / "reverse_winners" / "baselines.py", "test": ROOT / "tests" / "reverse_winners" / "test_reverse_winners_baselines.py"}
 MODULOS["reverse_winners_evaluation"] = {"spec": _EXP005, "destino": ROOT / "src" / "prl" / "reverse_winners" / "evaluation.py", "test": ROOT / "tests" / "reverse_winners" / "test_reverse_winners_evaluation.py"}
+MODULOS["reverse_winners_exp005"] = {"spec": _EXP005, "destino": ROOT / "src" / "prl" / "reverse_winners" / "exp005.py", "test": ROOT / "tests" / "reverse_winners" / "test_reverse_winners_exp005.py"}
 
 SISTEMA = (
     "Eres un ingeniero cuantitativo senior. Implementas módulos de Python para que pasen un conjunto de "
