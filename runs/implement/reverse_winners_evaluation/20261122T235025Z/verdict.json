@@ -1,0 +1,10 @@
+{
+  "modulo": "reverse_winners_evaluation",
+  "destino": "src/prl/reverse_winners/evaluation.py",
+  "estado": "TESTS_PASAN",
+  "iteraciones": 1,
+  "motivo": null,
+  "llamadas": 1,
+  "tokens_salida": 15051,
+  "modelo": "deepseek-flash"
+}
