@@ -1,0 +1,10 @@
+{
+  "modulo": "reverse_winners_baselines",
+  "destino": "src/prl/reverse_winners/baselines.py",
+  "estado": "TESTS_PASAN",
+  "iteraciones": 1,
+  "motivo": null,
+  "llamadas": 1,
+  "tokens_salida": 1463,
+  "modelo": "deepseek-flash"
+}
