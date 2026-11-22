@@ -51,7 +51,7 @@ MODULOS["growth_evaluation"] = {"spec": _EXP002, "destino": ROOT / "src" / "prl"
 MODULOS["exp002"] = {"spec": _EXP002, "destino": ROOT / "src" / "prl" / "growth_max" / "exp002.py", "test": ROOT / "tests" / "growth_max" / "test_growth_exp002.py"}
 
 _EXP005 = ROOT / "experiments" / "EXP-005-reverse-winners" / "IMPLEMENTATION_SPEC.md"
-MODULOS["reverse_winners_features"] = {"spec": _EXP005, "destino": ROOT / "src" / "prl" / "reverse_winners" / "features.py", "test": ROOT / "tests" / "reverse_winners" / "test_features.py"}
+MODULOS["reverse_winners_features"] = {"spec": _EXP005, "destino": ROOT / "src" / "prl" / "reverse_winners" / "features.py", "test": ROOT / "tests" / "reverse_winners" / "test_reverse_winners_features.py"}
 
 SISTEMA = (
     "Eres un ingeniero cuantitativo senior. Implementas módulos de Python para que pasen un conjunto de "

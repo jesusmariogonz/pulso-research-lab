@@ -4,7 +4,13 @@
 
 Implementa la sección "Metodología — ventanas rolling" de
 `PREREGISTRATION.md` (pasos 2 y 3: features en T0 y discriminación
-estadística). Tests en `tests/reverse_winners/test_features.py`.
+estadística). Tests en
+`tests/reverse_winners/test_reverse_winners_features.py` (nombre
+distinto de "test_features.py" a propósito: ningún directorio de
+`tests/` usa `__init__.py`, así que los nombres de archivo deben ser
+únicos en todo el árbol — `tests/emergency/test_features.py` ya existe
+desde EXP-001; mismo motivo por el que `growth_max` prefija sus tests
+con "growth_").
 
 Reglas transversales (igual estándar que `prl.growth_max.signals` de
 EXP-002):
