@@ -59,10 +59,17 @@ elegida por el bucket, el mismo formato que ya usa
   pd.Series`: `composiciones` ya viene con las fechas en el orden
   deseado (no se reordena — el llamador decide el orden cronológico).
   Para cada fecha a partir de la segunda, `turnover =
-  len(simbolos_t.symmetric_difference(simbolos_t_menos_1)) /
-  len(simbolos_t_menos_1)` (fracción de la composición anterior que
-  cambió — entradas más salidas, sobre el tamaño anterior). `NaN` si
-  `simbolos_t_menos_1` está vacío. La primera fecha no tiene valor (no
+  max(len(entradas), len(salidas)) / len(simbolos_t_menos_1)`, con
+  `entradas = simbolos_t - simbolos_t_menos_1` y `salidas =
+  simbolos_t_menos_1 - simbolos_t` (fracción mínima garantizada de la
+  composición anterior que cambió — nota de implementación v1.1: la
+  primera versión de este contrato decía
+  `symmetric_difference/anterior`, pero el caso de prueba 6 siempre
+  exigió `max(entradas,salidas)/anterior`; se corrige la prosa para
+  que coincida con lo realmente probado e implementado, sin volver a
+  despachar por un cambio que no afecta ningún resultado ya
+  reportado). `NaN` si `simbolos_t_menos_1` está vacío. La primera
+  fecha no tiene valor (no
   aparece en el resultado — no hay turnover sin una fecha anterior).
 * `concentracion_del_efecto(senales: pd.DataFrame, columna_retorno: str
   = "retorno_30d", top_n: int = 5) -> dict`: `media_total =
