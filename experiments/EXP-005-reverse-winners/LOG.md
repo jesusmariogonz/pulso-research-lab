@@ -148,3 +148,76 @@ criterios de éxito evaluados uno por uno, en `RESULTADOS.md`.
 No se propone una fase de implementación operativa (reservada a un
 resultado `VALIDATED` por el propio pre-registro). No se ajustó
 ningún umbral después de ver el resultado.
+
+## Forward validation: hipótesis congelada + mecanismo de recheck periódico
+
+A petición del usuario, se construyó una validación forward estricta
+del bucket ganador (el que dio `INCONCLUSIVE`), congelando
+exactamente su configuración — universo, 4 features discriminantes,
+umbrales, horizonte de 30d, método de retorno — sin volver a
+descubrir ni reoptimizar nada con datos nuevos. Documento completo:
+`FORWARD_VALIDATION.md`.
+
+Se encontraron y resolvieron 2 ambigüedades propias al congelar: (1)
+el bucket no tiene paso de ranking, es un filtro AND puro equal-weight
+— se declara así en vez de inventar un criterio de orden; (2) el
+pre-registro original exigía 0.05%+0.05% de costos de transacción pero
+la implementación nunca los aplicó — se mantiene retorno bruto para
+que la comparación forward sea consistente con lo ya reportado, y se
+documenta la discrepancia en vez de corregirla en silencio.
+
+Hallazgo crítico antes de tocar datos nuevos: **no existe ninguna
+fecha de corte forward disponible hoy** (2026-11-23) con retorno de 30
+días ya completo — la corrida original ya consumió hasta la última
+fecha posible dados los precios actuales (SPY hasta 2026-11-12). Se
+verificó con precisión (0 fechas nuevas con ventana completa) antes de
+fabricar un resultado con muestra insuficiente, y se le preguntó
+explícitamente al usuario cómo proceder dado ese hallazgo — eligió
+congelar todo ahora y programar un recheck periódico.
+
+Se construyeron 3 módulos nuevos vía DeepSeek-TDD:
+`prl.reverse_winners.forward_validation` (Sharpe, max drawdown, hit
+rate, turnover, concentración del efecto en pocas señales, desgloses
+por periodo/régimen VIX/tercil de volatilidad — sector y tamaño de
+empresa declarados no calculables por falta de datos),
+`prl.reverse_winners.forward_runner` (aplica el bucket congelado y los
+4 baselines + SPY sobre fechas dadas, reutilizando literalmente
+`grid.aplicar_bucket`/`baselines.*`/`features.*`), y
+`prl.reverse_winners.forward_check` (determina fechas nuevas, acumula
+el log entre corridas de forma idempotente, calcula las métricas del
+reporte).
+
+**Dos bugs serios encontrados en la primera implementación de
+`forward_runner` antes de mergear** (revisión manual, no solo
+"TESTS_PASAN"): (1) nunca llamaba `grid.aplicar_bucket` con el orden
+de argumentos real — el intento con el orden equivocado lanzaba
+`KeyError`, capturado por un `except Exception` demasiado amplio que
+caía en una reimplementación propia de la lógica de umbrales, la cual
+NO reflejaba el umbral para dirección `"bajo"` (`valores <= umbral` en
+vez de `valores <= 1-umbral`) — verificado con un caso manual: el real
+selecciona 1 de 3 símbolos, el fallback seleccionaba 2; (2) la llamada
+a `features.calcular_features_simbolo` se hacía sin el argumento
+`benchmark` (obligatorio), también oculta por un `except` genérico —
+esto dejaba **0 señales siempre**, para el bucket y los 4 baselines,
+en cualquier fecha. Mis propios tests tampoco atraparon ninguno de los
+dos (solo verificaban fechas o comportamiento vacío-compatible) — se
+reescribieron el contrato (prohíbe explícitamente adivinar firmas y
+usar `except` genéricos) y los tests (comparan contra las funciones
+reales llamadas directamente, para direcciones "alto" y "bajo") antes
+de re-despachar. De paso se encontró que el fixture sintético de
+volumen constante (también presente, sin corregir, en
+`test_reverse_winners_exp005.py` ya mergeado) deja `volume_spike_z`
+siempre `NaN`, excluyendo a todos los símbolos de elegibilidad — no se
+tocó `exp005.py` porque sus resultados ya están verificados contra
+datos reales (smoke test de 40 símbolos + la corrida completa de
+1,501).
+
+El mecanismo de recheck (`scripts/exp005_forward_check.py`, sin
+cómputo propio — puro *glue* que llama a los módulos de arriba) se
+probó end-to-end contra una muestra real de 40 símbolos (con una
+fecha de corte simulada anterior, ya que hoy no hay ninguna real) y
+produjo el reporte exacto que pidió el usuario. Se conectó a
+`.github/workflows/exp005-forward-check.yml`, cron semanal (domingos,
+2h después de `data-build.yml`) + `workflow_dispatch`, mismo patrón
+idempotente que `daily-indicator.yml` — commitea el log y el reporte
+solo cuando de verdad hay fechas nuevas.
