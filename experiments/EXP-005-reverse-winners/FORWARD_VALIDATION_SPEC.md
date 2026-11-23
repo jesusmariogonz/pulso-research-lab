@@ -171,3 +171,73 @@ elegida por el bucket, el mismo formato que ya usa
 
 Todas las tablas de prueba son sintéticas, construidas a mano (sin red,
 sin datos reales).
+
+## `prl.reverse_winners.forward_runner`
+
+Aplica el bucket **congelado** (y los baselines, y `SPY` como
+referencia) sobre un conjunto de fechas de corte ya determinadas como
+"nuevas" — a diferencia de `exp005.py`, **nunca descubre ni
+selecciona** nada; solo ejecuta una regla fija sobre fechas dadas.
+Tests en `tests/reverse_winners/test_reverse_winners_forward_runner.py`.
+Reutiliza `features.calcular_features_simbolo`,
+`features.normalizar_percentil_cross_sectional`, `grid.aplicar_bucket`,
+`baselines.*`, y de `exp005`: `ajustar_ohlc`, `retorno_forward` (se
+importan, no se reimplementan).
+
+* `construir_senales_para_fechas(inputs_dir: Path, universo_path: Path,
+  fechas: list[pd.Timestamp], bucket_congelado: dict, benchmark: str =
+  "SPY", min_historia: int = 252) -> dict[str, pd.DataFrame]`:
+  * Carga universo + benchmark igual que el paso 1 de `exp005.run`
+    (mismo manejo de símbolos sin archivo: se omiten, sin excepción).
+  * Para cada símbolo, features de historia completa (igual que el
+    paso 2 de `exp005.run` — un único `calcular_features_simbolo` por
+    símbolo, no uno por fecha) y `retorno_forward` a 10/20/30/60 días.
+  * Para cada fecha en `fechas` (ya se asume que tiene retorno de 30
+    días completo — esta función no lo valida, es responsabilidad del
+    llamador): construye la tabla cross-sectional (mismo criterio dual
+    de elegibilidad que `exp005.run` paso 4: ≥`min_historia` filas de
+    precio original **y** fila de features sin `NaN`), normaliza por
+    percentil, aplica:
+    * `bucket_congelado` vía `grid.aplicar_bucket` → método `"ganador"`.
+    * `baselines.baseline_momentum_simple` → `"baseline_momentum_simple"`.
+    * `baselines.baseline_buy_hold` (sobre la lista de elegibles esa
+      fecha) → `"baseline_buy_hold"`.
+    * `baselines.baseline_rsi_simple` → `"baseline_rsi_simple"`.
+    * `baselines.baseline_combo_ingenuo` (sobre `features_crudas`) →
+      `"baseline_combo_ingenuo"`.
+    * `"spy"`: una sola señal por fecha, `ticker="SPY"`,
+      `retorno_30d` = el propio retorno forward de 30 días de `SPY` esa
+      fecha (de su serie `retorno_forward(close_ajustado, 30)` — no
+      pasa por el filtro de elegibilidad del universo, es el índice
+      mismo).
+  * Para cada método, cada señal es un `dict` con `fecha`, `ticker`,
+    `retorno_10d`, `retorno_20d`, `retorno_30d`, `retorno_60d`, y
+    `vol_realizada_20d_cruda` (valor crudo de esa feature para ese
+    símbolo esa fecha — **no** aplica a la señal de `"spy"`, que no
+    tiene esa columna).
+  * Devuelve `{"ganador": pd.DataFrame, "baseline_momentum_simple":
+    pd.DataFrame, "baseline_buy_hold": pd.DataFrame,
+    "baseline_rsi_simple": pd.DataFrame, "baseline_combo_ingenuo":
+    pd.DataFrame, "spy": pd.DataFrame}` — cada `DataFrame` puede tener
+    0 filas (sin excepción) si ninguna fecha tuvo señales de ese
+    método.
+
+### Casos de prueba obligatorios
+
+1. **Caso de referencia completo**: universo sintético de 6-8 símbolos
+   con historia suficiente (≥260 filas) + `SPY`, 2 fechas de corte
+   sintéticas, un `bucket_congelado` de 1 sola feature con un umbral
+   conocido → verificar a mano qué símbolos debía seleccionar el
+   bucket y que el `DataFrame` `"ganador"` coincide exactamente.
+2. **`"spy"`**: con 2 fechas, el método `"spy"` tiene exactamente 2
+   filas, `ticker="SPY"` en ambas, valores iguales a
+   `retorno_forward(close_SPY_ajustado, 30)` en esas fechas.
+3. **Símbolo sin archivo**: se omite sin excepción (igual que
+   `exp005.run`).
+4. **Elegibilidad**: un símbolo con <252 filas de historia en una
+   fecha dada queda fuera de la tabla cross-sectional esa fecha (no
+   aparece en ningún método esa fecha).
+5. **Determinismo**: dos llamadas idénticas dan `DataFrame`s idénticos
+   (sin aleatoriedad en ninguna parte de esta función).
+
+Todos los datos de prueba son sintéticos, construidos a mano.

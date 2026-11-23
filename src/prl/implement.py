@@ -59,6 +59,7 @@ MODULOS["reverse_winners_exp005"] = {"spec": _EXP005, "destino": ROOT / "src" / 
 
 _EXP005_FORWARD = ROOT / "experiments" / "EXP-005-reverse-winners" / "FORWARD_VALIDATION_SPEC.md"
 MODULOS["reverse_winners_forward_validation"] = {"spec": _EXP005_FORWARD, "destino": ROOT / "src" / "prl" / "reverse_winners" / "forward_validation.py", "test": ROOT / "tests" / "reverse_winners" / "test_reverse_winners_forward_validation.py"}
+MODULOS["reverse_winners_forward_runner"] = {"spec": _EXP005_FORWARD, "destino": ROOT / "src" / "prl" / "reverse_winners" / "forward_runner.py", "test": ROOT / "tests" / "reverse_winners" / "test_reverse_winners_forward_runner.py"}
 
 SISTEMA = (
     "Eres un ingeniero cuantitativo senior. Implementas módulos de Python para que pasen un conjunto de "
