@@ -101,3 +101,50 @@ si el experimento aporta algo), el módulo de evaluación
 (DSR/PBO/placebo/concentración) y el orquestador — todavía no se ha
 tocado ningún dato real de precios, solo se construyó y verificó el
 módulo de features.
+
+## Módulos `grid`, `baselines`, `evaluation` y orquestador `exp005` implementados; corrida real completa
+
+Se escribieron los contratos + tests de los 3 módulos restantes antes
+del orquestador: `prl.reverse_winners.grid` (grilla cerrada de hasta
+243 variantes, direccionada por el signo de `diferencia_medianas` de
+cada feature discriminante), `prl.reverse_winners.baselines` (los 4
+baselines, incluido el de momentum simple), `prl.reverse_winners.
+evaluation` (bootstrap de bloques pareado, Deflated Sharpe Ratio
+reimplementado igual que en EXP-001/002, PBO vía CSCV — Bailey et al.
+2014, implementado desde cero porque no existía antes en este
+laboratorio —, concentración, leave-one-ticker-out, placebo, y la
+función de etiqueta final). Los 3 se mandaron a DeepSeek en paralelo,
+se revisaron y verificaron de forma independiente (worktrees aislados)
+antes de mergear — sin hallazgos de corrección.
+
+Antes de escribir el contrato del orquestador se encontró y corrigió
+un bug propio en el borrador del contrato: `ajustar_ohlc` especificaba
+`factor = adj_close / close`, asumiendo que eso daría `NaN` cuando
+`close=0` — en realidad `x/0.0` da `inf` en numpy/pandas, no `NaN`
+(solo `0/0` da `NaN`). Se corrigió el contrato para exigir una máscara
+explícita antes de mandarlo a DeepSeek, evitando que el bug quedara
+bloqueado en el código generado.
+
+El orquestador (`prl.reverse_winners.exp005`) se implementó vía
+DeepSeek en 2 iteraciones, se revisó línea por línea contra el
+contrato (sin hallazgos de corrección) y se verificó con un smoke test
+sobre una muestra real de 40 símbolos antes de mergear a `main`. Suite
+completa: 278/278 tras el merge.
+
+**Corrida real** (2026-11-23, commit `025a906`, universo completo de
+1,501 símbolos con datos, parámetros exactos del pre-registro,
+`seed=0`): **`INCONCLUSIVE`**. El bucket descubierto (alta volatilidad
+realizada 20d + bajo drawdown 60d + cerca de su máximo de 20d + beta
+alto) supera a los 4 baselines en el locked test (2022-2026), incluido
+el baseline de momentum simple (la condición que de verdad importaba),
+con un bootstrap pareado de 87.9% de réplicas a favor — pero el
+Deflated Sharpe Ratio (0.534, corregido por las 81 variantes
+realmente probadas) queda muy por debajo del umbral de 0.95 exigido
+para `VALIDATED`. PBO de 32.9% (CSCV, 10 particiones). Ningún chequeo
+de concentración, leave-one-ticker-out o sensibilidad a vecinos de la
+grilla disparó un rechazo. Detalle completo, con la tabla de los 6
+criterios de éxito evaluados uno por uno, en `RESULTADOS.md`.
+
+No se propone una fase de implementación operativa (reservada a un
+resultado `VALIDATED` por el propio pre-registro). No se ajustó
+ningún umbral después de ver el resultado.

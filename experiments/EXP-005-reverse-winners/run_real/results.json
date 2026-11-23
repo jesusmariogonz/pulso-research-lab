@@ -1,0 +1,163 @@
+{
+  "comparacion_bootstrap_vs_baseline1": {
+    "ci_media_bucket": [
+      0.006198134860014095,
+      0.052693519915487555
+    ],
+    "frac_supera_baseline": 0.8793
+  },
+  "concentracion": {
+    "frac_max_ticker": 0.017606781871535703,
+    "ticker_max": "CLSK"
+  },
+  "direcciones": {
+    "beta_60d": "alto",
+    "dist_max20": "bajo",
+    "drawdown_60d": "bajo",
+    "vol_realizada_20d": "alto"
+  },
+  "dsr": 0.5344064122044916,
+  "experiment": "EXP-005",
+  "features_discriminantes": [
+    {
+      "correlacion_punto_biserial": 0.15707104973281968,
+      "diferencia_medianas": 0.21724386511057514,
+      "direccion": "alto",
+      "feature": "vol_realizada_20d"
+    },
+    {
+      "correlacion_punto_biserial": -0.09712631940352354,
+      "diferencia_medianas": -0.14216256403466782,
+      "direccion": "bajo",
+      "feature": "drawdown_60d"
+    },
+    {
+      "correlacion_punto_biserial": -0.08508134911541435,
+      "diferencia_medianas": -0.12489281292945814,
+      "direccion": "bajo",
+      "feature": "dist_max20"
+    },
+    {
+      "correlacion_punto_biserial": 0.060864307300917166,
+      "diferencia_medianas": 0.09554982757200192,
+      "direccion": "alto",
+      "feature": "beta_60d"
+    }
+  ],
+  "fechas_t0": {
+    "discovery": 227,
+    "locked": 119,
+    "validation": 76
+  },
+  "label": "INCONCLUSIVE",
+  "leave_one_ticker_out": {
+    "n_tickers": 516,
+    "reversiones": 0,
+    "revierte_con_algun_ticker": false,
+    "signo_original": 1
+  },
+  "metricas_locked": {
+    "baseline_buy_hold": {
+      "frac_positivo": 0.5340622176924325,
+      "media": 0.0156410859470825,
+      "mediana": 0.00894627540331816,
+      "retorno_10d": 0.004782911256455004,
+      "retorno_20d": 0.01008464404709816,
+      "retorno_60d": 0.03198487283065106
+    },
+    "baseline_combo_ingenuo": {
+      "frac_positivo": 0.5420249166520442,
+      "media": 0.015907462473168144,
+      "mediana": 0.010124222645393255,
+      "retorno_10d": 0.005955505959708886,
+      "retorno_20d": 0.01118009695130675,
+      "retorno_60d": 0.031927578617654294
+    },
+    "baseline_momentum_simple": {
+      "frac_positivo": 0.537388038139266,
+      "media": 0.01941629119539295,
+      "mediana": 0.011186368262376845,
+      "retorno_10d": 0.005110873958631407,
+      "retorno_20d": 0.012001617030642288,
+      "retorno_60d": 0.036522238109220076
+    },
+    "baseline_rsi_simple": {
+      "frac_positivo": 0.5175458982105507,
+      "media": 0.013969368689052995,
+      "mediana": 0.004743009125667719,
+      "retorno_10d": 0.005569212273198066,
+      "retorno_20d": 0.009759615298140407,
+      "retorno_60d": 0.031995539228394945
+    },
+    "ganador": {
+      "frac_positivo": 0.49364199543527876,
+      "media": 0.022689095147454423,
+      "mediana": -0.0035757670343106174,
+      "retorno_10d": 0.010817181040367862,
+      "retorno_20d": 0.015800539219052244,
+      "retorno_60d": 0.06880503433640643
+    }
+  },
+  "motivo": null,
+  "n_simbolos_con_datos": 1501,
+  "n_simbolos_universo": 1502,
+  "n_trials_dsr": 81,
+  "n_variantes_grid_total": 81,
+  "n_variantes_pbo": 81,
+  "n_variantes_sobreviven_filtro_soporte": 81,
+  "notes": [
+    "Fuerza relativa vs. sector fuera de alcance v1 (sin clasificación sectorial).",
+    "Concentración por sector fuera de alcance v1.",
+    "MFE, MAE, máximo drawdown post-señal y tiempo-a-objetivo (+5%/+10%) fuera de alcance v1.",
+    "Autocorrelación serial por solapamiento de ventanas forward de 30 días con paso de 10 sesiones declarada.",
+    "CWEN-A: sin archivo de datos, omitido"
+  ],
+  "pbo": 0.32936507936507936,
+  "placebo": {
+    "percentil": 0.997,
+    "placebo_distingue": true,
+    "potencia_confirmada": true
+  },
+  "sensibilidad_vecinos": {
+    "detalle": [
+      {
+        "feature": "vol_realizada_20d",
+        "media": 0.021621224826778408,
+        "n_senales": 4433,
+        "percentil": 0.75,
+        "variant_id": "vol_realizada_20d:alto:0.75|drawdown_60d:bajo:0.90|dist_max20:bajo:0.90|beta_60d:alto:0.75"
+      },
+      {
+        "feature": "drawdown_60d",
+        "media": 0.020237863314297833,
+        "n_senales": 4216,
+        "percentil": 0.75,
+        "variant_id": "vol_realizada_20d:alto:0.90|drawdown_60d:bajo:0.75|dist_max20:bajo:0.90|beta_60d:alto:0.75"
+      },
+      {
+        "feature": "dist_max20",
+        "media": 0.02668093102317924,
+        "n_senales": 3676,
+        "percentil": 0.75,
+        "variant_id": "vol_realizada_20d:alto:0.90|drawdown_60d:bajo:0.90|dist_max20:bajo:0.75|beta_60d:alto:0.75"
+      },
+      {
+        "feature": "beta_60d",
+        "media": 0.026309023171337896,
+        "n_senales": 3476,
+        "percentil": 0.6,
+        "variant_id": "vol_realizada_20d:alto:0.90|drawdown_60d:bajo:0.90|dist_max20:bajo:0.90|beta_60d:alto:0.60"
+      },
+      {
+        "feature": "beta_60d",
+        "media": 0.02402464672317329,
+        "n_senales": 2223,
+        "percentil": 0.9,
+        "variant_id": "vol_realizada_20d:alto:0.90|drawdown_60d:bajo:0.90|dist_max20:bajo:0.90|beta_60d:alto:0.90"
+      }
+    ],
+    "vecino_destruye_mas_50pct": false,
+    "vecino_revierte_signo": false
+  },
+  "variant_id_ganador": "vol_realizada_20d:alto:0.90|drawdown_60d:bajo:0.90|dist_max20:bajo:0.90|beta_60d:alto:0.75"
+}

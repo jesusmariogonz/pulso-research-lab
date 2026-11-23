@@ -1,7 +1,11 @@
 # EXP-005 · Reverse Winners — espacio del experimento
 
 Índice único de todo lo que existe sobre este experimento. **Estado:
-`EXPERIMENTAL`** (pre-registrado y bloqueado, sin ejecutar todavía).
+`INCONCLUSIVE`** (corrido end-to-end sobre datos reales el 2026-11-23
+— ver `RESULTADOS.md`). El bucket descubierto supera a los 4 baselines
+en el locked test, pero el Deflated Sharpe Ratio (0.534, corregido por
+las 81 variantes probadas) no alcanza el umbral de 0.95 exigido para
+`VALIDATED`.
 
 ## Qué investiga
 
@@ -23,6 +27,9 @@ claramente ese baseline de un solo factor para aportar algo nuevo.
 | Archivo | Qué es |
 |---|---|
 | `PREREGISTRATION.md` | Pre-registro (v1, LOCKED 2026-11-22): universo (reutiliza el S&P 1500 de EXP-004), periodo 2010-2026 (elegido por cobertura real verificada, no arbitrario), 15 features candidatas, grilla cerrada de hasta 243 variantes, split discovery/validation/locked test, 4 baselines (el primero, momentum simple, es el que de verdad importa), criterios de etiqueta. |
+| `IMPLEMENTATION_SPEC.md` | Contrato de implementación de los 5 módulos (`features`, `grid`, `baselines`, `evaluation`, `exp005`), todos implementados vía DeepSeek-TDD y revisados antes de mergear. |
+| `RESULTADOS.md` | Resultado de la corrida real end-to-end: `INCONCLUSIVE` — supera los 4 baselines pero el DSR no alcanza el umbral de validación. |
+| `run_real/results.json` | Salida completa de la corrida real (`seed=0`, parámetros exactos del pre-registro). |
 | `LOG.md` | Bitácora cronológica. |
 
 ## Por qué no hace falta una fase nueva de infraestructura de datos
