@@ -1,0 +1,10 @@
+{
+  "modulo": "reverse_winners_exp005",
+  "destino": "src/prl/reverse_winners/exp005.py",
+  "estado": "TESTS_PASAN",
+  "iteraciones": 2,
+  "motivo": null,
+  "llamadas": 2,
+  "tokens_salida": 61088,
+  "modelo": "deepseek-flash"
+}
