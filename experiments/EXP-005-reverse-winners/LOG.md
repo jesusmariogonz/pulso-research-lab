@@ -221,3 +221,19 @@ produjo el reporte exacto que pidió el usuario. Se conectó a
 2h después de `data-build.yml`) + `workflow_dispatch`, mismo patrón
 idempotente que `daily-indicator.yml` — commitea el log y el reporte
 solo cuando de verdad hay fechas nuevas.
+
+Antes de confiar el workflow a un cron desatendido, se corrió 3 veces
+manualmente (`workflow_dispatch`) contra el runner real de GitHub
+Actions, no solo localmente — y se encontraron 2 fallas reales que la
+prueba local no había expuesto: (1) `data/raw/` está en `.gitignore`
+a propósito (se publica como Release, ver `data-build.yml`) — un
+checkout limpio no trae los `.parquet`, a diferencia de esta sesión
+que ya los tenía en disco; se corrigió agregando el mismo paso de
+`run-exp002-real.yml` (traer el último Release `data-*` y
+extraerlo). (2) `git add` sobre `log.json`/el reporte falla duro con
+"pathspec did not match" en la primerísima corrida, porque esos
+archivos todavía no existen (nunca hubo fechas nuevas que procesar) —
+se corrigió agregando solo los que ya existen antes del `git diff
+--cached --quiet`. La 3ª corrida pasó limpia de punta a punta
+(pytest, descarga del Release, "sin fechas nuevas todavía", commit-step
+no-op sin error).
