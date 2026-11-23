@@ -1,0 +1,10 @@
+{
+  "modulo": "reverse_winners_forward_validation",
+  "destino": "src/prl/reverse_winners/forward_validation.py",
+  "estado": "TESTS_PASAN",
+  "iteraciones": 1,
+  "motivo": null,
+  "llamadas": 1,
+  "tokens_salida": 15980,
+  "modelo": "deepseek-flash"
+}
