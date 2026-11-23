@@ -295,3 +295,113 @@ omite.
    (sin aleatoriedad en ninguna parte de esta función).
 
 Todos los datos de prueba son sintéticos, construidos a mano.
+
+## `prl.reverse_winners.forward_check`
+
+Determina qué fechas de corte son nuevas, acumula el log de señales
+entre corridas sucesivas (persistido como JSON plano, sin pandas, para
+que sobreviva entre ejecuciones del workflow programado), y calcula
+las métricas del reporte sobre el log acumulado. Tests en
+`tests/reverse_winners/test_reverse_winners_forward_check.py`. Reutiliza
+`exp005.fechas_t0` y todas las funciones de `forward_validation` (no
+reimplementa ninguna). Misma regla transversal que `forward_runner`:
+**ninguna llamada a una función ya probada se envuelve en un
+`try/except` que oculte un error de firma o la reemplace por una
+reimplementación propia** — un error se propaga.
+
+* `determinar_fechas_nuevas(calendario: pd.DatetimeIndex,
+  ultima_fecha_procesada: pd.Timestamp, discovery_start: str =
+  "2010-01-01", paso_dias: int = 10, ventana_forward: int = 30) ->
+  list[pd.Timestamp]`: `todas = exp005.fechas_t0(calendario,
+  inicio=discovery_start, paso=paso_dias)` — **se reutiliza esta
+  función tal cual, no se reimplementa el grid de fechas** (debe
+  coincidir exactamente con la grilla de la corrida original, ancla en
+  `discovery_start`, no en `ultima_fecha_procesada`). De esas, recorta
+  a las que tienen `ventana_forward` sesiones de `calendario` después
+  (igual criterio que `exp005.run`), y de esas devuelve solo las
+  estrictamente posteriores a `ultima_fecha_procesada`. Lista vacía si
+  no hay ninguna — **no es un error, es el caso esperado la mayoría de
+  las veces que corre este chequeo**.
+* `actualizar_log(log_existente: dict[str, list[dict]],
+  nuevas_senales: dict[str, pd.DataFrame]) -> dict[str, list[dict]]`:
+  `log_existente` y el valor de retorno son `dict[método, lista de
+  señales como dict]` (formato JSON-plano, una entrada por señal, cada
+  una con al menos `fecha` como string ISO y `ticker`) — representación
+  elegida porque debe persistirse en disco entre corridas del workflow
+  sin depender de serialización de pandas. Para cada método en
+  `nuevas_senales` (mismas 6 claves que `forward_runner`:
+  `"ganador"`, los 4 baselines, `"spy"`), convierte el `DataFrame` a
+  lista de `dict` (`fecha` → `.isoformat()`) y la agrega a la lista ya
+  existente de ese método (`log_existente.get(metodo, [])`) —
+  **deduplicando** por la tupla `(fecha, ticker)`: si una señal con esa
+  tupla ya existe en el log, no se duplica (permite volver a correr el
+  chequeo sobre el mismo rango de fechas sin ensuciar el log,
+  idempotente). El orden final de cada lista queda ordenado por
+  `fecha` ascendente.
+* `calcular_metricas_reporte(log_acumulado: dict[str, list[dict]],
+  vix_por_fecha: pd.Series, ultima_fecha_original: str =
+  "2026-09-30") -> dict`: reconstruye un `pd.DataFrame` por método a
+  partir de `log_acumulado[metodo]` (vacío si la clave no existe o la
+  lista está vacía), y calcula, usando **únicamente** funciones ya
+  implementadas de `forward_validation` (no fórmulas nuevas en este
+  módulo):
+  * `n_fechas_acumuladas`: número de fechas únicas en
+    `log_acumulado["ganador"]` (0 si está vacío).
+  * `n_senales_ganador`: `len(log_acumulado["ganador"])`.
+  * Para `"ganador"`, cada baseline, y `"spy"`: `retorno_acumulado`,
+    `sharpe`, `max_drawdown` (los 3 sobre `serie_por_fecha` de ese
+    método), `hit_rate` (sobre las señales individuales).
+  * `exceso_vs_momentum` = media de `exceso_vs_benchmark(serie_por_
+    fecha("ganador"), serie_por_fecha("baseline_momentum_simple"))`
+    (ignorando `NaN`); `exceso_vs_spy` análogo contra `"spy"`.
+  * `concentracion` = `evaluation.concentracion_maxima` (del paquete
+    `prl.reverse_winners.evaluation`, se importa) sobre el `DataFrame`
+    de `"ganador"` completo.
+  * `leave_one_ticker_out` = `evaluation.leave_one_ticker_out_signo`
+    sobre el `DataFrame` de `"ganador"` completo.
+  * `concentracion_del_efecto` = `forward_validation.
+    concentracion_del_efecto` sobre `"ganador"`.
+  * `desglose_periodo`, `desglose_vix`, `desglose_volatilidad`: los 3
+    desgloses de `forward_validation` sobre `"ganador"`.
+  * `supera_los_5_benchmarks` = `retorno_acumulado("ganador") >
+    retorno_acumulado(m)` para cada uno de los 5 (`AND` de las 5
+    comparaciones; `False` si algún `retorno_acumulado` es `NaN`).
+  * `label` = `forward_validation.etiqueta_forward(n_fechas_acumuladas,
+    supera_los_5_benchmarks,
+    concentracion_del_efecto["depende_de_pocas_senales"])`.
+  * `ultima_fecha_original`: el parámetro tal cual (para que el
+    reporte pueda mostrar desde cuándo empieza el periodo forward).
+  Devuelve un `dict` con todas esas claves (los `pd.Timestamp`/`NaN` se
+  convierten a `str`/`None` antes de devolver — este `dict` debe ser
+  directamente serializable a JSON con `json.dumps`, sin pasos
+  adicionales por parte del llamador).
+
+### Casos de prueba obligatorios
+
+1. **`determinar_fechas_nuevas`**: calendario sintético donde se conoce
+   a mano qué fechas del grid de paso 10 (anclado en `discovery_start`)
+   quedan después de `ultima_fecha_procesada` y tienen ventana completa
+   → lista exacta esperada; `ultima_fecha_procesada` posterior a la
+   última fecha con ventana completa → lista vacía.
+2. **`actualizar_log` deduplica**: `log_existente` con una señal
+   `(fecha=X, ticker="A")`; `nuevas_senales["ganador"]` con esa misma
+   señal repetida más una nueva `(fecha=Y, ticker="B")` → el resultado
+   tiene exactamente 2 entradas para `"ganador"`, no 3.
+3. **`actualizar_log` con log vacío**: `log_existente={}` → el
+   resultado tiene las 6 claves, cada una con las señales nuevas tal
+   cual (convertidas a dict, fechas en ISO).
+4. **`calcular_metricas_reporte` con log vacío**: `log_acumulado` con
+   las 6 claves en listas vacías → `n_fechas_acumuladas=0`,
+   `n_senales_ganador=0`, `label="inconclusa"` (por el criterio de
+   `etiqueta_forward`, `n_fechas_acumuladas < 10`), sin excepción.
+5. **`calcular_metricas_reporte` caso con datos**: log sintético de
+   ≥10 fechas construido a mano donde el método `"ganador"` supera
+   claramente a los otros 4 en cada fecha → `supera_los_5_benchmarks
+   == True`, `label == "favorable"` (si además
+   `depende_de_pocas_senales` da `False` con esos datos — construir el
+   caso para que así sea).
+6. **Determinismo de `calcular_metricas_reporte`**: mismo
+   `log_acumulado` dos veces → mismo `dict` (comparar
+   `json.dumps(resultado, sort_keys=True)` de ambas llamadas).
+
+Todos los datos de prueba son sintéticos, construidos a mano.
