@@ -57,6 +57,9 @@ MODULOS["reverse_winners_baselines"] = {"spec": _EXP005, "destino": ROOT / "src"
 MODULOS["reverse_winners_evaluation"] = {"spec": _EXP005, "destino": ROOT / "src" / "prl" / "reverse_winners" / "evaluation.py", "test": ROOT / "tests" / "reverse_winners" / "test_reverse_winners_evaluation.py"}
 MODULOS["reverse_winners_exp005"] = {"spec": _EXP005, "destino": ROOT / "src" / "prl" / "reverse_winners" / "exp005.py", "test": ROOT / "tests" / "reverse_winners" / "test_reverse_winners_exp005.py"}
 
+_EXP005_FORWARD = ROOT / "experiments" / "EXP-005-reverse-winners" / "FORWARD_VALIDATION_SPEC.md"
+MODULOS["reverse_winners_forward_validation"] = {"spec": _EXP005_FORWARD, "destino": ROOT / "src" / "prl" / "reverse_winners" / "forward_validation.py", "test": ROOT / "tests" / "reverse_winners" / "test_reverse_winners_forward_validation.py"}
+
 SISTEMA = (
     "Eres un ingeniero cuantitativo senior. Implementas módulos de Python para que pasen un conjunto de "
     "tests y cumplan un contrato. No inventes requisitos: el contrato y los tests mandan. "
