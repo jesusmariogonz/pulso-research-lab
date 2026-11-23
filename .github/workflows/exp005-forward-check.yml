@@ -45,8 +45,13 @@ jobs:
         run: |
           git config user.name "prl-bot"
           git config user.email "prl-bot@users.noreply.github.com"
-          git add experiments/EXP-005-reverse-winners/run_forward/log.json \
-                   experiments/EXP-005-reverse-winners/FORWARD_VALIDATION_RESULTADOS.md
+          # Primera corrida: estos archivos todavía no existen (la rutina no
+          # encontró fechas nuevas todavía) — git add falla duro sobre un
+          # pathspec inexistente, así que solo se agregan si ya existen.
+          for f in experiments/EXP-005-reverse-winners/run_forward/log.json \
+                   experiments/EXP-005-reverse-winners/FORWARD_VALIDATION_RESULTADOS.md; do
+            [ -f "$f" ] && git add "$f"
+          done
           git diff --cached --quiet && { echo "Sin fechas nuevas: nada que commitear"; exit 0; }
           git commit -m "EXP-005 forward validation: fechas nuevas $(date -u +%Y-%m-%d)"
           git pull --rebase origin main
