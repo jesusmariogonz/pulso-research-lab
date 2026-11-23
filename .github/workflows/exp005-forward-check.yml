@@ -20,6 +20,8 @@ jobs:
   forward-check:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -28,6 +30,15 @@ jobs:
           cache: pip
       - run: pip install -e ".[dev]"
       - run: pytest -q
+      - name: Traer datos congelados (último Release data-*)
+        run: |
+          TAG=$(gh release list --limit 30 --json tagName -q '.[] | select(.tagName | startswith("data-")) | .tagName' | head -1)
+          test -n "$TAG" || { echo "No hay Release de datos: corre primero 'Construir base de datos'"; exit 1; }
+          mkdir -p dl data
+          gh release download "$TAG" -p data-raw.tar.gz -p manifest.json -D dl
+          tar -xzf dl/data-raw.tar.gz -C data
+          cp dl/manifest.json data/manifest.json
+          python -m prl.data.build --verify
       - name: Aplicar el bucket congelado sobre fechas nuevas (si existen)
         run: python scripts/exp005_forward_check.py
       - name: Commitear el log y el reporte, solo si hay cambios
