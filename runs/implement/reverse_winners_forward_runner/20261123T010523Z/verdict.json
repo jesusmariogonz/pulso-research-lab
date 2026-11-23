@@ -1,0 +1,10 @@
+{
+  "modulo": "reverse_winners_forward_runner",
+  "destino": "src/prl/reverse_winners/forward_runner.py",
+  "estado": "TESTS_PASAN",
+  "iteraciones": 2,
+  "motivo": null,
+  "llamadas": 2,
+  "tokens_salida": 56303,
+  "modelo": "deepseek-flash"
+}
