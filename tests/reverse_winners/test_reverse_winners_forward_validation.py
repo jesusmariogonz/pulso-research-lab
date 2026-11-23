@@ -72,8 +72,10 @@ def test_max_drawdown():
 
 
 def test_hit_rate():
+    # Estrictamente > 0 (misma convención que frac_positivo en exp005.py
+    # original) — 0.0 exacto NO cuenta como acierto, a propósito.
     senales = pd.DataFrame({"retorno_30d": [0.1, -0.1, 0.2, 0.0, -0.3, 0.05, 0.01, -0.02, 0.3, -0.4]})
-    assert fv.hit_rate(senales) == pytest.approx(0.6)
+    assert fv.hit_rate(senales) == pytest.approx(0.5)
     senales_nan = pd.DataFrame({"retorno_30d": [float("nan"), float("nan")]})
     assert math.isnan(fv.hit_rate(senales_nan))
 

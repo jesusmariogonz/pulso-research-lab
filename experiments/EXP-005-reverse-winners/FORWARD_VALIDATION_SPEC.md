@@ -49,7 +49,11 @@ elegida por el bucket, el mismo formato que ya usa
 
 * `hit_rate(senales: pd.DataFrame, columna_retorno: str =
   "retorno_30d") -> float`: fracción de filas con
-  `columna_retorno > 0` (sobre las no-`NaN`). `NaN` si no hay filas
+  `columna_retorno > 0` — **estrictamente mayor que cero, `0.0` exacto
+  NO cuenta como acierto** (misma convención que `frac_positivo` de
+  `prl.reverse_winners.exp005._metricas` en la corrida original, que
+  usa `v30 > 0`, no `>= 0` — se declara así explícitamente porque es
+  fácil confundirlo). Sobre las filas no-`NaN`. `NaN` si no hay filas
   no-`NaN`.
 * `turnover_por_fecha(composiciones: dict[pd.Timestamp, set[str]]) ->
   pd.Series`: `composiciones` ya viene con las fechas en el orden
