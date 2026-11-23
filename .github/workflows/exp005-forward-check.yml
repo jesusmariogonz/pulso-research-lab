@@ -1,0 +1,42 @@
+name: EXP-005 — Forward validation check
+
+# Validación forward del bucket CONGELADO de EXP-005 (Reverse Winners).
+# No descubre ni reoptimiza nada — ver experiments/EXP-005-reverse-winners/
+# FORWARD_VALIDATION.md. Corre semanalmente (domingos, 2h después de
+# data-build.yml, para tener precios recién refrescados) y bajo demanda.
+# La mayoría de las corridas no encuentran ninguna fecha de corte nueva
+# con retorno de 30 días completo (solo existe una cada ~10 sesiones
+# hábiles) y terminan sin commitear nada — es el resultado esperado, no
+# un error. Cómputo puro: sin LLM, sin llaves.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 14 * * 0"
+
+permissions:
+  contents: write
+
+jobs:
+  forward-check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: pytest -q
+      - name: Aplicar el bucket congelado sobre fechas nuevas (si existen)
+        run: python scripts/exp005_forward_check.py
+      - name: Commitear el log y el reporte, solo si hay cambios
+        run: |
+          git config user.name "prl-bot"
+          git config user.email "prl-bot@users.noreply.github.com"
+          git add experiments/EXP-005-reverse-winners/run_forward/log.json \
+                   experiments/EXP-005-reverse-winners/FORWARD_VALIDATION_RESULTADOS.md
+          git diff --cached --quiet && { echo "Sin fechas nuevas: nada que commitear"; exit 0; }
+          git commit -m "EXP-005 forward validation: fechas nuevas $(date -u +%Y-%m-%d)"
+          git pull --rebase origin main
+          git push
