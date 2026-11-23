@@ -186,23 +186,56 @@ Tests en `tests/reverse_winners/test_reverse_winners_forward_runner.py`.
 Reutiliza `features.calcular_features_simbolo`,
 `features.normalizar_percentil_cross_sectional`, `grid.aplicar_bucket`,
 `baselines.*`, y de `exp005`: `ajustar_ohlc`, `retorno_forward` (se
-importan, no se reimplementan).
+importan, **se llaman con la firma exacta que ya tienen, documentada
+en sus propios contratos — nunca se adivina el orden de argumentos
+probando combinaciones, nunca se reimplementa su lógica "por si acaso"
+la llamada real falla**). Regla transversal obligatoria: un
+`try/except` que oculte un `TypeError`/`KeyError` de una llamada mal
+hecha y la reemplace por un resultado vacío o por una reimplementación
+propia **no es aceptable en este módulo** — si una llamada a una
+función ya probada falla, la excepción se propaga (el llamador de
+`construir_senales_para_fechas`, no esta función, decide qué hacer con
+un error). El único manejo de excepción permitido explícitamente es el
+ya descrito en el pre-registro: un símbolo sin archivo `.parquet` se
+omite.
 
 * `construir_senales_para_fechas(inputs_dir: Path, universo_path: Path,
   fechas: list[pd.Timestamp], bucket_congelado: dict, benchmark: str =
   "SPY", min_historia: int = 252) -> dict[str, pd.DataFrame]`:
   * Carga universo + benchmark igual que el paso 1 de `exp005.run`
     (mismo manejo de símbolos sin archivo: se omiten, sin excepción).
-  * Para cada símbolo, features de historia completa (igual que el
-    paso 2 de `exp005.run` — un único `calcular_features_simbolo` por
-    símbolo, no uno por fecha) y `retorno_forward` a 10/20/30/60 días.
+  * Para cada símbolo, features de historia completa — **llamada
+    exacta, los dos argumentos posicionales son obligatorios, no
+    tiene valor por defecto**: `features.calcular_features_simbolo(
+    df_ajustado, benchmark_ajustado.reindex(df_ajustado.index))`
+    (idéntica línea que usa `exp005.run` en su paso 2 — **copiarla
+    literal, no omitir el segundo argumento ni envolver la llamada en
+    un `try/except` que la convierta en silencio en un `DataFrame`
+    vacío si falla**: un error aquí debe propagarse, no esconderse).
+    Un único `calcular_features_simbolo` por símbolo (sobre toda su
+    historia), no uno por fecha. También `retorno_forward` a
+    10/20/30/60 días sobre el mismo `close` ajustado.
   * Para cada fecha en `fechas` (ya se asume que tiene retorno de 30
     días completo — esta función no lo valida, es responsabilidad del
     llamador): construye la tabla cross-sectional (mismo criterio dual
     de elegibilidad que `exp005.run` paso 4: ≥`min_historia` filas de
     precio original **y** fila de features sin `NaN`), normaliza por
     percentil, aplica:
-    * `bucket_congelado` vía `grid.aplicar_bucket` → método `"ganador"`.
+    * `bucket_congelado` → método `"ganador"`: llama **literalmente**
+      `grid.aplicar_bucket(bucket_congelado, tabla_norm)` — **en ese
+      orden exacto de argumentos** (`variant: dict` primero,
+      `features_percentil: pd.DataFrame` segundo; es el orden real de
+      la firma ya implementada y probada de `grid.aplicar_bucket`,
+      ver `src/prl/reverse_winners/grid.py`). **Prohibido**: adivinar
+      el orden de argumentos probando varias combinaciones, envolver
+      la llamada en un `try/except` genérico que oculte un error de
+      firma, o reimplementar la lógica de umbrales por cuenta propia
+      como alternativa/respaldo — si la llamada falla, debe propagar
+      la excepción, no devolver una selección calculada de otra
+      forma. El caso de prueba 1 exige que el resultado de esta
+      función coincida, símbolo por símbolo, con llamar
+      `grid.aplicar_bucket` directamente con los mismos datos — no
+      basta con verificar que las fechas sean correctas.
     * `baselines.baseline_momentum_simple` → `"baseline_momentum_simple"`.
     * `baselines.baseline_buy_hold` (sobre la lista de elegibles esa
       fecha) → `"baseline_buy_hold"`.
@@ -228,11 +261,21 @@ importan, no se reimplementan).
 
 ### Casos de prueba obligatorios
 
-1. **Caso de referencia completo**: universo sintético de 6-8 símbolos
-   con historia suficiente (≥260 filas) + `SPY`, 2 fechas de corte
-   sintéticas, un `bucket_congelado` de 1 sola feature con un umbral
-   conocido → verificar a mano qué símbolos debía seleccionar el
-   bucket y que el `DataFrame` `"ganador"` coincide exactamente.
+1. **Caso de referencia completo, direcciones "alto" y "bajo"**:
+   universo sintético de 6-8 símbolos con historia suficiente (≥260
+   filas) + `SPY`, 2 fechas de corte sintéticas. Probar **dos**
+   buckets congelados sobre los mismos datos: uno con una sola feature
+   dirección `"alto"`, otro con una sola feature dirección `"bajo"` —
+   para cada uno, calcular por separado (en el test, llamando
+   `grid.aplicar_bucket` directamente sobre la tabla de percentiles
+   esperada) qué símbolos debía seleccionar, y verificar que el
+   conjunto de `ticker`s en el `DataFrame` `"ganador"` de
+   `construir_senales_para_fechas` coincide **exactamente** (no un
+   subconjunto, no un superconjunto) con ese cálculo independiente —
+   este caso existe específicamente para atrapar un error de
+   "mirroring" del umbral en la dirección `"bajo"` (percentil
+   `p` dirección `"bajo"` selecciona `valores <= 1 - p`, **no**
+   `valores <= p`).
 2. **`"spy"`**: con 2 fechas, el método `"spy"` tiene exactamente 2
    filas, `ticker="SPY"` en ambas, valores iguales a
    `retorno_forward(close_SPY_ajustado, 30)` en esas fechas.
