@@ -2,16 +2,17 @@ name: EXP-005 — Paper portfolio
 
 # Cartera virtual EN VIVO del bucket CONGELADO de EXP-005 (ver
 # scripts/exp005_paper_portfolio.py) — complementa, no reemplaza, al
-# forward check estadístico (exp005-forward-check.yml). Corre semanalmente
-# (domingos, 1h después de ese forward check, con los mismos datos recién
-# refrescados por "Construir base de datos") y bajo demanda. La primera
-# corrida arranca la cartera en la última fecha disponible, sin backtest
-# retroactivo — las siguientes corridas solo avanzan fechas nuevas.
-# Cómputo puro: sin LLM, sin llaves.
+# forward check estadístico (exp005-forward-check.yml). Corre diario, de
+# lunes a viernes (antes solo domingos, cambiado el 2026-11-24 junto con
+# "Construir base de datos" — una corrida semanal dejaba la cartera sin
+# fechas nuevas toda la semana), 3h después de ese build (mismo colchón
+# que antes), y bajo demanda. La primera corrida arranca la cartera en la
+# última fecha disponible, sin backtest retroactivo — las siguientes
+# corridas solo avanzan fechas nuevas. Cómputo puro: sin LLM, sin llaves.
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 15 * * 0"
+    - cron: "0 15 * * 1-5"
 
 permissions:
   contents: write

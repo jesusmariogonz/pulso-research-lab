@@ -1,12 +1,16 @@
 name: Construir base de datos
 
-# Corre bajo demanda (y cada domingo). No usa LLM ni la llave de DeepSeek:
-# es cómputo puro. Commitea solo el manifiesto y el reporte de calidad;
-# los datos crudos se publican como Release verificable por hash.
+# Corre bajo demanda y diario, de lunes a viernes (antes solo domingos —
+# cambiado el 2026-11-24: EXP-005 Paper Portfolio necesita el calendario
+# de SPY al día para poder avanzar, y una corrida semanal lo dejaba
+# congelado toda la semana si Yahoo truncaba silenciosamente los datos
+# ese domingo). No usa LLM ni la llave de DeepSeek: es cómputo puro.
+# Commitea solo el manifiesto y el reporte de calidad; los datos crudos
+# se publican como Release verificable por hash.
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 12 * * 0"
+    - cron: "0 12 * * 1-5"
 
 permissions:
   contents: write
