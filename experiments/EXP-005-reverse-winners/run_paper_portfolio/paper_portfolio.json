@@ -38,7 +38,11 @@
   "n_posiciones_abiertas": 0,
   "n_posiciones_cerradas": 0,
   "nombre": "Reverse Winners — Paper Portfolio",
+  "pnl_no_realizado_total": 0,
+  "pnl_realizado_total": 0,
   "posiciones_abiertas": [],
+  "posiciones_cerradas": [],
   "retorno_acumulado_pct": 0.0,
-  "ultima_actualizacion": "2026-11-24T04:56:10.051000+00:00"
+  "ultima_actualizacion": "2026-11-24T05:32:22.979487+00:00",
+  "win_rate_pct": null
 }
