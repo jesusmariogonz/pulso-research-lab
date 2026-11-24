@@ -1,0 +1,44 @@
+{
+  "bucket_congelado": {
+    "umbrales": {
+      "beta_60d": {
+        "direccion": "alto",
+        "percentil": 0.75
+      },
+      "dist_max20": {
+        "direccion": "bajo",
+        "percentil": 0.9
+      },
+      "drawdown_60d": {
+        "direccion": "bajo",
+        "percentil": 0.9
+      },
+      "vol_realizada_20d": {
+        "direccion": "alto",
+        "percentil": 0.9
+      }
+    }
+  },
+  "capital_inicial": 1000.0,
+  "drawdown_pct": 0.0,
+  "efectivo": 1000.0,
+  "equity_actual": 1000.0,
+  "experimento": "EXP-005",
+  "fecha_inicio": "2026-11-13",
+  "grid_paso_sesiones": 10,
+  "historial_diario": [
+    {
+      "cumulative_return_pct": 0.0,
+      "drawdown_pct": 0.0,
+      "equity": 1000.0,
+      "fecha": "2026-11-13"
+    }
+  ],
+  "horizonte_sesiones": 30,
+  "n_posiciones_abiertas": 0,
+  "n_posiciones_cerradas": 0,
+  "nombre": "Reverse Winners — Paper Portfolio",
+  "posiciones_abiertas": [],
+  "retorno_acumulado_pct": 0.0,
+  "ultima_actualizacion": "2026-11-24T04:56:10.051000+00:00"
+}
