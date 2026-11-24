@@ -54,5 +54,12 @@ jobs:
           done
           git diff --cached --quiet && { echo "Sin fechas nuevas: nada que commitear"; exit 0; }
           git commit -m "EXP-005 forward validation: fechas nuevas $(date -u +%Y-%m-%d)"
+          # El manifiesto del Release descargado arriba puede no coincidir
+          # byte a byte con el data/manifest.json ya trackeado en main (se
+          # pisó solo para que --verify tuviera con qué comparar) — eso deja
+          # un cambio sin stagear que rompe "pull --rebase" (visto en
+          # exp005-paper-portfolio.yml). Se descarta: nunca fue intención de
+          # esta corrida tocar ese archivo.
+          git checkout -- data/manifest.json 2>/dev/null || true
           git pull --rebase origin main
           git push
