@@ -37,6 +37,16 @@ RAW = ROOT / "data" / "raw"
 MANIFIESTO = ROOT / "data" / "manifest.json"
 REPORTE = ROOT / "data" / "quality_report.md"
 INICIO = "1990-01-01"
+# Días corridos de atraso tolerados entre "hoy" y el último dato de Yahoo
+# antes de tratarlo como una corrida fallida (no un aviso, ver
+# UMBRAL_HUECO_DIAS_HABILES en validate.py para huecos DENTRO de la
+# serie). Cubre un fin de semana largo con feriado (hasta ~4 días
+# corridos); más que eso casi siempre es Yahoo truncando/cacheando
+# silenciosamente la respuesta en las IPs de GitHub Actions — pasó el
+# 2026-11-21, dejó el SPY pegado 8 días sin que ningún error lo avisara,
+# y EXP-005 Paper Portfolio se quedó sin fechas nuevas que procesar toda
+# esa semana (ver exp005_paper_portfolio.py).
+UMBRAL_DATOS_VIEJOS_DIAS = 5
 
 
 def cargar_catalogo(path: Path = CATALOGO) -> dict:
@@ -52,6 +62,14 @@ def descargar_yahoo(symbol: str, inicio: str = INICIO) -> pd.DataFrame:
     df = df.rename(columns={"Open": "open", "High": "high", "Low": "low", "Close": "close", "Adj Close": "adj_close", "Volume": "volume"})
     df.index = pd.to_datetime(df.index).tz_localize(None)
     df.index.name = "date"
+    atraso_dias = (pd.Timestamp.now().normalize() - df.index.max()).days
+    if atraso_dias > UMBRAL_DATOS_VIEJOS_DIAS:
+        raise RuntimeError(
+            f"{symbol}: el dato más reciente es del {df.index.max().date()} "
+            f"({atraso_dias} días de atraso) — Yahoo respondió sin error pero "
+            f"con datos viejos, probable truncamiento silencioso en CI, no se "
+            f"congela una serie desactualizada sin avisar"
+        )
     cols = [c for c in ["open", "high", "low", "close", "adj_close", "volume"] if c in df.columns]
     return df[cols].sort_index()
 

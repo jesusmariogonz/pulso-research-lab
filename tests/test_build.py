@@ -77,3 +77,32 @@ def test_construir_limpia_una_fallida_si_ahora_tiene_exito(monkeypatch):
     segunda = build.construir(only=["FOO"])
     assert "FOO" not in segunda["fallidas"], "una serie que antes falló y ahora tiene éxito no debe seguir en fallidas"
     assert "FOO" in segunda["series"]
+
+
+def _df_yahoo_crudo(dates, closes):
+    """Shape crudo que entrega yfinance (columnas con mayúscula), antes de
+    que descargar_yahoo las renombre."""
+    idx = pd.to_datetime(dates)
+    return pd.DataFrame(
+        {"Open": closes, "High": closes, "Low": closes, "Close": closes, "Adj Close": closes, "Volume": [100] * len(closes)},
+        index=idx,
+    )
+
+
+def test_descargar_yahoo_lanza_error_si_el_dato_mas_reciente_esta_viejo(monkeypatch):
+    hoy = pd.Timestamp.now().normalize()
+    vieja = hoy - pd.Timedelta(days=build.UMBRAL_DATOS_VIEJOS_DIAS + 1)
+    monkeypatch.setattr("yfinance.download", lambda *a, **k: _df_yahoo_crudo([vieja], [100.0]))
+
+    with pytest.raises(RuntimeError, match="días de atraso"):
+        build.descargar_yahoo("SPY")
+
+
+def test_descargar_yahoo_acepta_datos_dentro_del_umbral(monkeypatch):
+    hoy = pd.Timestamp.now().normalize()
+    reciente = hoy - pd.Timedelta(days=build.UMBRAL_DATOS_VIEJOS_DIAS)
+    monkeypatch.setattr("yfinance.download", lambda *a, **k: _df_yahoo_crudo([reciente], [100.0]))
+
+    df = build.descargar_yahoo("SPY")
+
+    assert df.index.max() == reciente
