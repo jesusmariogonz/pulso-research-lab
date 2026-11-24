@@ -1,0 +1,56 @@
+name: EXP-005 — Paper portfolio
+
+# Cartera virtual EN VIVO del bucket CONGELADO de EXP-005 (ver
+# scripts/exp005_paper_portfolio.py) — complementa, no reemplaza, al
+# forward check estadístico (exp005-forward-check.yml). Corre semanalmente
+# (domingos, 1h después de ese forward check, con los mismos datos recién
+# refrescados por "Construir base de datos") y bajo demanda. La primera
+# corrida arranca la cartera en la última fecha disponible, sin backtest
+# retroactivo — las siguientes corridas solo avanzan fechas nuevas.
+# Cómputo puro: sin LLM, sin llaves.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 15 * * 0"
+
+permissions:
+  contents: write
+
+jobs:
+  paper-portfolio:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: pip install -e ".[dev]"
+      - run: pytest -q
+      - name: Traer datos congelados (último Release data-*)
+        run: |
+          TAG=$(gh release list --limit 30 --json tagName -q '.[] | select(.tagName | startswith("data-")) | .tagName' | head -1)
+          test -n "$TAG" || { echo "No hay Release de datos: corre primero 'Construir base de datos'"; exit 1; }
+          mkdir -p dl data
+          gh release download "$TAG" -p data-raw.tar.gz -p manifest.json -D dl
+          tar -xzf dl/data-raw.tar.gz -C data
+          cp dl/manifest.json data/manifest.json
+          python -m prl.data.build --verify
+      - name: Avanzar la cartera a las fechas nuevas (si existen)
+        run: python scripts/exp005_paper_portfolio.py
+      - name: Commitear el estado y el snapshot público, solo si hay cambios
+        run: |
+          git config user.name "prl-bot"
+          git config user.email "prl-bot@users.noreply.github.com"
+          # Primera corrida: estos archivos todavía no existen en git.
+          for f in experiments/EXP-005-reverse-winners/run_paper_portfolio/estado.json \
+                   experiments/EXP-005-reverse-winners/run_paper_portfolio/paper_portfolio.json; do
+            [ -f "$f" ] && git add "$f"
+          done
+          git diff --cached --quiet && { echo "Sin fechas nuevas: nada que commitear"; exit 0; }
+          git commit -m "EXP-005 paper portfolio: fechas nuevas $(date -u +%Y-%m-%d)"
+          git pull --rebase origin main
+          git push
