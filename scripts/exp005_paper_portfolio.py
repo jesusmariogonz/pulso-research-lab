@@ -205,35 +205,38 @@ def main() -> dict:
         fechas_a_procesar = calendario[calendario == fecha_arranque]
 
     if len(fechas_a_procesar) == 0:
-        print("Sin fechas nuevas todavía (nada que actualizar).")
-        return {"fechas_nuevas": 0}
+        print("Sin fechas nuevas todavía — se reescribe el snapshot público por si cambió su formato.")
+    else:
+        datos = _cargar_datos(universo, df_bench_adj)
 
-    datos = _cargar_datos(universo, df_bench_adj)
+        for fecha in fechas_a_procesar:
+            step_actual = int(calendario.get_loc(fecha))
 
-    for fecha in fechas_a_procesar:
-        step_actual = int(calendario.get_loc(fecha))
+            tickers_nuevos: list[str] = []
+            if fecha in grid_cortes_set:
+                tabla = _tabla_features_elegibles(datos, fecha, MIN_HISTORIA)
+                tickers_nuevos = pp.detectar_senales(tabla, BUCKET_CONGELADO)
 
-        tickers_nuevos: list[str] = []
-        if fecha in grid_cortes_set:
-            tabla = _tabla_features_elegibles(datos, fecha, MIN_HISTORIA)
-            tickers_nuevos = pp.detectar_senales(tabla, BUCKET_CONGELADO)
+            tickers_relevantes = {p["ticker"] for p in estado["posiciones_abiertas"]} | set(tickers_nuevos)
+            precios_cierre = {
+                t: precio
+                for t in tickers_relevantes
+                if (precio := _precio_en(datos, t, fecha)) is not None
+            }
 
-        tickers_relevantes = {p["ticker"] for p in estado["posiciones_abiertas"]} | set(tickers_nuevos)
-        precios_cierre = {
-            t: precio
-            for t in tickers_relevantes
-            if (precio := _precio_en(datos, t, fecha)) is not None
-        }
+            estado = pp.step_diario(
+                estado,
+                fecha=str(fecha.date()),
+                step_actual=step_actual,
+                precios_cierre=precios_cierre,
+                tickers_nuevos=tickers_nuevos,
+                horizonte_sesiones=HORIZONTE_SESIONES,
+            )
 
-        estado = pp.step_diario(
-            estado,
-            fecha=str(fecha.date()),
-            step_actual=step_actual,
-            precios_cierre=precios_cierre,
-            tickers_nuevos=tickers_nuevos,
-            horizonte_sesiones=HORIZONTE_SESIONES,
-        )
-
+    # Siempre se reescriben ambos archivos, incluso sin fechas nuevas: así un
+    # cambio de formato en _construir_snapshot (ej. un campo nuevo) se
+    # publica de inmediato en vez de esperar a la próxima sesión de mercado.
+    # El workflow solo commitea si "git diff" encuentra un cambio real.
     RUN_DIR.mkdir(parents=True, exist_ok=True)
     ESTADO_PATH.write_text(json.dumps(estado, indent=2, ensure_ascii=False, sort_keys=True))
     SNAPSHOT_PATH.write_text(
