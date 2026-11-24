@@ -131,6 +131,19 @@ def _construir_snapshot(estado: dict) -> dict:
         "drawdown_pct": round(ultimo["drawdown_pct"], 2) if ultimo else 0.0,
         "n_posiciones_abiertas": len(estado["posiciones_abiertas"]),
         "n_posiciones_cerradas": len(estado["posiciones_cerradas"]),
+        "pnl_realizado_total": round(sum(p["pnl"] for p in estado["posiciones_cerradas"]), 2),
+        "pnl_no_realizado_total": round(
+            sum(
+                p["dolares_invertidos"] * (p["ultimo_precio_conocido"] / p["entry_price"] - 1.0)
+                for p in estado["posiciones_abiertas"]
+            ),
+            2,
+        ),
+        "win_rate_pct": (
+            round(100.0 * sum(1 for p in estado["posiciones_cerradas"] if p["pnl"] > 0) / len(estado["posiciones_cerradas"]), 1)
+            if estado["posiciones_cerradas"]
+            else None
+        ),
         "posiciones_abiertas": [
             {
                 "ticker": p["ticker"],
@@ -143,6 +156,20 @@ def _construir_snapshot(estado: dict) -> dict:
                 ),
             }
             for p in estado["posiciones_abiertas"]
+        ],
+        "posiciones_cerradas": [
+            {
+                "ticker": p["ticker"],
+                "entry_fecha": p["entry_fecha"],
+                "entry_price": round(p["entry_price"], 2),
+                "exit_fecha": p["exit_fecha"],
+                "exit_price": round(p["exit_price"], 2),
+                "exit_price_estimado": p["exit_price_estimado"],
+                "dolares_invertidos": round(p["dolares_invertidos"], 2),
+                "pnl": round(p["pnl"], 2),
+                "pnl_pct": round(p["pnl_pct"] * 100.0, 2),
+            }
+            for p in estado["posiciones_cerradas"]
         ],
         "historial_diario": [
             {

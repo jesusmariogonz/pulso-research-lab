@@ -111,6 +111,7 @@ def test_posicion_se_liquida_exactamente_al_cumplir_el_horizonte():
     assert estado["posiciones_abiertas"] == []
     assert len(estado["posiciones_cerradas"]) == 1
     cerrada = estado["posiciones_cerradas"][0]
+    assert cerrada["exit_fecha"] == "d3"
     assert cerrada["exit_price"] == 12.0
     assert cerrada["pnl_pct"] == pytest.approx(0.2)
     assert estado["efectivo"] == pytest.approx(1200.0)
@@ -180,6 +181,7 @@ def test_precio_faltante_usa_el_ultimo_precio_conocido_para_marcar_y_liquidar():
     estado = pp.step_diario(estado, "d2", 2, {}, [], horizonte_sesiones=2)
     assert estado["posiciones_abiertas"] == []
     cerrada = estado["posiciones_cerradas"][0]
+    assert cerrada["exit_fecha"] == "d2"
     assert cerrada["exit_price"] == 10.0
     assert cerrada["exit_price_estimado"] is True
     assert cerrada["pnl"] == pytest.approx(0.0)

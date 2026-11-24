@@ -87,6 +87,7 @@ def inicializar_estado(fecha_inicio: str, capital_inicial: float) -> dict[str, A
 
 def _cerrar_posiciones_vencidas(
     estado: dict[str, Any],
+    fecha: str,
     step_actual: int,
     precios_cierre: dict[str, float],
     horizonte_sesiones: int,
@@ -108,6 +109,7 @@ def _cerrar_posiciones_vencidas(
         cerradas_nuevas.append(
             {
                 **pos,
+                "exit_fecha": fecha,
                 "exit_step": step_actual,
                 "exit_price": precio_salida,
                 "exit_price_estimado": precio_estimado,
@@ -194,7 +196,7 @@ def step_diario(
     madura el mismo día en que hay señales nuevas sí puede financiarlas,
     en vez de quedar un día entero sin invertir de más.
     """
-    estado = _cerrar_posiciones_vencidas(estado, step_actual, precios_cierre, horizonte_sesiones)
+    estado = _cerrar_posiciones_vencidas(estado, fecha, step_actual, precios_cierre, horizonte_sesiones)
     estado = _abrir_posiciones_nuevas(estado, fecha, step_actual, tickers_nuevos, precios_cierre)
     estado = _marcar_a_mercado(estado, precios_cierre)
 
