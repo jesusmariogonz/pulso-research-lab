@@ -248,12 +248,15 @@ def test_confirmacion_d():
 
 
 def test_confirmacion_e():
-    rel_volume = _serie([1.5, 0.8, 1.2, np.nan])
-    cierre = _serie([10.0, 11.0, 9.0, 12.0])
+    rel_volume = _serie([0.8, 1.5, 0.8, np.nan])
+    cierre = _serie([10.0, 11.0, 12.0, 13.0])
     r = confirmacion_e(rel_volume, cierre)
     assert pd.isna(r.iloc[0])  # primera fila de cierre sin shift
-    assert bool(r.iloc[1]) is True  # rel_volume>1 y cierre sube
-    assert bool(r.iloc[2]) is False  # cierre baja
+    assert bool(r.iloc[1]) is True  # rel_volume (HOY) > 1 y cierre sube
+    # HOY (índice 2) rel_volume=0.8 no supera 1, aunque AYER sí (1.5) y el
+    # cierre vuelve a subir: debe dar False — la condición es sobre el
+    # volumen relativo de HOY, nunca el de ayer.
+    assert bool(r.iloc[2]) is False
     assert pd.isna(r.iloc[3])  # rel_volume NaN
 
 
