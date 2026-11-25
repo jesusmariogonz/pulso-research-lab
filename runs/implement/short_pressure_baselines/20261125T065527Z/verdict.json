@@ -1,0 +1,10 @@
+{
+  "modulo": "short_pressure_baselines",
+  "destino": "src/prl/short_pressure/baselines.py",
+  "estado": "TESTS_PASAN",
+  "iteraciones": 1,
+  "motivo": null,
+  "llamadas": 1,
+  "tokens_salida": 1588,
+  "modelo": "deepseek-flash"
+}
