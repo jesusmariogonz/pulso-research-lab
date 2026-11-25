@@ -62,6 +62,13 @@ MODULOS["reverse_winners_forward_validation"] = {"spec": _EXP005_FORWARD, "desti
 MODULOS["reverse_winners_forward_runner"] = {"spec": _EXP005_FORWARD, "destino": ROOT / "src" / "prl" / "reverse_winners" / "forward_runner.py", "test": ROOT / "tests" / "reverse_winners" / "test_reverse_winners_forward_runner.py"}
 MODULOS["reverse_winners_forward_check"] = {"spec": _EXP005_FORWARD, "destino": ROOT / "src" / "prl" / "reverse_winners" / "forward_check.py", "test": ROOT / "tests" / "reverse_winners" / "test_reverse_winners_forward_check.py"}
 
+_EXP004 = ROOT / "experiments" / "EXP-004-short-pressure-reversal" / "IMPLEMENTATION_SPEC.md"
+MODULOS["short_pressure_features"] = {"spec": _EXP004, "destino": ROOT / "src" / "prl" / "short_pressure" / "features.py", "test": ROOT / "tests" / "short_pressure" / "test_short_pressure_features.py"}
+MODULOS["short_pressure_grid"] = {"spec": _EXP004, "destino": ROOT / "src" / "prl" / "short_pressure" / "grid.py", "test": ROOT / "tests" / "short_pressure" / "test_short_pressure_grid.py"}
+MODULOS["short_pressure_baselines"] = {"spec": _EXP004, "destino": ROOT / "src" / "prl" / "short_pressure" / "baselines.py", "test": ROOT / "tests" / "short_pressure" / "test_short_pressure_baselines.py"}
+MODULOS["short_pressure_evaluation"] = {"spec": _EXP004, "destino": ROOT / "src" / "prl" / "short_pressure" / "evaluation.py", "test": ROOT / "tests" / "short_pressure" / "test_short_pressure_evaluation.py"}
+MODULOS["short_pressure_exp004"] = {"spec": _EXP004, "destino": ROOT / "src" / "prl" / "short_pressure" / "exp004.py", "test": ROOT / "tests" / "short_pressure" / "test_short_pressure_exp004.py"}
+
 SISTEMA = (
     "Eres un ingeniero cuantitativo senior. Implementas módulos de Python para que pasen un conjunto de "
     "tests y cumplan un contrato. No inventes requisitos: el contrato y los tests mandan. "
