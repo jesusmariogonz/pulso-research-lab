@@ -52,17 +52,21 @@ def _tabla():
 def test_aplicar_bucket_sin_confirmaciones():
     variant = {"umbral_short_pressure": 0.80, "umbral_price_exhaustion": 0.10, "confirmaciones": ()}
     r = aplicar_bucket(variant, _tabla())
-    assert list(r[r].index) == ["AAA", "BBB"]
+    # AAA, BBB (límite inclusivo en ambos umbrales) y EEE pasan el filtro de
+    # score; CCC falla por SHORT_PRESSURE_SCORE y DDD por NaN.
+    assert list(r[r].index) == ["AAA", "BBB", "EEE"]
 
 
 def test_aplicar_bucket_una_confirmacion():
     variant = {"umbral_short_pressure": 0.80, "umbral_price_exhaustion": 0.10, "confirmaciones": ("a",)}
     r = aplicar_bucket(variant, _tabla())
-    assert list(r[r].index) == ["AAA"]
+    # BBB pasa el filtro de score pero confirmacion_a es False.
+    assert list(r[r].index) == ["AAA", "EEE"]
 
 
 def test_aplicar_bucket_todas_confirmaciones_y_nan():
     variant = {"umbral_short_pressure": 0.80, "umbral_price_exhaustion": 0.10, "confirmaciones": ("a", "b", "c", "d", "e")}
     r = aplicar_bucket(variant, _tabla())
-    assert list(r[r].index) == ["AAA"]
+    # BBB falla confirmacion_a, CCC falla confirmacion_b y SHORT_PRESSURE_SCORE.
+    assert list(r[r].index) == ["AAA", "EEE"]
     assert r.loc["DDD"] == False  # SHORT_PRESSURE_SCORE NaN -> False, nunca excepción
