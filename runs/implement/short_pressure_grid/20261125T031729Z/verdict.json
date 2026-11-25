@@ -1,0 +1,10 @@
+{
+  "modulo": "short_pressure_grid",
+  "destino": "src/prl/short_pressure/grid.py",
+  "estado": "FALLIDO",
+  "iteraciones": 6,
+  "motivo": "los tests no pasaron tras 6 iteraciones",
+  "llamadas": 6,
+  "tokens_salida": 105791,
+  "modelo": "deepseek-flash"
+}
