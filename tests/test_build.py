@@ -106,3 +106,49 @@ def test_descargar_yahoo_acepta_datos_dentro_del_umbral(monkeypatch):
     df = build.descargar_yahoo("SPY")
 
     assert df.index.max() == reciente
+
+
+def _catalogo_con_universo(tmp_path, miembros):
+    """Catálogo con una serie explícita (FOO, crítica) y un universo (sus
+    miembros NO son críticos — pueden fallar sin tumbar la corrida)."""
+    universo_dir = tmp_path / "data" / "universes"
+    universo_dir.mkdir(parents=True, exist_ok=True)
+    (universo_dir / "uni1.txt").write_text("\n".join(miembros))
+    return {
+        "series": [{"id": "FOO", "source": "yahoo", "symbol": "FOO", "role": "x", "notes": ""}],
+        "universes": [{"id": "uni1", "file": "universes/uni1.txt", "notes": ""}],
+    }
+
+
+def _descargar_con_fallidos(fallidos: set[str]):
+    def descargar(symbol, inicio=None):
+        if symbol in fallidos:
+            raise RuntimeError(f"{symbol}: possibly delisted")
+        return _df(["2020-01-01"], [1.0])
+    return descargar
+
+
+def test_main_falla_si_una_serie_critica_del_catalogo_falla(tmp_path, monkeypatch):
+    monkeypatch.setattr(build, "ROOT", tmp_path)
+    monkeypatch.setattr(build, "cargar_catalogo", lambda path=None: _catalogo_con_universo(tmp_path, ["A", "B"]))
+    monkeypatch.setattr(build, "descargar_yahoo", _descargar_con_fallidos({"FOO"}))
+
+    assert build.main([]) == 1
+
+
+def test_main_no_falla_si_solo_fallan_pocos_simbolos_de_universo(tmp_path, monkeypatch):
+    monkeypatch.setattr(build, "ROOT", tmp_path)
+    monkeypatch.setattr(build, "cargar_catalogo", lambda path=None: _catalogo_con_universo(tmp_path, ["A", "B", "C"]))
+    monkeypatch.setattr(build, "descargar_yahoo", _descargar_con_fallidos({"A"}))
+
+    assert build.main([]) == 0, "un símbolo de universo fallido (churn normal) no debe tumbar la corrida"
+
+
+def test_main_falla_si_fallan_demasiados_simbolos_de_universo(tmp_path, monkeypatch):
+    miembros = [f"SYM{i}" for i in range(build.UMBRAL_FALLIDAS_UNIVERSO + 5)]
+    fallidos = set(miembros[: build.UMBRAL_FALLIDAS_UNIVERSO + 1])
+    monkeypatch.setattr(build, "ROOT", tmp_path)
+    monkeypatch.setattr(build, "cargar_catalogo", lambda path=None: _catalogo_con_universo(tmp_path, miembros))
+    monkeypatch.setattr(build, "descargar_yahoo", _descargar_con_fallidos(fallidos))
+
+    assert build.main([]) == 1, "demasiados fallos de universo a la vez huele a bloqueo sistémico, no a churn"

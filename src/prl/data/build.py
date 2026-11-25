@@ -37,6 +37,15 @@ RAW = ROOT / "data" / "raw"
 MANIFIESTO = ROOT / "data" / "manifest.json"
 REPORTE = ROOT / "data" / "quality_report.md"
 INICIO = "1990-01-01"
+# Símbolos de universo fallidos tolerados en una sola corrida antes de
+# tratarlo como fallo real (en vez de churn normal: delistings, fusiones,
+# cambios de ticker — esperables en una lista de ~1600 símbolos). Más que
+# esto en una sola corrida probablemente es un bloqueo sistémico (ej. IP
+# de CI bloqueada por Yahoo), no un puñado de empresas que dejaron de
+# cotizar — bug real encontrado el 2026-11-22: CWEN-A/TCBI fallidos
+# tumbaban TODA la corrida (incluido SPY, que sí se había descargado
+# bien), dejando sin publicar ningún Release nuevo desde entonces.
+UMBRAL_FALLIDAS_UNIVERSO = 10
 # Días corridos de atraso tolerados entre "hoy" y el último dato de Yahoo
 # antes de tratarlo como una corrida fallida (no un aviso, ver
 # UMBRAL_HUECO_DIAS_HABILES en validate.py para huecos DENTRO de la
@@ -238,7 +247,28 @@ def main(argv: list[str] | None = None) -> int:
     print(f"Series guardadas: {len(m['series'])} · fallidas: {len(m['fallidas'])}")
     for k, v in m["fallidas"].items():
         print(f"  FALLÓ {k}: {v}")
-    return 1 if m["fallidas"] else 0
+    if not m["fallidas"]:
+        return 0
+
+    # No toda falla bloquea la publicación: un símbolo de universo
+    # delistado es churn normal, no una razón para dejar a SPY (y los
+    # demás ~1600 símbolos que sí se descargaron bien) sin un Release
+    # nuevo. Lo que SÍ bloquea: una serie del catálogo explícito (no un
+    # miembro de universo) o demasiados fallos de universo a la vez
+    # (señal de bloqueo sistémico real, no churn).
+    ids_criticos = {s["id"] for s in cargar_catalogo()["series"]}
+    fallidas_criticas = sorted(set(m["fallidas"]) & ids_criticos)
+    if fallidas_criticas:
+        print(f"CRÍTICO: fallaron series del catálogo explícito (no universo): {', '.join(fallidas_criticas)}")
+        return 1
+    if len(m["fallidas"]) > UMBRAL_FALLIDAS_UNIVERSO:
+        print(
+            f"CRÍTICO: {len(m['fallidas'])} símbolos de universo fallaron "
+            f"(> {UMBRAL_FALLIDAS_UNIVERSO}) — no parece churn normal"
+        )
+        return 1
+    print(f"{len(m['fallidas'])} símbolo(s) de universo fallido(s) — churn normal, no bloquea la publicación.")
+    return 0
 
 
 if __name__ == "__main__":
