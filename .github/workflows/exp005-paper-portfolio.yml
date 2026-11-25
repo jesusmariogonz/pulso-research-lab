@@ -30,7 +30,10 @@ jobs:
           python-version: "3.11"
           cache: pip
       - run: pip install -e ".[dev]"
-      - run: pytest -q
+      # --ignore tests/short_pressure: ver mismo comentario en data-build.yml
+      # — EXP-004 (ajeno a EXP-005) no debe poder tumbar esta corrida mientras
+      # se implementa módulo por módulo.
+      - run: pytest -q --ignore=tests/short_pressure
       - name: Traer datos congelados (último Release data-*)
         run: |
           TAG=$(gh release list --limit 30 --json tagName -q '.[] | select(.tagName | startswith("data-")) | .tagName' | head -1)

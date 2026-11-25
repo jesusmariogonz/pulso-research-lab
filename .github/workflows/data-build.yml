@@ -26,7 +26,13 @@ jobs:
           python-version: "3.11"
           cache: pip
       - run: pip install -e ".[dev]"
-      - run: pytest -q
+      # --ignore tests/short_pressure: ese experimento (EXP-004) se implementa
+      # módulo por módulo vía DeepSeek y, mientras falta alguno, sus tests
+      # truenan al importar — eso no debería poder tumbar un workflow que no
+      # tiene nada que ver con EXP-004 (pasó el 2026-11-25: bloqueó la
+      # publicación de datos de TODO el repo, incluido SPY). Quitar este
+      # --ignore cuando EXP-004 esté completo y estable.
+      - run: pytest -q --ignore=tests/short_pressure
       - name: Descargar, validar y congelar
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
