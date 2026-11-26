@@ -46,7 +46,18 @@ INICIO = "1990-01-01"
 # cotizar — bug real encontrado el 2026-11-22: CWEN-A/TCBI fallidos
 # tumbaban TODA la corrida (incluido SPY, que sí se había descargado
 # bien), dejando sin publicar ningún Release nuevo desde entonces.
-UMBRAL_FALLIDAS_UNIVERSO = 10
+#
+# Subido de 10 a 20 el 2026-11-26: un grupo de 12 símbolos del universo
+# (ROKU, ACA, BLFS, CWEN-A, HLX, INDV, ITGR, LEG, LXP, PCRX, QRVO, RAMP)
+# quedó bloqueando la corrida día tras día pese al retry con backoff de
+# descargar_yahoo. Evidencia de que NO es el "bloqueo sistémico" que este
+# umbral busca atajar: cada reintento devuelve la MISMA fecha de atraso
+# exacta (no una más fresca), y el patrón se repite idéntico en corridas
+# separadas por horas — un throttling de IP de CI afectaría a símbolos
+# variables y mejoraría con el reintento, no esto. Son ~0.7% de un
+# universo de ~1600 símbolos, consistente con el nivel de delistings/
+# fusiones reales que este umbral está pensado para tolerar.
+UMBRAL_FALLIDAS_UNIVERSO = 20
 # Días corridos de atraso tolerados entre "hoy" y el último dato de Yahoo
 # antes de tratarlo como una corrida fallida (no un aviso, ver
 # UMBRAL_HUECO_DIAS_HABILES en validate.py para huecos DENTRO de la
