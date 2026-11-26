@@ -90,6 +90,7 @@ def _df_yahoo_crudo(dates, closes):
 
 
 def test_descargar_yahoo_lanza_error_si_el_dato_mas_reciente_esta_viejo(monkeypatch):
+    monkeypatch.setattr(build.time, "sleep", lambda s: None)
     hoy = pd.Timestamp.now().normalize()
     vieja = hoy - pd.Timedelta(days=build.UMBRAL_DATOS_VIEJOS_DIAS + 1)
     monkeypatch.setattr("yfinance.download", lambda *a, **k: _df_yahoo_crudo([vieja], [100.0]))
@@ -106,6 +107,40 @@ def test_descargar_yahoo_acepta_datos_dentro_del_umbral(monkeypatch):
     df = build.descargar_yahoo("SPY")
 
     assert df.index.max() == reciente
+
+
+def test_descargar_yahoo_reintenta_tras_dato_viejo_y_al_final_trae_datos_frescos(monkeypatch):
+    monkeypatch.setattr(build.time, "sleep", lambda s: None)
+    hoy = pd.Timestamp.now().normalize()
+    vieja = hoy - pd.Timedelta(days=build.UMBRAL_DATOS_VIEJOS_DIAS + 1)
+    llamadas = {"n": 0}
+
+    def descarga(*a, **k):
+        llamadas["n"] += 1
+        fecha = vieja if llamadas["n"] == 1 else hoy
+        return _df_yahoo_crudo([fecha], [100.0])
+
+    monkeypatch.setattr("yfinance.download", descarga)
+
+    df = build.descargar_yahoo("SPY")
+
+    assert df.index.max() == hoy
+    assert llamadas["n"] == 2
+
+
+def test_descargar_yahoo_agota_reintentos_si_siempre_llega_vacio(monkeypatch):
+    monkeypatch.setattr(build.time, "sleep", lambda s: None)
+    llamadas = {"n": 0}
+
+    def descarga(*a, **k):
+        llamadas["n"] += 1
+        return pd.DataFrame()
+
+    monkeypatch.setattr("yfinance.download", descarga)
+
+    with pytest.raises(RuntimeError, match="no devolvió datos"):
+        build.descargar_yahoo("CWEN-A")
+    assert llamadas["n"] == build.DESCARGA_REINTENTOS
 
 
 def _catalogo_con_universo(tmp_path, miembros):

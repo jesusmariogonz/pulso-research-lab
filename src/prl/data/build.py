@@ -22,6 +22,7 @@ import io
 import json
 import os
 import sys
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -56,6 +57,15 @@ UMBRAL_FALLIDAS_UNIVERSO = 10
 # y EXP-005 Paper Portfolio se quedó sin fechas nuevas que procesar toda
 # esa semana (ver exp005_paper_portfolio.py).
 UMBRAL_DATOS_VIEJOS_DIAS = 5
+# Reintentos para un símbolo que llega vacío o con datos viejos (ver
+# UMBRAL_DATOS_VIEJOS_DIAS arriba) — bug real encontrado el 2026-11-25:
+# 12 símbolos de un universo de 1620 llegaron cada uno con un atraso
+# distinto (7 a 91 días), la firma típica de Yahoo cacheando/limitando
+# respuestas para las IPs compartidas de GitHub Actions, no de que esas
+# empresas dejaran de cotizar de verdad. Un reintento con espera suele
+# alcanzar para que Yahoo sirva el dato fresco.
+DESCARGA_REINTENTOS = 3
+DESCARGA_ESPERA_ENTRE_REINTENTOS_SEGUNDOS = 8
 
 
 def cargar_catalogo(path: Path = CATALOGO) -> dict:
@@ -65,22 +75,30 @@ def cargar_catalogo(path: Path = CATALOGO) -> dict:
 def descargar_yahoo(symbol: str, inicio: str = INICIO) -> pd.DataFrame:
     import yfinance as yf
 
-    df = yf.download(symbol, start=inicio, auto_adjust=False, progress=False, actions=False, multi_level_index=False)
-    if df is None or df.empty:
-        raise RuntimeError(f"Yahoo no devolvió datos para {symbol}")
-    df = df.rename(columns={"Open": "open", "High": "high", "Low": "low", "Close": "close", "Adj Close": "adj_close", "Volume": "volume"})
-    df.index = pd.to_datetime(df.index).tz_localize(None)
-    df.index.name = "date"
-    atraso_dias = (pd.Timestamp.now().normalize() - df.index.max()).days
-    if atraso_dias > UMBRAL_DATOS_VIEJOS_DIAS:
-        raise RuntimeError(
-            f"{symbol}: el dato más reciente es del {df.index.max().date()} "
-            f"({atraso_dias} días de atraso) — Yahoo respondió sin error pero "
-            f"con datos viejos, probable truncamiento silencioso en CI, no se "
-            f"congela una serie desactualizada sin avisar"
-        )
-    cols = [c for c in ["open", "high", "low", "close", "adj_close", "volume"] if c in df.columns]
-    return df[cols].sort_index()
+    ultimo_error: Exception | None = None
+    for intento in range(1, DESCARGA_REINTENTOS + 1):
+        df = yf.download(symbol, start=inicio, auto_adjust=False, progress=False, actions=False, multi_level_index=False)
+        if df is None or df.empty:
+            ultimo_error = RuntimeError(f"Yahoo no devolvió datos para {symbol}")
+        else:
+            df = df.rename(columns={"Open": "open", "High": "high", "Low": "low", "Close": "close", "Adj Close": "adj_close", "Volume": "volume"})
+            df.index = pd.to_datetime(df.index).tz_localize(None)
+            df.index.name = "date"
+            atraso_dias = (pd.Timestamp.now().normalize() - df.index.max()).days
+            if atraso_dias <= UMBRAL_DATOS_VIEJOS_DIAS:
+                cols = [c for c in ["open", "high", "low", "close", "adj_close", "volume"] if c in df.columns]
+                return df[cols].sort_index()
+            ultimo_error = RuntimeError(
+                f"{symbol}: el dato más reciente es del {df.index.max().date()} "
+                f"({atraso_dias} días de atraso) — Yahoo respondió sin error pero "
+                f"con datos viejos, probable truncamiento silencioso en CI, no se "
+                f"congela una serie desactualizada sin avisar"
+            )
+        if intento < DESCARGA_REINTENTOS:
+            print(f"descargar_yahoo({symbol}): intento {intento}/{DESCARGA_REINTENTOS} falló ({ultimo_error}), reintentando")
+            time.sleep(DESCARGA_ESPERA_ENTRE_REINTENTOS_SEGUNDOS)
+    assert ultimo_error is not None
+    raise ultimo_error
 
 
 def descargar_fred(serie: str) -> pd.DataFrame:
