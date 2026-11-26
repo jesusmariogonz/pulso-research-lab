@@ -1,0 +1,10 @@
+{
+  "modulo": "short_pressure_exp004",
+  "destino": "src/prl/short_pressure/exp004.py",
+  "estado": "TESTS_PASAN",
+  "iteraciones": 4,
+  "motivo": null,
+  "llamadas": 4,
+  "tokens_salida": 123488,
+  "modelo": "deepseek-flash"
+}
