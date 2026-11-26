@@ -19,13 +19,13 @@
       }
     }
   },
+  "cadencia_entradas": "diaria",
   "capital_inicial": 1000.0,
   "drawdown_pct": 0.0,
   "efectivo": 1000.0,
   "equity_actual": 1000.0,
   "experimento": "EXP-005",
   "fecha_inicio": "2026-11-13",
-  "grid_paso_sesiones": 10,
   "historial_diario": [
     {
       "cumulative_return_pct": 0.0,
@@ -91,6 +91,6 @@
   "posiciones_abiertas": [],
   "posiciones_cerradas": [],
   "retorno_acumulado_pct": 0.0,
-  "ultima_actualizacion": "2026-11-26T01:46:25.395346+00:00",
+  "ultima_actualizacion": "2026-11-26T02:31:30.282084+00:00",
   "win_rate_pct": null
 }
