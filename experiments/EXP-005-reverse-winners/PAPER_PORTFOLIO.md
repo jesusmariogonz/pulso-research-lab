@@ -21,10 +21,10 @@ que comparten el mismo bucket congelado:
 
 Universo, elegibilidad, las 4 features, los umbrales exactos
 (`vol_realizada_20d` alto P90, `drawdown_60d` bajo P90, `dist_max20`
-bajo P90, `beta_60d` alto P75), la cadencia de fechas de corte (cada
-10 sesiones, `exp005.fechas_t0`) y el horizonte de 30 sesiones son
+bajo P90, `beta_60d` alto P75) y el horizonte de 30 sesiones son
 **idénticos** a `FORWARD_VALIDATION.md` — mismo `BUCKET_CONGELADO`,
-nunca reoptimizado. La detección de señales (`paper_portfolio.
+nunca reoptimizado (la cadencia de revisión de señales SÍ difiere,
+ver sección 2 — eso es cartera, no bucket). La detección de señales (`paper_portfolio.
 detectar_senales`) delega en las mismas funciones ya probadas
 (`features.calcular_features_simbolo`, `features.
 normalizar_percentil_cross_sectional`, `grid.aplicar_bucket`) que usa
@@ -43,17 +43,29 @@ confunda con algo ya validado:
 * **Capital inicial**: USD $1,000 virtuales — la misma unidad de
   referencia que usa el resto del sistema de trading de jesus-site,
   para que sea comparable.
-* **Tamaño de posición**: el efectivo disponible el día de una fecha
-  de corte se reparte en **partes iguales** entre las señales nuevas
+* **Cadencia de revisión de señales: DIARIA, no el grid de 10 sesiones
+  de la validación forward** (cambiado el 2026-11-26, a pedido
+  explícito, para que se comporte como los buckets de trading
+  algorítmico en vivo de jesus-site — revisión todos los días de
+  mercado, no una vez cada 10 sesiones). `exp005.fechas_t0`/el grid
+  de 10 sesiones sigue siendo la cadencia de `FORWARD_VALIDATION.md`
+  sin cambios — esa separación de ventanas importa ahí porque
+  alimenta pruebas estadísticas (bootstrap, DSR, PBO) que asumen
+  observaciones no masivamente solapadas. Esta cartera no es una
+  prueba estadística (no tiene veredicto, ver arriba), así que
+  revisar a diario no compromete nada ya validado.
+* **Tamaño de posición**: el efectivo disponible el día de una
+  revisión se reparte en **partes iguales** entre las señales nuevas
   de ese día. Si ya no queda efectivo (cartera totalmente invertida),
   no se abren posiciones nuevas hasta que madure alguna.
 * **Señales repetidas del mismo símbolo**: si un símbolo vuelve a dar
-  señal en una fecha de corte posterior mientras sigue abierta una
-  posición previa, se abre una posición **nueva e independiente** —
-  no se deduplica. Esto es fiel a cómo la validación original cuenta
+  señal en un día posterior mientras sigue abierta una posición
+  previa, se abre una posición **nueva e independiente** — no se
+  deduplica. Esto es fiel a cómo la validación original cuenta
   señales (cada `(fecha, ticker)` es una observación independiente),
   pero en una cartera real esto puede concentrar capital en los
-  nombres más persistentes (ver limitaciones).
+  nombres más persistentes (ver limitaciones) — con revisión diaria
+  en vez de cada 10 sesiones, este efecto es más fuerte que antes.
 * **Salida**: exactamente al cumplirse 30 sesiones desde la entrada,
   al precio de cierre ajustado de ese día. Sin stop-loss ni control de
   riesgo por posición — la validación original tampoco midió ninguno
@@ -65,11 +77,10 @@ confunda con algo ya validado:
 
 ## 3. Cadencia y arranque
 
-Corre semanalmente (domingos, después de `exp005-forward-check.yml`),
-limitado por el mismo refresco semanal de datos del repositorio — a
-diferencia del motor de producción de jesus-site (que sí corre
-diario), esta cartera solo ve fechas nuevas una vez por semana, en
-lotes.
+Corre diario, de lunes a viernes (igual que `data-build.yml`, del
+que depende), y bajo demanda — revisa señales nuevas cada sesión de
+mercado, no cada 10 sesiones (ver sección 2), igual que el motor de
+producción de jesus-site.
 
 **Primera corrida: sin backtest retroactivo.** La cartera arranca con
 `fecha_inicio` = la última fecha disponible en el calendario el día

@@ -4,12 +4,24 @@
 
 Distinto de `exp005_forward_check.py` (que solo PUNTÚA retrospectivamente,
 cuando ya existe el retorno forward de 30 sesiones completo): este script
-mantiene una cartera con capital virtual que opera en tiempo real — abre
-posiciones en cuanto ocurre una fecha de corte del mismo grid de 10
-sesiones que ya usa la validación forward (`exp005.fechas_t0`), sin
-esperar a poder calificarlas. Es el "Paper Lab" de EXP-005: para ver si
-el bucket, llevado a una cartera, sostiene lo que mostró en el locked
-test — no reemplaza esa validación estadística, la complementa.
+mantiene una cartera con capital virtual que opera en tiempo real — revisa
+señales nuevas TODOS los días de mercado (no solo en las fechas de corte
+del grid de 10 sesiones que usa la validación forward), igual que los
+buckets de trading algorítmico en vivo de jesus-site. Es el "Paper Lab" de
+EXP-005: para ver si el bucket, llevado a una cartera, sostiene lo que
+mostró en el locked test — no reemplaza esa validación estadística, la
+complementa.
+
+Cadencia de entrada distinta a propósito (cambiado el 2026-11-26, a
+pedido explícito): la validación forward (`exp005.fechas_t0`) solo puntúa
+en fechas de corte espaciadas cada 10 sesiones porque eso importa para
+la independencia estadística de sus pruebas (bootstrap, DSR, PBO) — un
+grid diario ahí sobrepondría masivamente las ventanas de 30 sesiones y
+sesgaría esos tests. Esta cartera NO es una prueba estadística (ver
+PAPER_PORTFOLIO.md: "no tiene veredicto"), así que no tiene ese problema
+y puede revisar señales a diario sin comprometer nada ya validado — el
+`BUCKET_CONGELADO` (umbrales, features, universo) sigue siendo exactamente
+el mismo, intacto.
 
 El bucket es el mismo BUCKET_CONGELADO que `exp005_forward_check.py`
 (variant_id_ganador exacto de run_real/results.json) — nunca se
@@ -25,8 +37,8 @@ que el Motor IBKR de jesus-site arrancó con historial corto el día que
 se prendió) — así el historial que se vea después es 100% forward, nunca
 una simulación maquillada de "paper trading".
 
-Corre semanalmente (domingos, después de exp005-forward-check.yml) y
-bajo demanda. Cómputo puro: sin LLM, sin llaves.
+Corre diario, de lunes a viernes, después de data-build.yml, y bajo
+demanda. Cómputo puro: sin LLM, sin llaves.
 """
 from __future__ import annotations
 
@@ -35,7 +47,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from prl.reverse_winners import exp005, features, paper_portfolio as pp
+from prl.reverse_winners import features, paper_portfolio as pp
 from prl.reverse_winners.exp005 import ajustar_ohlc
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -49,8 +61,6 @@ SNAPSHOT_PATH = RUN_DIR / "paper_portfolio.json"
 BENCHMARK = "SPY"
 CAPITAL_INICIAL = 1000.0
 HORIZONTE_SESIONES = 30
-GRID_PASO_SESIONES = 10
-GRID_INICIO = "2010-01-01"
 MIN_HISTORIA = 252
 
 # Idéntico a BUCKET_CONGELADO de exp005_forward_check.py — una sola fuente
@@ -122,7 +132,7 @@ def _construir_snapshot(estado: dict) -> dict:
         "nombre": "Reverse Winners — Paper Portfolio",
         "bucket_congelado": BUCKET_CONGELADO,
         "horizonte_sesiones": HORIZONTE_SESIONES,
-        "grid_paso_sesiones": GRID_PASO_SESIONES,
+        "cadencia_entradas": "diaria",
         "fecha_inicio": estado["fecha_inicio"],
         "capital_inicial": estado["capital_inicial"],
         "efectivo": round(estado["efectivo"], 2),
@@ -191,9 +201,6 @@ def main() -> dict:
     df_bench_adj = ajustar_ohlc(df_bench_raw).sort_index()
     calendario = df_bench_adj.index
 
-    grid_cortes = exp005.fechas_t0(calendario, inicio=GRID_INICIO, paso=GRID_PASO_SESIONES)
-    grid_cortes_set = set(grid_cortes)
-
     if ESTADO_PATH.exists():
         estado = json.loads(ESTADO_PATH.read_text())
         ultima_fecha_procesada = pd.Timestamp(estado["historial_diario"][-1]["fecha"])
@@ -212,10 +219,8 @@ def main() -> dict:
         for fecha in fechas_a_procesar:
             step_actual = int(calendario.get_loc(fecha))
 
-            tickers_nuevos: list[str] = []
-            if fecha in grid_cortes_set:
-                tabla = _tabla_features_elegibles(datos, fecha, MIN_HISTORIA)
-                tickers_nuevos = pp.detectar_senales(tabla, BUCKET_CONGELADO)
+            tabla = _tabla_features_elegibles(datos, fecha, MIN_HISTORIA)
+            tickers_nuevos = pp.detectar_senales(tabla, BUCKET_CONGELADO)
 
             tickers_relevantes = {p["ticker"] for p in estado["posiciones_abiertas"]} | set(tickers_nuevos)
             precios_cierre = {
