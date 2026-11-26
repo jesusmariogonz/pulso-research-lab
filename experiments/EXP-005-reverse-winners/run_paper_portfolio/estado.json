@@ -8,6 +8,54 @@
       "drawdown_pct": 0.0,
       "equity": 1000.0,
       "fecha": "2026-11-13"
+    },
+    {
+      "cumulative_return_pct": 0.0,
+      "drawdown_pct": 0.0,
+      "equity": 1000.0,
+      "fecha": "2026-11-16"
+    },
+    {
+      "cumulative_return_pct": 0.0,
+      "drawdown_pct": 0.0,
+      "equity": 1000.0,
+      "fecha": "2026-11-17"
+    },
+    {
+      "cumulative_return_pct": 0.0,
+      "drawdown_pct": 0.0,
+      "equity": 1000.0,
+      "fecha": "2026-11-18"
+    },
+    {
+      "cumulative_return_pct": 0.0,
+      "drawdown_pct": 0.0,
+      "equity": 1000.0,
+      "fecha": "2026-11-19"
+    },
+    {
+      "cumulative_return_pct": 0.0,
+      "drawdown_pct": 0.0,
+      "equity": 1000.0,
+      "fecha": "2026-11-20"
+    },
+    {
+      "cumulative_return_pct": 0.0,
+      "drawdown_pct": 0.0,
+      "equity": 1000.0,
+      "fecha": "2026-11-23"
+    },
+    {
+      "cumulative_return_pct": 0.0,
+      "drawdown_pct": 0.0,
+      "equity": 1000.0,
+      "fecha": "2026-11-24"
+    },
+    {
+      "cumulative_return_pct": 0.0,
+      "drawdown_pct": 0.0,
+      "equity": 1000.0,
+      "fecha": "2026-11-25"
     }
   ],
   "pico_equity": 1000.0,
