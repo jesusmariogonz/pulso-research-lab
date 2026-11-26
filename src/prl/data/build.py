@@ -147,7 +147,13 @@ def descargar_fred_vintage(serie: str) -> pd.DataFrame:
         },
         timeout=60,
     )
-    r.raise_for_status()
+    if not r.ok:
+        # requests.raise_for_status() solo da "400 Bad Request", sin el
+        # error_message real que manda FRED (ej. clave inválida/revocada,
+        # rate limit, o un cambio en lo que acepta la API) — bug real del
+        # 2026-11-26: las 8 series fred_vintage fallaron igual y el log
+        # solo decía "400 Client Error", sin pista de la causa.
+        raise RuntimeError(f"FRED respondió {r.status_code} para {serie}: {r.text[:500]}")
     crudo = r.json().get("observations", [])
     if not crudo:
         raise RuntimeError(f"ALFRED no devolvió observaciones para {serie}")

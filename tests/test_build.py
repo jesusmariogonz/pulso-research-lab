@@ -187,3 +187,23 @@ def test_main_falla_si_fallan_demasiados_simbolos_de_universo(tmp_path, monkeypa
     monkeypatch.setattr(build, "descargar_yahoo", _descargar_con_fallidos(fallidos))
 
     assert build.main([]) == 1, "demasiados fallos de universo a la vez huele a bloqueo sistémico, no a churn"
+
+
+class _RespuestaFalsa:
+    def __init__(self, status_code, text, ok=None):
+        self.status_code = status_code
+        self.text = text
+        self.ok = ok if ok is not None else (200 <= status_code < 300)
+
+    def json(self):
+        import json as _json
+        return _json.loads(self.text)
+
+
+def test_descargar_fred_vintage_incluye_el_cuerpo_de_la_respuesta_en_el_error(monkeypatch):
+    monkeypatch.setenv("FRED_API_KEY", "clave-de-prueba")
+    cuerpo = '{"error_code":400,"error_message":"clave invalida"}'
+    monkeypatch.setattr("requests.get", lambda *a, **k: _RespuestaFalsa(400, cuerpo))
+
+    with pytest.raises(RuntimeError, match="clave invalida"):
+        build.descargar_fred_vintage("CPIAUCSL")
