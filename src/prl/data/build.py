@@ -23,7 +23,7 @@ import json
 import os
 import sys
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import pandas as pd
@@ -128,13 +128,20 @@ def descargar_fred_vintage(serie: str) -> pd.DataFrame:
     valor de salida): hay que pedir hasta hoy. FRED entonces devuelve la
     versión vigente con realtime_end = hoy (no 9999-12-31), así que se
     normaliza aquí a 9999-12-31 para cumplir el centinela que espera
-    prl.data.macro_vintage ("vigente para siempre")."""
+    prl.data.macro_vintage ("vigente para siempre").
+
+    "Hoy" se pide como ayer (UTC), no hoy: bug real del 2026-11-26 — una
+    corrida justo después de medianoche UTC calculó "hoy" como un día que,
+    del lado de FRED, todavía no llegaba ("Variable realtime_end can not
+    be after today's date"), tumbando las 8 series fred_vintage del
+    catálogo. Un día de margen cuesta nada aquí (la vintage vigente sigue
+    siendo la misma) y evita el choque de reloj."""
     import requests
 
     api_key = os.environ.get("FRED_API_KEY")
     if not api_key:
         raise RuntimeError("falta FRED_API_KEY en el entorno (requerida para series fred_vintage)")
-    hoy = datetime.now(timezone.utc).date().isoformat()
+    hoy = (datetime.now(timezone.utc).date() - timedelta(days=1)).isoformat()
     r = requests.get(
         "https://api.stlouisfed.org/fred/series/observations",
         params={
