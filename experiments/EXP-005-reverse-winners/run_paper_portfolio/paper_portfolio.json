@@ -21,8 +21,8 @@
   },
   "cadencia_entradas": "diaria",
   "capital_inicial": 1000.0,
-  "drawdown_pct": 0.0,
-  "efectivo": 1000.0,
+  "drawdown_pct": -0.0,
+  "efectivo": 0.0,
   "equity_actual": 1000.0,
   "experimento": "EXP-005",
   "fecha_inicio": "2026-11-13",
@@ -80,17 +80,504 @@
       "drawdown_pct": 0.0,
       "equity": 1000.0,
       "fecha": "2026-11-25"
+    },
+    {
+      "cumulative_return_pct": -0.0,
+      "drawdown_pct": -0.0,
+      "equity": 1000.0,
+      "fecha": "2026-11-27"
     }
   ],
   "horizonte_sesiones": 30,
-  "n_posiciones_abiertas": 0,
+  "n_posiciones_abiertas": 60,
   "n_posiciones_cerradas": 0,
   "nombre": "Reverse Winners — Paper Portfolio",
-  "pnl_no_realizado_total": 0,
+  "pnl_no_realizado_total": 0.0,
   "pnl_realizado_total": 0,
-  "posiciones_abiertas": [],
+  "posiciones_abiertas": [
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 1.23,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "ABR",
+      "ultimo_precio_conocido": 1.23
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 14.99,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "ADEA",
+      "ultimo_precio_conocido": 14.99
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 4.89,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "AESI",
+      "ultimo_precio_conocido": 4.89
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 2.87,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "AGNT",
+      "ultimo_precio_conocido": 2.87
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 322.04,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "AMAT",
+      "ultimo_precio_conocido": 322.04
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 424.54,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "AMD",
+      "ultimo_precio_conocido": 424.54
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 95.78,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "AVAV",
+      "ultimo_precio_conocido": 95.78
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 163.02,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "BE",
+      "ultimo_precio_conocido": 163.02
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 2.94,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "CCOI",
+      "ultimo_precio_conocido": 2.94
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 12.76,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "CDE",
+      "ultimo_precio_conocido": 12.76
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 256.58,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "CIEN",
+      "ultimo_precio_conocido": 256.58
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 5.15,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "CLSK",
+      "ultimo_precio_conocido": 5.15
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 39.17,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "COHU",
+      "ultimo_precio_conocido": 39.17
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 246.37,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "DAVE",
+      "ultimo_precio_conocido": 246.37
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 165.75,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "DDOG",
+      "ultimo_precio_conocido": 165.75
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 316.96,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "DELL",
+      "ultimo_precio_conocido": 316.96
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 73.48,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "DOCN",
+      "ultimo_precio_conocido": 73.48
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 180.42,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "DY",
+      "ultimo_precio_conocido": 180.42
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 80.83,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "ECG",
+      "ultimo_precio_conocido": 80.83
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 21.69,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "ENPH",
+      "ultimo_precio_conocido": 21.69
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 69.77,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "FLEX",
+      "ultimo_precio_conocido": 69.77
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 74.39,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "FORM",
+      "ultimo_precio_conocido": 74.39
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 15.0,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "HIMS",
+      "ultimo_precio_conocido": 15.0
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 12.12,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "HL",
+      "ultimo_precio_conocido": 12.12
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 42.76,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "HPE",
+      "ultimo_precio_conocido": 42.76
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 26.11,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "ICHR",
+      "ultimo_precio_conocido": 26.11
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 59.58,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "KLIC",
+      "ultimo_precio_conocido": 59.58
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 30.91,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "KRMN",
+      "ultimo_precio_conocido": 30.91
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 12.26,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "LBRT",
+      "ultimo_precio_conocido": 12.26
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 85.43,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "LEU",
+      "ultimo_precio_conocido": 85.43
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 514.63,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "LITE",
+      "ultimo_precio_conocido": 514.63
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 192.69,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "LRCX",
+      "ultimo_precio_conocido": 192.69
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 5.59,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "MARA",
+      "ultimo_precio_conocido": 5.59
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 140.54,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "MRVL",
+      "ultimo_precio_conocido": 140.54
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 157.65,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "MTZ",
+      "ultimo_precio_conocido": 157.65
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 646.95,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "MU",
+      "ultimo_precio_conocido": 646.95
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 44.83,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "MXL",
+      "ultimo_precio_conocido": 44.83
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 150.49,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "NVDA",
+      "ultimo_precio_conocido": 150.49
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 74.18,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "NXT",
+      "ultimo_precio_conocido": 74.18
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 107.13,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "ORCL",
+      "ultimo_precio_conocido": 107.13
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 101.46,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "P",
+      "ultimo_precio_conocido": 101.46
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 39.35,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "PENG",
+      "ultimo_precio_conocido": 39.35
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 58.02,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "PRIM",
+      "ultimo_precio_conocido": 58.02
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 8.31,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "QDEL",
+      "ultimo_precio_conocido": 8.31
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 31.82,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "ROCK",
+      "ultimo_precio_conocido": 31.82
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 21.0,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "SEDG",
+      "ultimo_precio_conocido": 21.0
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 23.76,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "SMCI",
+      "ultimo_precio_conocido": 23.76
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 97.36,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "SMTC",
+      "ultimo_precio_conocido": 97.36
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 85.36,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "SNDK",
+      "ultimo_precio_conocido": 85.36
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 38.05,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "SNEX",
+      "ultimo_precio_conocido": 38.05
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 54.12,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "STRA",
+      "ultimo_precio_conocido": 54.12
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 272.25,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "STRL",
+      "ultimo_precio_conocido": 272.25
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 509.66,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "STX",
+      "ultimo_precio_conocido": 509.66
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 222.96,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "TER",
+      "ultimo_precio_conocido": 222.96
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 63.16,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "TTMI",
+      "ultimo_precio_conocido": 63.16
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 36.29,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "UCTT",
+      "ultimo_precio_conocido": 36.29
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 26.03,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "VCYT",
+      "ultimo_precio_conocido": 26.03
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 131.17,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "VICR",
+      "ultimo_precio_conocido": 131.17
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 178.71,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "VRT",
+      "ultimo_precio_conocido": 178.71
+    },
+    {
+      "dolares_invertidos": 16.67,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 292.11,
+      "retorno_no_realizado_pct": 0.0,
+      "ticker": "WDC",
+      "ultimo_precio_conocido": 292.11
+    }
+  ],
   "posiciones_cerradas": [],
-  "retorno_acumulado_pct": 0.0,
-  "ultima_actualizacion": "2026-11-26T23:29:29.810536+00:00",
+  "retorno_acumulado_pct": -0.0,
+  "ultima_actualizacion": "2026-11-27T23:09:40.699191+00:00",
   "win_rate_pct": null
 }

@@ -1,6 +1,6 @@
 {
   "capital_inicial": 1000.0,
-  "efectivo": 1000.0,
+  "efectivo": 0.0,
   "fecha_inicio": "2026-11-13",
   "historial_diario": [
     {
@@ -56,9 +56,496 @@
       "drawdown_pct": 0.0,
       "equity": 1000.0,
       "fecha": "2026-11-25"
+    },
+    {
+      "cumulative_return_pct": -8.881784197001252e-14,
+      "drawdown_pct": -8.881784197001252e-14,
+      "equity": 999.9999999999991,
+      "fecha": "2026-11-27"
     }
   ],
   "pico_equity": 1000.0,
-  "posiciones_abiertas": [],
+  "posiciones_abiertas": [
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 1.2300000190734863,
+      "entry_step": 8515,
+      "ticker": "ABR",
+      "ultimo_precio_conocido": 1.2300000190734863
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 14.989999771118164,
+      "entry_step": 8515,
+      "ticker": "ADEA",
+      "ultimo_precio_conocido": 14.989999771118164
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 4.889999866485596,
+      "entry_step": 8515,
+      "ticker": "AESI",
+      "ultimo_precio_conocido": 4.889999866485596
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 2.869999885559082,
+      "entry_step": 8515,
+      "ticker": "AGNT",
+      "ultimo_precio_conocido": 2.869999885559082
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 322.0400085449219,
+      "entry_step": 8515,
+      "ticker": "AMAT",
+      "ultimo_precio_conocido": 322.0400085449219
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 424.5400085449219,
+      "entry_step": 8515,
+      "ticker": "AMD",
+      "ultimo_precio_conocido": 424.5400085449219
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 95.77999877929688,
+      "entry_step": 8515,
+      "ticker": "AVAV",
+      "ultimo_precio_conocido": 95.77999877929688
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 163.02000427246094,
+      "entry_step": 8515,
+      "ticker": "BE",
+      "ultimo_precio_conocido": 163.02000427246094
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 2.944999933242798,
+      "entry_step": 8515,
+      "ticker": "CCOI",
+      "ultimo_precio_conocido": 2.944999933242798
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 12.760000228881836,
+      "entry_step": 8515,
+      "ticker": "CDE",
+      "ultimo_precio_conocido": 12.760000228881836
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 256.5799865722656,
+      "entry_step": 8515,
+      "ticker": "CIEN",
+      "ultimo_precio_conocido": 256.5799865722656
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 5.150000095367432,
+      "entry_step": 8515,
+      "ticker": "CLSK",
+      "ultimo_precio_conocido": 5.150000095367432
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 39.16999816894531,
+      "entry_step": 8515,
+      "ticker": "COHU",
+      "ultimo_precio_conocido": 39.16999816894531
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 246.3699951171875,
+      "entry_step": 8515,
+      "ticker": "DAVE",
+      "ultimo_precio_conocido": 246.3699951171875
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 165.75,
+      "entry_step": 8515,
+      "ticker": "DDOG",
+      "ultimo_precio_conocido": 165.75
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 316.9599914550781,
+      "entry_step": 8515,
+      "ticker": "DELL",
+      "ultimo_precio_conocido": 316.9599914550781
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 73.4800033569336,
+      "entry_step": 8515,
+      "ticker": "DOCN",
+      "ultimo_precio_conocido": 73.4800033569336
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 180.4199981689453,
+      "entry_step": 8515,
+      "ticker": "DY",
+      "ultimo_precio_conocido": 180.4199981689453
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 80.83000183105469,
+      "entry_step": 8515,
+      "ticker": "ECG",
+      "ultimo_precio_conocido": 80.83000183105469
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 21.690000534057617,
+      "entry_step": 8515,
+      "ticker": "ENPH",
+      "ultimo_precio_conocido": 21.690000534057617
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 69.7699966430664,
+      "entry_step": 8515,
+      "ticker": "FLEX",
+      "ultimo_precio_conocido": 69.7699966430664
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 74.38999938964844,
+      "entry_step": 8515,
+      "ticker": "FORM",
+      "ultimo_precio_conocido": 74.38999938964844
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 15.0,
+      "entry_step": 8515,
+      "ticker": "HIMS",
+      "ultimo_precio_conocido": 15.0
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 12.119999885559082,
+      "entry_step": 8515,
+      "ticker": "HL",
+      "ultimo_precio_conocido": 12.119999885559082
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 42.7599983215332,
+      "entry_step": 8515,
+      "ticker": "HPE",
+      "ultimo_precio_conocido": 42.7599983215332
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 26.110000610351562,
+      "entry_step": 8515,
+      "ticker": "ICHR",
+      "ultimo_precio_conocido": 26.110000610351562
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 59.58000183105469,
+      "entry_step": 8515,
+      "ticker": "KLIC",
+      "ultimo_precio_conocido": 59.58000183105469
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 30.90999984741211,
+      "entry_step": 8515,
+      "ticker": "KRMN",
+      "ultimo_precio_conocido": 30.90999984741211
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 12.260000228881836,
+      "entry_step": 8515,
+      "ticker": "LBRT",
+      "ultimo_precio_conocido": 12.260000228881836
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 85.43000030517578,
+      "entry_step": 8515,
+      "ticker": "LEU",
+      "ultimo_precio_conocido": 85.43000030517578
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 514.6300048828125,
+      "entry_step": 8515,
+      "ticker": "LITE",
+      "ultimo_precio_conocido": 514.6300048828125
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 192.69000244140625,
+      "entry_step": 8515,
+      "ticker": "LRCX",
+      "ultimo_precio_conocido": 192.69000244140625
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 5.590000152587891,
+      "entry_step": 8515,
+      "ticker": "MARA",
+      "ultimo_precio_conocido": 5.590000152587891
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 140.5399932861328,
+      "entry_step": 8515,
+      "ticker": "MRVL",
+      "ultimo_precio_conocido": 140.5399932861328
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 157.64999389648438,
+      "entry_step": 8515,
+      "ticker": "MTZ",
+      "ultimo_precio_conocido": 157.64999389648438
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 646.9500122070312,
+      "entry_step": 8515,
+      "ticker": "MU",
+      "ultimo_precio_conocido": 646.9500122070312
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 44.83000183105469,
+      "entry_step": 8515,
+      "ticker": "MXL",
+      "ultimo_precio_conocido": 44.83000183105469
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 150.49000549316406,
+      "entry_step": 8515,
+      "ticker": "NVDA",
+      "ultimo_precio_conocido": 150.49000549316406
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 74.18000030517578,
+      "entry_step": 8515,
+      "ticker": "NXT",
+      "ultimo_precio_conocido": 74.18000030517578
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 107.12999725341797,
+      "entry_step": 8515,
+      "ticker": "ORCL",
+      "ultimo_precio_conocido": 107.12999725341797
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 101.45999908447266,
+      "entry_step": 8515,
+      "ticker": "P",
+      "ultimo_precio_conocido": 101.45999908447266
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 39.349998474121094,
+      "entry_step": 8515,
+      "ticker": "PENG",
+      "ultimo_precio_conocido": 39.349998474121094
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 58.02000045776367,
+      "entry_step": 8515,
+      "ticker": "PRIM",
+      "ultimo_precio_conocido": 58.02000045776367
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 8.305000305175781,
+      "entry_step": 8515,
+      "ticker": "QDEL",
+      "ultimo_precio_conocido": 8.305000305175781
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 31.81999969482422,
+      "entry_step": 8515,
+      "ticker": "ROCK",
+      "ultimo_precio_conocido": 31.81999969482422
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 21.0,
+      "entry_step": 8515,
+      "ticker": "SEDG",
+      "ultimo_precio_conocido": 21.0
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 23.760000228881836,
+      "entry_step": 8515,
+      "ticker": "SMCI",
+      "ultimo_precio_conocido": 23.760000228881836
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 97.36000061035156,
+      "entry_step": 8515,
+      "ticker": "SMTC",
+      "ultimo_precio_conocido": 97.36000061035156
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 85.36000061035156,
+      "entry_step": 8515,
+      "ticker": "SNDK",
+      "ultimo_precio_conocido": 85.36000061035156
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 38.04999923706055,
+      "entry_step": 8515,
+      "ticker": "SNEX",
+      "ultimo_precio_conocido": 38.04999923706055
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 54.119998931884766,
+      "entry_step": 8515,
+      "ticker": "STRA",
+      "ultimo_precio_conocido": 54.119998931884766
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 272.25,
+      "entry_step": 8515,
+      "ticker": "STRL",
+      "ultimo_precio_conocido": 272.25
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 509.6600036621094,
+      "entry_step": 8515,
+      "ticker": "STX",
+      "ultimo_precio_conocido": 509.6600036621094
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 222.9600067138672,
+      "entry_step": 8515,
+      "ticker": "TER",
+      "ultimo_precio_conocido": 222.9600067138672
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 63.15999984741211,
+      "entry_step": 8515,
+      "ticker": "TTMI",
+      "ultimo_precio_conocido": 63.15999984741211
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 36.290000915527344,
+      "entry_step": 8515,
+      "ticker": "UCTT",
+      "ultimo_precio_conocido": 36.290000915527344
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 26.030000686645508,
+      "entry_step": 8515,
+      "ticker": "VCYT",
+      "ultimo_precio_conocido": 26.030000686645508
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 131.1699981689453,
+      "entry_step": 8515,
+      "ticker": "VICR",
+      "ultimo_precio_conocido": 131.1699981689453
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 178.7100067138672,
+      "entry_step": 8515,
+      "ticker": "VRT",
+      "ultimo_precio_conocido": 178.7100067138672
+    },
+    {
+      "dolares_invertidos": 16.666666666666668,
+      "entry_fecha": "2026-11-27",
+      "entry_price": 292.1099853515625,
+      "entry_step": 8515,
+      "ticker": "WDC",
+      "ultimo_precio_conocido": 292.1099853515625
+    }
+  ],
   "posiciones_cerradas": []
 }
