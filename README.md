@@ -40,6 +40,18 @@ repo, y se verifican contra los SHA-256 del manifiesto.
 | [EXP-004](experiments/EXP-004-short-pressure-reversal/PREREGISTRATION.md) | Short Pressure Reversal (discovery de buckets de reversión bajo presión short elevada + agotamiento de precio, universo S&P 1500, grilla cerrada de 140 variantes) | `EXPERIMENTAL` — pre-registrado y bloqueado; infraestructura de datos ya construida y corrida (universo + precios + short volume/interest de FINRA) — faltan los módulos de cómputo |
 | [EXP-005](experiments/EXP-005-reverse-winners/PREREGISTRATION.md) | Reverse Winners (ingeniería inversa de las mayores ganadoras de 30 días: qué características tenían antes de subir, grilla cerrada de hasta 243 variantes, debe superar un baseline de momentum de un solo factor) | `INCONCLUSIVE` — corrida real completa (1,501 símbolos, 2010-2026): el bucket descubierto supera a los 4 baselines pero el Deflated Sharpe Ratio (0.534) no alcanza el umbral de validación (0.95) tras corregir por las 81 variantes probadas. Ver [RESULTADOS.md](experiments/EXP-005-reverse-winners/RESULTADOS.md) |
 
+| [EXP-006](experiments/EXP-006-strategy-dna/PROPUESTA.md) | Strategy DNA (reverse-engineering de las reglas de entrada/sizing/salida de traders de eToro, sin copiar sus operaciones) | **IDEA, no iniciado** — propuesta guardada |
+
+## Agenda de investigación futura
+
+Temas guardados para después, sin hipótesis ni diseño todavía (un
+nivel anterior a la lista de experimentos de arriba) — ver
+[AGENDA-INVESTIGACION.md](AGENDA-INVESTIGACION.md): Volatility
+Research, Return Predictability, Market Regimes, Market Anomalies,
+Factor Research, Financial Machine Learning, Fondos de seguimiento de
+tendencia (CTA), y patrones de precio reconocibles (chart/candlestick
+patterns).
+
 ## Aviso
 
 Material de investigación y educativo. No es asesoría de inversión.
